@@ -1,0 +1,18 @@
+[2025-07-18 13:55:44] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/core/initial/initInfra.go:10] [32mim here...[0m
+[2025-07-18 14:12:16] [ERROR] [/Users/guanlin/Desktop/gps_project/PetTracker/core/initial/initDb.go:25] [31m ❌ 無法連接讀取資料庫: Error 1045 (28000): Access denied for user 'root'@'localhost' (using password: NO)[0m
+[2025-07-18 14:17:36] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/initial/initDb.go:36] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-07-18 14:17:36] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-07-18 14:17:36] [ERROR] [/Users/guanlin/Desktop/gps_project/PetTracker/core/redis/hash.go:27] [31mRedis HGetAll 讀取失敗, key: device_setting, error: context canceled[0m
+[2025-07-18 14:17:36] [ERROR] [/Users/guanlin/Desktop/gps_project/PetTracker/core/redis/hash.go:11] [31mRedis HSet 寫入失敗, key: device_setting, data: map[device_prefix:AA device_sequence:0][0m
+[2025-07-18 14:17:36] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/initial/initInfra.go:19] [36m ✅ 成功初始化裝置設定[0m
+[2025-07-18 14:17:36] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:17] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-18 14:19:43] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/initial/initDb.go:36] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-07-18 14:19:43] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-07-18 14:19:43] [ERROR] [/Users/guanlin/Desktop/gps_project/PetTracker/core/redis/hash.go:27] [31mRedis HGetAll 讀取失敗, key: device_setting, error: context canceled[0m
+[2025-07-18 14:19:43] [ERROR] [/Users/guanlin/Desktop/gps_project/PetTracker/core/redis/hash.go:11] [31mRedis HSet 寫入失敗, key: device_setting, data: map[device_prefix:AA device_sequence:0][0m
+[2025-07-18 14:19:43] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/initial/initInfra.go:19] [36m ✅ 成功初始化裝置設定[0m
+[2025-07-18 14:19:43] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:17] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-18 14:22:10] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/initial/initDb.go:36] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-07-18 14:22:10] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-07-18 14:22:10] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/initial/initInfra.go:19] [36m ✅ 成功初始化裝置設定[0m
+[2025-07-18 14:22:10] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:17] [32m http server 已啟動, 使用 PORT: 8000[0m

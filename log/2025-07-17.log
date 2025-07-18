@@ -1,0 +1,113 @@
+[2025-07-17 09:58:57] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:36] [36m ✅ MariaDB資料庫連接成功[0m
+[2025-07-17 09:58:57] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:68] [36m ✅ Redis資料庫連接成功[0m
+[2025-07-17 09:58:57] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:18] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-17 09:59:00] [ERROR] [/Users/guanlin/Desktop/gps_project/PetTracker/service/member/register.go:110] [31m建立使用者歷史密碼失敗, error: Error 1054 (42S22): Unknown column 'uuid' in 'INSERT INTO'[0m
+[2025-07-17 10:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:36] [32m每小時執行程序, 現在時間: 10:00:00[0m
+[2025-07-17 10:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:37] [32m小時執行完畢[0m
+[2025-07-17 10:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:29] [32m每半小時執行程序, 現在時間: 10:00:00[0m
+[2025-07-17 10:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:18] [32m開始執行 GPS DATA 持久化...[0m
+[2025-07-17 10:00:00] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:27] [36m取得 0 筆裝置資料, 開始讀取[0m
+[2025-07-17 10:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:31] [32m半小時執行完畢[0m
+[2025-07-17 10:01:48] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:36] [36m ✅ MariaDB資料庫連接成功[0m
+[2025-07-17 10:01:48] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:68] [36m ✅ Redis資料庫連接成功[0m
+[2025-07-17 10:01:48] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:18] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-17 10:04:35] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:36] [36m ✅ MariaDB資料庫連接成功[0m
+[2025-07-17 10:04:35] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:68] [36m ✅ Redis資料庫連接成功[0m
+[2025-07-17 10:04:35] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:18] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-17 10:08:03] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:36] [36m ✅ MariaDB資料庫連接成功[0m
+[2025-07-17 10:08:03] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:68] [36m ✅ Redis資料庫連接成功[0m
+[2025-07-17 10:08:03] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:18] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-17 10:08:51] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:36] [36m ✅ MariaDB資料庫連接成功[0m
+[2025-07-17 10:08:51] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:68] [36m ✅ Redis資料庫連接成功[0m
+[2025-07-17 10:08:51] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:18] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-17 10:09:20] [ERROR] [/Users/guanlin/Desktop/gps_project/PetTracker/service/device/create.go:39] [31mfailed to increment sequence in Redis: ERR value is not an integer or out of range[0m
+[2025-07-17 10:13:57] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:36] [36m ✅ MariaDB資料庫連接成功[0m
+[2025-07-17 10:13:57] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:68] [36m ✅ Redis資料庫連接成功[0m
+[2025-07-17 10:13:57] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:18] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-17 10:14:18] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:36] [36m ✅ MariaDB資料庫連接成功[0m
+[2025-07-17 10:14:18] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:68] [36m ✅ Redis資料庫連接成功[0m
+[2025-07-17 10:14:18] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:18] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-17 10:34:19] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:36] [36m ✅ MariaDB資料庫連接成功[0m
+[2025-07-17 10:34:19] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:68] [36m ✅ Redis資料庫連接成功[0m
+[2025-07-17 10:34:19] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:18] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-17 10:35:25] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:36] [36m ✅ MariaDB資料庫連接成功[0m
+[2025-07-17 10:35:25] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:68] [36m ✅ Redis資料庫連接成功[0m
+[2025-07-17 10:35:25] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:18] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-17 10:36:13] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:36] [36m ✅ MariaDB資料庫連接成功[0m
+[2025-07-17 10:36:13] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:68] [36m ✅ Redis資料庫連接成功[0m
+[2025-07-17 10:36:13] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initSetting.go:18] [36m成功初始化裝置設定[0m
+[2025-07-17 10:36:13] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:18] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-17 10:36:53] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:36] [36m ✅ MariaDB資料庫連接成功[0m
+[2025-07-17 10:36:53] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:68] [36m ✅ Redis資料庫連接成功[0m
+[2025-07-17 10:36:53] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initSetting.go:18] [36m ✅ 成功初始化裝置設定[0m
+[2025-07-17 10:36:53] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:18] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-17 10:41:05] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:36] [36m ✅ MariaDB資料庫連接成功[0m
+[2025-07-17 10:41:05] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:68] [36m ✅ Redis資料庫連接成功[0m
+[2025-07-17 10:41:05] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initSetting.go:18] [36m ✅ 成功初始化裝置設定[0m
+[2025-07-17 10:41:05] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:18] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-17 10:46:56] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:36] [36m ✅ MariaDB資料庫連接成功[0m
+[2025-07-17 10:46:56] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:68] [36m ✅ Redis資料庫連接成功[0m
+[2025-07-17 10:46:56] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initSetting.go:18] [36m ✅ 成功初始化裝置設定[0m
+[2025-07-17 10:46:56] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:18] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-17 10:49:34] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:36] [36m ✅ MariaDB資料庫連接成功[0m
+[2025-07-17 10:49:34] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:68] [36m ✅ Redis資料庫連接成功[0m
+[2025-07-17 10:49:34] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initSetting.go:18] [36m ✅ 成功初始化裝置設定[0m
+[2025-07-17 10:49:34] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:18] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-17 10:54:37] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:36] [36m ✅ MariaDB資料庫連接成功[0m
+[2025-07-17 10:54:37] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:68] [36m ✅ Redis資料庫連接成功[0m
+[2025-07-17 10:54:37] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initSetting.go:18] [36m ✅ 成功初始化裝置設定[0m
+[2025-07-17 10:54:37] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:18] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-17 11:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:36] [32m每小時執行程序, 現在時間: 11:00:00[0m
+[2025-07-17 11:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:37] [32m小時執行完畢[0m
+[2025-07-17 11:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:29] [32m每半小時執行程序, 現在時間: 11:00:00[0m
+[2025-07-17 11:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:18] [32m開始執行 GPS DATA 持久化...[0m
+[2025-07-17 11:00:00] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:27] [36m取得 0 筆裝置資料, 開始讀取[0m
+[2025-07-17 11:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:31] [32m半小時執行完畢[0m
+[2025-07-17 11:13:37] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:36] [36m ✅ MariaDB資料庫連接成功[0m
+[2025-07-17 11:13:37] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initMachine.go:68] [36m ✅ Redis資料庫連接成功[0m
+[2025-07-17 11:13:37] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/core/init/initSetting.go:18] [36m ✅ 成功初始化裝置設定[0m
+[2025-07-17 11:13:37] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/main/main.go:18] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-17 11:30:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:29] [32m每半小時執行程序, 現在時間: 11:30:00[0m
+[2025-07-17 11:30:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:18] [32m開始執行 GPS DATA 持久化...[0m
+[2025-07-17 11:30:00] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:27] [36m取得 0 筆裝置資料, 開始讀取[0m
+[2025-07-17 11:30:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:31] [32m半小時執行完畢[0m
+[2025-07-17 12:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:29] [32m每半小時執行程序, 現在時間: 12:00:00[0m
+[2025-07-17 12:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:36] [32m每小時執行程序, 現在時間: 12:00:00[0m
+[2025-07-17 12:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:18] [32m開始執行 GPS DATA 持久化...[0m
+[2025-07-17 12:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:37] [32m小時執行完畢[0m
+[2025-07-17 12:00:00] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:27] [36m取得 0 筆裝置資料, 開始讀取[0m
+[2025-07-17 12:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:31] [32m半小時執行完畢[0m
+[2025-07-17 12:30:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:29] [32m每半小時執行程序, 現在時間: 12:30:00[0m
+[2025-07-17 12:30:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:18] [32m開始執行 GPS DATA 持久化...[0m
+[2025-07-17 12:30:00] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:27] [36m取得 0 筆裝置資料, 開始讀取[0m
+[2025-07-17 12:30:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:31] [32m半小時執行完畢[0m
+[2025-07-17 13:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:36] [32m每小時執行程序, 現在時間: 13:00:00[0m
+[2025-07-17 13:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:29] [32m每半小時執行程序, 現在時間: 13:00:00[0m
+[2025-07-17 13:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:37] [32m小時執行完畢[0m
+[2025-07-17 13:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:18] [32m開始執行 GPS DATA 持久化...[0m
+[2025-07-17 13:00:00] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:27] [36m取得 0 筆裝置資料, 開始讀取[0m
+[2025-07-17 13:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:31] [32m半小時執行完畢[0m
+[2025-07-17 13:30:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:29] [32m每半小時執行程序, 現在時間: 13:30:00[0m
+[2025-07-17 13:30:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:18] [32m開始執行 GPS DATA 持久化...[0m
+[2025-07-17 13:30:00] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:27] [36m取得 0 筆裝置資料, 開始讀取[0m
+[2025-07-17 13:30:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:31] [32m半小時執行完畢[0m
+[2025-07-17 14:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:29] [32m每半小時執行程序, 現在時間: 14:00:00[0m
+[2025-07-17 14:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:36] [32m每小時執行程序, 現在時間: 14:00:00[0m
+[2025-07-17 14:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:18] [32m開始執行 GPS DATA 持久化...[0m
+[2025-07-17 14:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:37] [32m小時執行完畢[0m
+[2025-07-17 14:00:00] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:27] [36m取得 0 筆裝置資料, 開始讀取[0m
+[2025-07-17 14:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:31] [32m半小時執行完畢[0m
+[2025-07-17 14:30:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:29] [32m每半小時執行程序, 現在時間: 14:30:00[0m
+[2025-07-17 14:30:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:18] [32m開始執行 GPS DATA 持久化...[0m
+[2025-07-17 14:30:00] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:27] [36m取得 0 筆裝置資料, 開始讀取[0m
+[2025-07-17 14:30:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:31] [32m半小時執行完畢[0m
+[2025-07-17 15:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:36] [32m每小時執行程序, 現在時間: 15:00:00[0m
+[2025-07-17 15:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:29] [32m每半小時執行程序, 現在時間: 15:00:00[0m
+[2025-07-17 15:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:37] [32m小時執行完畢[0m
+[2025-07-17 15:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:18] [32m開始執行 GPS DATA 持久化...[0m
+[2025-07-17 15:00:00] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:27] [36m取得 0 筆裝置資料, 開始讀取[0m
+[2025-07-17 15:00:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:31] [32m半小時執行完畢[0m
+[2025-07-17 15:30:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:29] [32m每半小時執行程序, 現在時間: 15:30:00[0m
+[2025-07-17 15:30:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:18] [32m開始執行 GPS DATA 持久化...[0m
+[2025-07-17 15:30:00] [DEBUG] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/persist/gps.go:27] [36m取得 0 筆裝置資料, 開始讀取[0m
+[2025-07-17 15:30:00] [INFO] [/Users/guanlin/Desktop/gps_project/PetTracker/cron/routine.go:31] [32m半小時執行完畢[0m
