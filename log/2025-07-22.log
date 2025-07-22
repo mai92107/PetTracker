@@ -1,0 +1,26 @@
+[2025-07-22 14:01:40] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initDb.go:35] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-07-22 14:01:40] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-07-22 14:02:06] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initDb.go:35] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-07-22 14:02:06] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-07-22 14:02:06] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initMosquitto.go:28] [36m ✅ 已連接到 Mosquitto 伺服器[0m
+[2025-07-22 14:02:06] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initInfra.go:19] [36m ✅ 成功初始化裝置設定[0m
+[2025-07-22 14:02:06] [INFO] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.main/main.go:17] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-22 14:02:58] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initDb.go:35] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-07-22 14:02:58] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-07-22 14:29:42] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initDb.go:35] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-07-22 14:29:42] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-07-22 14:29:42] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initMosquitto.go:28] [36m ✅ 已連接到 Mosquitto 伺服器[0m
+[2025-07-22 14:29:42] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initInfra.go:19] [36m ✅ 成功初始化裝置設定[0m
+[2025-07-22 14:29:42] [INFO] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/main.go:17] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-22 14:30:58] [ERROR] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/4.repo/account.go:41] [31m查詢帳戶發生錯誤, error: Error 1054 (42S22): Unknown column 'emil' in 'WHERE'[0m
+[2025-07-22 14:31:16] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initDb.go:35] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-07-22 14:31:16] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-07-22 14:31:16] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initMosquitto.go:28] [36m ✅ 已連接到 Mosquitto 伺服器[0m
+[2025-07-22 14:31:16] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initInfra.go:19] [36m ✅ 成功初始化裝置設定[0m
+[2025-07-22 14:31:16] [INFO] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/main.go:17] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-22 14:33:44] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initDb.go:35] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-07-22 14:33:44] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-07-22 14:33:44] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initMosquitto.go:28] [36m ✅ 已連接到 Mosquitto 伺服器[0m
+[2025-07-22 14:33:44] [DEBUG] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/0.core/initial/initInfra.go:19] [36m ✅ 成功初始化裝置設定[0m
+[2025-07-22 14:33:44] [INFO] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/main.go:17] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-07-22 14:34:51] [ERROR] [/Users/guanlin/Desktop/gps_project/Pet_Tracker/2.api/device/01-create.go:34] [31m身份認證錯誤, error: JWT 解析失敗: token has invalid claims: token is expired[0m
