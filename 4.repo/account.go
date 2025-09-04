@@ -9,7 +9,7 @@ import (
 	"batchLog/0.core/global"
 	gormTable "batchLog/0.core/gorm"
 	"batchLog/0.core/logafa"
-	"batchLog/0.core/redis"
+	"batchLog/0.core/model"
 
 	"gorm.io/gorm"
 
@@ -44,15 +44,17 @@ func FindAccountByEmail(tx *gorm.DB,email string) (*gormTable.Account, error) {
 	return &account, nil
 }
 
-func CreateAccount(tx *gorm.DB,username, password, email string) (uuid.UUID, error) {
+func CreateAccount(tx *gorm.DB, memberId int64, username, password, email string) (uuid.UUID, error) {
 	now := time.Now().UTC()
 	hashedPassword, _ := common.BcryptHash(password)
 	account := gormTable.Account{
 		Uuid:          uuid.New(),
+		MemberId: 	   memberId,
 		Username:      username,
 		Password:      hashedPassword,
 		Email:         email,
-		LastLoginTime: &now,
+		Identity: 	   model.MEMBER.ToString(),
+		LastLoginTime: now,
 	}
 	err := tx.Create(&account).Error
 	if err != nil {
@@ -70,21 +72,32 @@ func CreateAccount(tx *gorm.DB,username, password, email string) (uuid.UUID, err
 	return account.Uuid, nil
 }
 
-func SaveLoginStatus(nickname, deviceId, token string, now time.Time, expireTime time.Duration)(map[string]interface{},error){
-	// 儲存登入狀態至 Redis
-	key := fmt.Sprintf("login:%s:%s", nickname, deviceId)
-	data := map[string]interface{}{
-		"token":     token,
-		"loginTime": now,
-		"expireAt": now.Add(expireTime),
-	}
-	err := redis.HSetData(key, data)
+func UpdateLoginTime(tx *gorm.DB, accountUUID uuid.UUID) error {
+	now := time.Now().UTC()
+
+	err := tx.Model(&gormTable.Account{}).
+		Where("uuid = ?", accountUUID).
+		Update("last_login_time", now).Error
+
 	if err != nil {
-		logafa.Error("redis 設置失敗，error: %+v",err)
-		return data,fmt.Errorf("系統錯誤")
+		logafa.Error("更新登入時間失敗, error: %+v", err)
+		return fmt.Errorf(global.COMMON_SYSTEM_ERROR)
 	}
-	// 設定過期時間
-	global.Repository.Cache.Writing.Expire(global.Repository.Cache.CTX, key, 24*time.Hour)
-	return data, nil
+	return nil
 }
+
+// func SaveLoginStatus(nickname, deviceId, token string, now time.Time)(map[string]interface{},error){
+// 	// 儲存登入狀態至 Redis
+// 	key := fmt.Sprintf("user:%s:%s", nickname, deviceId)
+// 	data := map[string]interface{}{
+// 		"token":     token,
+// 		"loginTime": now,
+// 	}
+// 	err := redis.HSetData(key, data)
+// 	if err != nil {
+// 		logafa.Error("redis 設置失敗，error: %+v",err)
+// 		return data,fmt.Errorf("系統錯誤")
+// 	}
+// 	return data, nil
+// }
 

@@ -3,42 +3,24 @@ package deviceService
 import (
 	"batchLog/0.core/global"
 	"batchLog/0.core/logafa"
+	"batchLog/0.core/model"
 	repo "batchLog/4.repo"
 	"fmt"
 )
 
 
-func Create(deviceName string, accountName string)(string,error){
+func Create(identity, deviceType string, memberId int64)(string,error){
 
-	tx := global.Repository.DB.Writing.Begin()
-	defer func(){
-		if r := recover();r != nil{
-			logafa.Error("裝置新增失敗")
-		}
-	}()
+	if identity != model.ADMIN.ToString(){
+		return "",fmt.Errorf("無權限新增裝置")
+	}
 
-	// 取得使用者資料
-	account,err := repo.FindAccountByAccountName(tx,accountName)
-	if err != nil{
-		return "",err
-	}
-	memberInfo,err := repo.FindMemberByAccountUuid(tx,account.Uuid.String())
-	if err != nil{
-		logafa.Error("查無此會員, error: %+v",err)
-		return "",err
-	}
-	
-	deviceId,err := repo.CreateDevice(tx,deviceName,memberInfo.Uuid)
+	db := global.Repository.DB.Writing	
+	// 取得用戶資料
+	deviceId,err := repo.CreateDevice(db,deviceType,memberId)
 	if err != nil {
 		logafa.Error("新增使用者裝置發生錯誤，error: %+v",err)
         return "",err
     }
-
-	if err := tx.Commit().Error ; err != nil{
-		tx.Rollback()
-		return "",fmt.Errorf(global.COMMON_SYSTEM_ERROR)
-
-	}
-
 	return deviceId,nil
 }

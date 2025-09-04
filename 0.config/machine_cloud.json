@@ -1,14 +1,14 @@
 {
   "mariaDb": {
     "in_use": true,
-    "reading":{
+    "reading": {
       "user": "root",
       "password": "",
       "host": "localhost",
       "port": "3306",
       "name": "gpsdb"
     },
-    "writing":{
+    "writing": {
       "user": "root",
       "password": "",
       "host": "localhost",
@@ -18,21 +18,22 @@
   },
   "redisDb": {
     "in_use": true,
-    "reading":{
+    "reading": {
       "password": "",
       "host": "localhost",
       "port": "6379"
     },
-    "writing":{
+    "writing": {
       "password": "",
       "host": "localhost",
       "port": "6379"
     }
   },
-  "mosquittoBroker":{
+  "mosquittoBroker": {
     "in_use": true,
-    "broker_host":"localhost",
-    "broker_port":"1883",
-    "client_id":"go-mqtt-client"
+    "broker_host": "test.mosquitto.org",
+    "broker_port": "1883",
+    "vague_topic":"pet/+/conn",
+    "client_id": "go-backend-tracker"
   }
 }

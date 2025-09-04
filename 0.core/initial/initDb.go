@@ -11,8 +11,6 @@ import (
 )
 
 func InitMariaDB(setting jsonModal.MariaDbConfig) *global.DB {
-	println(123456789)
-
 	if !setting.InUse {
 		return nil
 	}
@@ -33,5 +31,8 @@ func InitMariaDB(setting jsonModal.MariaDbConfig) *global.DB {
 		panic(err)
 	}
 	logafa.Debug(" ✅ MariaDB 資料庫連接成功")
-	return global.NewDBRepository(readingDb, writingDb)
+	return &global.DB{
+		Reading: readingDb,
+		Writing: writingDb,
+	}
 }

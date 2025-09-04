@@ -4,7 +4,8 @@ import (
 	jsonModal "batchLog/0.config"
 	"batchLog/0.core/global"
 	"batchLog/0.core/logafa"
-	"batchLog/0.cron"
+	cron "batchLog/0.cron"
+	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -20,24 +21,31 @@ var (
 )
 
 func InitAll(){
-	loadEnvFromJSON()
-	logafaInit()
+	env := initEnv()
+
+	loadEnvFromJSON(env)
+	logafaInit(env)
 	
-	initRepo()
 	initMachine()
 
 	InitDeviceSequence()
 	cron.CronStart()
 }
 
-func loadEnvFromJSON(){
-	err := loadConfigJson()
+func initEnv()(env string){
+	flag.StringVar(&env, "env", "dev", "Environment: dev, prod, test")
+	flag.Parse()
+	return
+}
+
+func loadEnvFromJSON(env string){
+	err := loadConfigJson(env)
 	if err != nil{
 		logafa.Error(" 讀取設定 json 發生異常, error: %v",err)
 		return
 	}
 
-	err = loadMachineJson()
+	err = loadMachineJson(env)
 	if err != nil{
 		logafa.Error(" 讀取機器 json 發生異常, error: %v",err)
 		return
@@ -57,8 +65,8 @@ func loadJsonFile(fileName string) (string, error) {
 	return string(content), nil
 }
 
-func loadConfigJson()error{
-	fileName := "config.json"
+func loadConfigJson(env string)error{
+	fileName := fmt.Sprintf("config_%s.json",env)
 	// 打開 JSON 檔案
 	data, err := loadJsonFile(fileName)
 	if err != nil {
@@ -75,8 +83,7 @@ func loadConfigJson()error{
 	return nil
 }
 
-func logafaInit(){
-	env := global.ConfigSetting.Env
+func logafaInit(env string){
 
 	switch env {
 	case "dev":
@@ -100,8 +107,8 @@ func logafaInit(){
 	}
 }
 
-func loadMachineJson() error{
-	fileName := "machine.json"
+func loadMachineJson(env string) error{
+	fileName := fmt.Sprintf("machine_%s.json",env)
 	// 打開 JSON 檔案
 	data, err := loadJsonFile(fileName)
 	if err != nil {
@@ -120,13 +127,12 @@ func loadMachineJson() error{
 	MosquittoBrokerSetting = machine.MosquittoBroker
 
 	return nil
-}
+}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 
-func initRepo(){
-	global.Repository.DB = *InitMariaDB(MariaDBSetting)
-	global.Repository.Cache = *InitRedis(RedisDBSetting)
-}
-
-func initMachine(){
-	global.Broker = InitMosquitto(MosquittoBrokerSetting)
+func initMachine() {
+	global.Repository = &global.Repo{
+		DB: InitMariaDB(MariaDBSetting),
+		Cache: InitRedis(RedisDBSetting),
+	}
+	global.GlobalBroker = InitMosquitto(MosquittoBrokerSetting)
 }

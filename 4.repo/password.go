@@ -13,11 +13,11 @@ import (
 
 func CreatePasswordHistory(tx *gorm.DB, accountUuid uuid.UUID, password string)error{
 	hashedPassword,_ := common.BcryptHash(password)
-	pastPassword := gormTable.PastPassword{
+	pastPassword := gormTable.PasswordHistory{
 		AccountUuid: accountUuid,
 		Password: hashedPassword,
 	}
-	err := tx.Table("past_passwords").Create(&pastPassword).Error
+	err := tx.Create(&pastPassword).Error
 	if err != nil {
 		logafa.Error("建立使用者歷史密碼失敗, error: %+v",err)
 		return fmt.Errorf("建立使用者歷史密碼失敗")

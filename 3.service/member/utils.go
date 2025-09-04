@@ -9,12 +9,12 @@ import (
 	"fmt"
 )
 
-func FindByJwt(jwt string)(*gormTable.MemberInfo,error){
+func FindByJwt(jwt string)(*gormTable.Member,error){
 
 	tx := global.Repository.DB.Reading.Begin()
 	defer func(){
 		if r := recover();r != nil{
-			logafa.Error("裝置追蹤失敗")
+			logafa.Error("Jwt 解析失敗")
 		}
 	}()
 

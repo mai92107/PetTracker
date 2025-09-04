@@ -13,6 +13,14 @@ func HSetData(key string, mapData map[string]interface{})error{
 	return err
 }
 
+func HSetFieldData(key, field, value string)error{
+	err := global.Repository.Cache.Writing.HSet(global.Repository.Cache.CTX,key,field,value).Err()
+	if err != nil{
+		logafa.Error("Redis HSetFieldData 寫入失敗, key: %s, field: %s, value: %s",key,field,value)
+	}
+	return err
+}
+
 func HGetData(key, field string)string{
 	value,err := global.Repository.Cache.Reading.HGet(global.Repository.Cache.CTX,key,field).Result()
 	if err != nil{

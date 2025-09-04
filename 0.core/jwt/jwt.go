@@ -5,16 +5,25 @@ import (
 	"batchLog/0.core/logafa"
 	"batchLog/0.core/model"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GenerateJwt(accountName, deviceId, ip string, currentTime time.Time, expireTime time.Duration)(string,error){
+func GenerateJwt(accountName, identity string, memberId int64, ip string, currentTime time.Time, expireTime time.Duration)(string,error){
+	var loginType model.LoginType
+	if strings.Contains(accountName, "@"){
+		loginType = model.EMAIL
+	}else{
+		loginType = model.USERNAME
+	}
 	// 產生 JWT
 	claims := &model.Claims{
+		LoginType: loginType.String(),
 		AccountName: accountName,
-		DeviceID: deviceId,
+		Identity: identity,
+		MemberId: memberId,
 		LoginIp: ip,
 		RegisteredClaims: jwt.RegisteredClaims{
 			IssuedAt: jwt.NewNumericDate(currentTime),

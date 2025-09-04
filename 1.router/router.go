@@ -5,6 +5,8 @@ import (
 	accountApi "batchLog/2.api/account"
 	deviceApi "batchLog/2.api/device"
 	"batchLog/2.api/home"
+	memberApi "batchLog/2.api/member"
+	mqttApi "batchLog/2.api/mqtt_system"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,15 +23,27 @@ func RegisterRoutes(r *gin.Engine) {
 		homeGroup.GET("/say_hello", home.SayHello)
 	}
 
-	memberGroup := r.Group("/account")
+	accountGroup := r.Group("/account")
 	{
-		memberGroup.POST("/login",accountApi.Login)
-		memberGroup.POST("/register",accountApi.Register)
+		accountGroup.POST("/login",accountApi.Login)
+		accountGroup.POST("/register",accountApi.Register)
 	}
 
 	trackGroup := r.Group("/device")
 	{
 		trackGroup.POST("/create", deviceApi.Create)
-		trackGroup.POST("/tracking", deviceApi.Tracking)
+		// trackGroup.POST("/tracking", deviceApi.Tracking)
+	}
+
+	memberGroup := r.Group("/member")
+	{
+		memberGroup.POST("/addDevice", memberApi.AddDevice)
+	}
+
+	mqttGroup := r.Group("/mqtt")
+	{
+		mqttGroup.GET("/status", mqttApi.MqttStatus)
+		mqttGroup.GET("/onlineDevice", mqttApi.MqttOnlineDevice)
+		mqttGroup.GET(":deviceId/status", mqttApi.DeviceStatus)
 	}
 }

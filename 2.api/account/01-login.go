@@ -12,7 +12,6 @@ import (
 type request01 struct {
 	UserAccount string `json:"userAccount"`
 	Password string `json:"password"`
-	DeviceID string `json:"deviceId"` // 前端應該傳送唯一裝置ID
 }
 
 func Login(c *gin.Context) {
@@ -25,7 +24,7 @@ func Login(c *gin.Context) {
 	// 擷取 IP 與 UA
 	ip := c.ClientIP() 
 
-	loginInfo,err := accountService.Login(ip,req.UserAccount,req.Password,req.DeviceID)
+	loginInfo,err := accountService.Login(ip,req.UserAccount,req.Password)
 	if err != nil{
 		response.Error(c,http.StatusInternalServerError,requestTime,"登入發生錯誤, " + err.Error())
 		return 

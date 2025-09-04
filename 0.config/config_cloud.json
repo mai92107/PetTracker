@@ -1,5 +1,4 @@
 {
-  "environment": "dev",
   "port": "8000",
   "json_secret_key":"vmjno;airehnbv;poiwoirnb;are",
   "crypto_secret_key":"ergahwenuil;gahejha;oeir",

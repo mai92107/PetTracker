@@ -1,10 +1,10 @@
-package deviceApi
+package memberApi
 
 import (
 	response "batchLog/0.core/commonResponse"
 	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
-	deviceService "batchLog/3.service/device"
+	memberService "batchLog/3.service/member"
 	"fmt"
 	"net/http"
 	"time"
@@ -13,10 +13,11 @@ import (
 )
 
 type request01 struct {
-	DeviceType	string	`json:"deviceType"`	
+	DeviceUuid	string	`json:"deviceUuid"`
+	DeviceName	string	`json:"deviceName"`
 }
 
-func Create(c *gin.Context){
+func AddDevice(c *gin.Context){
 	requestTime := time.Now().UTC()
 	var req request01
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -35,18 +36,20 @@ func Create(c *gin.Context){
 		response.Error(c,http.StatusForbidden,requestTime,"身份認證錯誤")
 		return
 	}
-	deviceId,err := deviceService.Create(userData.Identity, req.DeviceType, userData.MemberId)
+
+	err = memberService.AddDevice(userData.MemberId, req.DeviceUuid, req.DeviceName)
 	if err != nil{
-		logafa.Error("裝置新增失敗，請稍後嘗試, error: %+v",err)
-		response.Error(c,http.StatusInternalServerError,requestTime,"裝置新增失敗，請稍後嘗試")
+		logafa.Error("身份認證錯誤, error: %+v",err)
+		response.Error(c,http.StatusInternalServerError,requestTime,"裝置新增錯誤")
 		return
 	}
-	response.Success[string](c,requestTime,deviceId)
+
+	response.Success[string](c,requestTime,"")
 }
 
 func validateRequest(req request01)error{
-	if req.DeviceType == ""{
-		return fmt.Errorf("裝置名稱不可為空")
+	if req.DeviceUuid == ""{
+		return fmt.Errorf("裝置唯一識別碼不可為空")
 	}
 	return nil
 }

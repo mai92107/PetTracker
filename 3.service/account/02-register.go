@@ -7,21 +7,21 @@ import (
 	"fmt"
 )
 
-func Register(ip, username, password, email, lastName, firstName, nickName string, deviceName string)(map[string]interface{},error){
+func Register(ip, username, password, email, lastName, firstName, nickName string)(map[string]interface{},error){
 
 	tx := global.Repository.DB.Writing.Begin()
 	defer func(){
 		if r := recover();r != nil{
 			logafa.Error("註冊失敗")
 		}
-	}()
+		}()
 
-	accountUuid,err := repo.CreateAccount(tx,username,password,email)
+	memberId,err := repo.CreateMember(tx,lastName,firstName,nickName,email)
 	if err != nil{
 		return nil, err
 	}
 
-	memberUuid,err := repo.CreateMember(tx,accountUuid,lastName,firstName,nickName,email)
+	accountUuid,err := repo.CreateAccount(tx,memberId,username,password,email)
 	if err != nil{
 		return nil, err
 	}
@@ -31,14 +31,10 @@ func Register(ip, username, password, email, lastName, firstName, nickName strin
 		return nil, err
 	}
 
-	deviceId,err := repo.CreateDevice(tx,deviceName,memberUuid)
-	if err != nil {
-		return nil, err
-	}
 	if err = tx.Commit().Error;err != nil{
 		tx.Rollback()
 		return nil,fmt.Errorf(global.COMMON_SYSTEM_ERROR)
 	}
 
-	return Login(ip,username,password,deviceId)
+	return Login(ip,username,password)
 }

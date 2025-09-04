@@ -11,11 +11,11 @@ import (
 	"time"
 )
 
-func Login(ip, accountName, password, deviceId string) (map[string]interface{}, error) {
+func Login(ip, accountName, password string) (map[string]interface{}, error) {
 	tx := global.Repository.DB.Reading.Begin()
 	defer func() {
 		if r := recover(); r != nil {
-			logafa.Error("登入失敗")
+			logafa.Error("登入失敗, r: %+v",r)
 		}
 	}()
 	
@@ -35,18 +35,11 @@ func Login(ip, accountName, password, deviceId string) (map[string]interface{}, 
 		return data, err
 	}
 
-	// 驗證裝置身份
-	member, err := repo.FindMemberByAccountUuid(tx,userAccount.Uuid.String())
+	err = repo.UpdateLoginTime(tx, userAccount.Uuid)
 	if err != nil {
 		tx.Rollback()
-		return data, err
-	}
-
-	device, err := repo.FindDeviceByDeviceId(tx,deviceId)
-	if err != nil || device == nil || member.Uuid != device.MemberInfoUuid {
-		tx.Rollback()
-		return data, fmt.Errorf("裝置ID錯誤")
-	}
+        return data,err
+    }
 
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()
@@ -56,13 +49,14 @@ func Login(ip, accountName, password, deviceId string) (map[string]interface{}, 
 
     now := time.Now().UTC()
 	expireTime := 24 * time.Hour
-	token, err := jwtUtil.GenerateJwt(accountName,deviceId,ip, now, expireTime)
+	token, err := jwtUtil.GenerateJwt(accountName, userAccount.Identity, userAccount.MemberId, ip, now, expireTime)
 	if err != nil{
 		return data,err
 	}
-	data,err = repo.SaveLoginStatus(member.NickName,deviceId,token,now,expireTime)
-	if err != nil{
-		return data,err
+	data = map[string]interface{}{
+		"token":     token,
+		"identity":	 userAccount.Identity,
+		"loginTime": now,
 	}
 	return data,nil
 }

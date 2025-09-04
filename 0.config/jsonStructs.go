@@ -1,7 +1,6 @@
 package jsonModal
 
 type Config struct{
-    Env             string  `json:"environment"`
     Port            string  `json:"port"`
     JsonSecretKey   string  `json:"json_secret_key"`
     CryptoSecretKey string  `json:"crypto_secret_key"`
@@ -42,5 +41,6 @@ type MosquittoConfig struct{
     InUser      bool    `json:"in_use"`
     BrokerHost  string  `json:"broker_host"`
     BrokerPort  string  `json:"broker_port"`
+    VagueTopic  string  `json:"vague_topic"`
     ClientID    string  `json:"client_id"`
 }

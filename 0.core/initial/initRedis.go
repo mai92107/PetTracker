@@ -35,5 +35,9 @@ func InitRedis(setting jsonModal.RedisDbConfig) *global.Cache {
 	}
 
 	logafa.Debug(" ✅ Redis 資料庫連接成功")
-	return global.NewCacheRepository(readClient, writeClient)
+	return &global.Cache{
+		Reading: readClient,
+		Writing: writeClient,
+		CTX: context.Background(),
+	}
 }
