@@ -11,41 +11,40 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GenerateJwt(accountName, identity string, memberId int64, ip string, currentTime time.Time, expireTime time.Duration)(string,error){
+func GenerateJwt(accountName, identity string, memberId int64, ip string, currentTime time.Time, expireTime time.Duration) (string, error) {
 	var loginType model.LoginType
-	if strings.Contains(accountName, "@"){
+	if strings.Contains(accountName, "@") {
 		loginType = model.EMAIL
-	}else{
+	} else {
 		loginType = model.USERNAME
 	}
 	// 產生 JWT
 	claims := &model.Claims{
-		LoginType: loginType.String(),
+		LoginType:   loginType.String(),
 		AccountName: accountName,
-		Identity: identity,
-		MemberId: memberId,
-		LoginIp: ip,
+		Identity:    identity,
+		MemberId:    memberId,
+		LoginIp:     ip,
 		RegisteredClaims: jwt.RegisteredClaims{
-			IssuedAt: jwt.NewNumericDate(currentTime),
+			IssuedAt:  jwt.NewNumericDate(currentTime),
 			ExpiresAt: jwt.NewNumericDate(currentTime.Add(expireTime)),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	key := []byte(global.ConfigSetting.JsonSecretKey)
+	key := []byte(global.ConfigSetting.JwtSecretKey)
 	tokenStr, err := token.SignedString(key)
 	if err != nil {
-		logafa.Error("產生 JWT 發生錯誤, Error: %v",err)
-		return "",err
+		logafa.Error("產生 JWT 發生錯誤, Error: %v", err)
+		return "", err
 	}
-	return tokenStr,nil
+	return tokenStr, nil
 }
-
 
 func GetUserDataFromJwt(tokenStr string) (model.Claims, error) {
 	claims := model.Claims{}
 	// Parse token with claims
 	token, err := jwt.ParseWithClaims(tokenStr, &claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(global.ConfigSetting.JsonSecretKey), nil
+		return []byte(global.ConfigSetting.JwtSecretKey), nil
 	})
 	if err != nil {
 		return model.Claims{}, fmt.Errorf("JWT 解析失敗: %w", err)

@@ -17,18 +17,8 @@ import (
 func FindDeviceByDeviceId(tx *gorm.DB, deviceId string) (*gormTable.Device, error) {
 	var device gormTable.Device
 	err := tx.First(&device, "device_id = ?", deviceId).Error
-	if err != nil{
-		logafa.Error("查無此裝置, error: %+v",err)
-		return nil, fmt.Errorf("查無此裝置")
-	}
-	return &device, nil
-}
-
-func FindDeviceByUuid(tx *gorm.DB, deviceUuid string) (*gormTable.Device, error) {
-	var device gormTable.Device
-	err := tx.First(&device, "uuid = ?", deviceUuid).Error
-	if err != nil{
-		logafa.Error("查無此裝置, error: %+v",err)
+	if err != nil {
+		logafa.Error("查無此裝置, error: %+v", err)
 		return nil, fmt.Errorf("查無此裝置")
 	}
 	return &device, nil
@@ -38,7 +28,7 @@ func CreateDevice(tx *gorm.DB, deviceType string, memberId int64) (string, error
 	device := gormTable.Device{
 		Uuid:           uuid.New(),
 		DeviceId:       generateDeviceId(),
-		DeviceType: 	deviceType,
+		DeviceType:     deviceType,
 		CreateByMember: memberId,
 	}
 	err := tx.Table("device").Create(&device).Error
@@ -60,26 +50,26 @@ func generateDeviceId() string {
 	return fmt.Sprintf("%s-%06d", prefix, sequence)
 }
 
-func SaveLocation(lat, lng, deviceId, nickname, recordTime string)error{
+func SaveLocation(lat, lng, deviceId, nickname, recordTime string) error {
 	now := time.Now().UTC()
 	// 存入 redis 臨時保存
-	key := fmt.Sprintf("device:%s:%s",nickname,deviceId)
+	key := fmt.Sprintf("device:%s:%s", nickname, deviceId)
 	score := float64(now.UnixMilli())
 	gps := gormTable.GPS{
-		DeviceId: deviceId,
-		Latitude: lat,
-		Longitude: lng,
+		DeviceId:   deviceId,
+		Latitude:   lat,
+		Longitude:  lng,
 		RecordTime: recordTime,
 	}
 	byteData, err := jsoniter.Marshal(gps)
-	if err != nil{
-		logafa.Error("Json Marshal 失敗, error: %+v",err)
+	if err != nil {
+		logafa.Error("Json Marshal 失敗, error: %+v", err)
 		return fmt.Errorf(global.COMMON_SYSTEM_ERROR)
 	}
 	// 存入 redis
 	err = redis.ZAddData(key, score, byteData)
-	if err != nil{
-		logafa.Error("redis 儲存失敗, error: %+v",err)
+	if err != nil {
+		logafa.Error("redis 儲存失敗, error: %+v", err)
 		return fmt.Errorf(global.COMMON_SYSTEM_ERROR)
 	}
 	return nil

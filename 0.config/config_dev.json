@@ -1,8 +1,0 @@
-{
-  "port": "8000",
-  "json_secret_key":"vbkvshj opirt[b ,sghkbpo",
-  "crypto_secret_key":"o ,icasrjgmvprgjfpoeiu",
-
-  "device_prefix":"AA",
-  "device_sequence":"0"
-}

@@ -13,45 +13,45 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 )
-var (
-	MariaDBSetting 	jsonModal.MariaDbConfig
-	RedisDBSetting 	jsonModal.RedisDbConfig
 
-	MosquittoBrokerSetting	jsonModal.MosquittoConfig
+var (
+	MariaDBSetting jsonModal.MariaDbConfig
+	RedisDBSetting jsonModal.RedisDbConfig
+
+	MosquittoBrokerSetting jsonModal.MosquittoConfig
 )
 
-func InitAll(){
+func InitAll() {
 	env := initEnv()
 
-	loadEnvFromJSON(env)
+	loadEnvFromJSON()
 	logafaInit(env)
-	
+
 	initMachine()
 
 	InitDeviceSequence()
 	cron.CronStart()
 }
 
-func initEnv()(env string){
+func initEnv() (env string) {
 	flag.StringVar(&env, "env", "dev", "Environment: dev, prod, test")
 	flag.Parse()
 	return
 }
 
-func loadEnvFromJSON(env string){
-	err := loadConfigJson(env)
-	if err != nil{
-		logafa.Error(" 讀取設定 json 發生異常, error: %v",err)
+func loadEnvFromJSON() {
+	err := loadConfigJson()
+	if err != nil {
+		logafa.Error(" 讀取設定 json 發生異常, error: %v", err)
 		return
 	}
 
-	err = loadMachineJson(env)
-	if err != nil{
-		logafa.Error(" 讀取機器 json 發生異常, error: %v",err)
+	err = loadMachineJson()
+	if err != nil {
+		logafa.Error(" 讀取機器 json 發生異常, error: %v", err)
 		return
 	}
 }
-
 
 func loadJsonFile(fileName string) (string, error) {
 	wd, _ := os.Getwd()
@@ -65,8 +65,8 @@ func loadJsonFile(fileName string) (string, error) {
 	return string(content), nil
 }
 
-func loadConfigJson(env string)error{
-	fileName := fmt.Sprintf("config_%s.json",env)
+func loadConfigJson() error {
+	fileName := "config.json"
 	// 打開 JSON 檔案
 	data, err := loadJsonFile(fileName)
 	if err != nil {
@@ -83,7 +83,7 @@ func loadConfigJson(env string)error{
 	return nil
 }
 
-func logafaInit(env string){
+func logafaInit(env string) {
 
 	switch env {
 	case "dev":
@@ -100,15 +100,15 @@ func logafaInit(env string){
 
 	var err error
 	wd, _ := os.Getwd()
-	filePath := filepath.Join(wd, "log", now.Format("2006-01-02") + ".log")
+	filePath := filepath.Join(wd, "log", now.Format("2006-01-02")+".log")
 	logafa.LogFile, err = os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		panic(fmt.Sprintf("無法打開 log 檔案: %v", err))
 	}
 }
 
-func loadMachineJson(env string) error{
-	fileName := fmt.Sprintf("machine_%s.json",env)
+func loadMachineJson() error {
+	fileName := "machine.json"
 	// 打開 JSON 檔案
 	data, err := loadJsonFile(fileName)
 	if err != nil {
@@ -119,7 +119,7 @@ func loadMachineJson(env string) error{
 	// 解析 JSON
 	err = jsoniter.UnmarshalFromString(data, &machine)
 	if err != nil {
-		return fmt.Errorf("❌ 解析 JSON 失敗: %s, error: %v",fileName, err)
+		return fmt.Errorf("❌ 解析 JSON 失敗: %s, error: %v", fileName, err)
 	}
 
 	MariaDBSetting = machine.MariaDB
@@ -127,11 +127,11 @@ func loadMachineJson(env string) error{
 	MosquittoBrokerSetting = machine.MosquittoBroker
 
 	return nil
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+}
 
 func initMachine() {
 	global.Repository = &global.Repo{
-		DB: InitMariaDB(MariaDBSetting),
+		DB:    InitMariaDB(MariaDBSetting),
 		Cache: InitRedis(RedisDBSetting),
 	}
 	global.GlobalBroker = InitMosquitto(MosquittoBrokerSetting)

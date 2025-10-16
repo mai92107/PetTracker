@@ -25,7 +25,6 @@ func main() {
 	r := gin.Default()
 	router.RegisterRoutes(r)
 
-	// ✅ 建立自訂的 HTTP server
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", port),
 		Handler: r,

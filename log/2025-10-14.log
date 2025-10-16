@@ -1,0 +1,96 @@
+[2025-10-14 14:34:52] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initDb.go:24]  ❌ 無法連接讀取資料庫: dial tcp [::1]:3306: connect: connection refused
+[2025-10-14 14:55:51] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:30]  ❌ Mosquitto 連線失敗：network Error : dial tcp :0: connect: can't assign requested address
+[2025-10-14 14:59:25] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initDb.go:33]  ✅ MariaDB 資料庫連接成功
+[2025-10-14 14:59:25] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initRedis.go:37]  ✅ Redis 資料庫連接成功
+[2025-10-14 14:59:26] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:33]  ✅ 已連接到 Mosquitto 伺服器
+[2025-10-14 14:59:26] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:36] 已訂閱主題: pet/+/conn
+[2025-10-14 14:59:26] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:36] 已訂閱主題: pet/+/conn
+[2025-10-14 14:59:26] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45]  ✅ 系統開始追蹤裝置主題: pet/+/conn
+[2025-10-14 14:59:26] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45]  ✅ 系統開始追蹤裝置主題: pet/+/conn
+[2025-10-14 14:59:26] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initInfra.go:19]  ✅ 成功初始化裝置設定
+[2025-10-14 14:59:26] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:23]  http server 已啟動, 使用 PORT: 8000
+[2025-10-14 15:19:28] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initDb.go:33]  ✅ MariaDB 資料庫連接成功
+[2025-10-14 15:19:28] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initRedis.go:37]  ✅ Redis 資料庫連接成功
+[2025-10-14 15:19:30] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:33]  ✅ 已連接到 Mosquitto 伺服器
+[2025-10-14 15:19:30] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:36] 已訂閱主題: pet/+/conn
+[2025-10-14 15:19:30] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:36] 已訂閱主題: pet/+/conn
+[2025-10-14 15:19:30] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45]  ✅ 系統開始追蹤裝置主題: pet/+/conn
+[2025-10-14 15:19:30] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45]  ✅ 系統開始追蹤裝置主題: pet/+/conn
+[2025-10-14 15:19:30] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initInfra.go:19]  ✅ 成功初始化裝置設定
+[2025-10-14 15:19:30] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:23]  http server 已啟動, 使用 PORT: 8000
+[2025-10-14 15:19:57] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initDb.go:33]  ✅ MariaDB 資料庫連接成功
+[2025-10-14 15:19:57] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initRedis.go:37]  ✅ Redis 資料庫連接成功
+[2025-10-14 15:19:58] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:33]  ✅ 已連接到 Mosquitto 伺服器
+[2025-10-14 15:19:58] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:36] 已訂閱主題: pet/+/conn
+[2025-10-14 15:19:58] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:36] 已訂閱主題: pet/+/conn
+[2025-10-14 15:19:58] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45]  ✅ 系統開始追蹤裝置主題: pet/+/conn
+[2025-10-14 15:19:58] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45]  ✅ 系統開始追蹤裝置主題: pet/+/conn
+[2025-10-14 15:19:58] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initInfra.go:19]  ✅ 成功初始化裝置設定
+[2025-10-14 15:19:58] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:23]  http server 已啟動, 使用 PORT: 8000
+[2025-10-14 15:20:33] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initDb.go:33] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-10-14 15:20:33] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-10-14 15:20:34] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:33] [36m ✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-14 15:20:34] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:36] [32m已訂閱主題: pet/+/conn[0m
+[2025-10-14 15:20:34] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45] [32m ✅ 系統開始追蹤裝置主題: pet/+/conn[0m
+[2025-10-14 15:20:34] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:36] [32m已訂閱主題: pet/+/conn[0m
+[2025-10-14 15:20:34] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45] [32m ✅ 系統開始追蹤裝置主題: pet/+/conn[0m
+[2025-10-14 15:20:34] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initInfra.go:19] [36m ✅ 成功初始化裝置設定[0m
+[2025-10-14 15:20:34] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:23] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-10-14 15:55:41] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:47] [32m收到終止訊號，開始優雅關閉...[0m
+[2025-10-14 15:55:41] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:55] [32m伺服器成功關閉[0m
+[2025-10-14 16:21:28] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initDb.go:33] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-10-14 16:21:28] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-10-14 16:21:30] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:33] [36m ✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-14 16:21:30] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:35] [32m已訂閱主題: pet/+/conn[0m
+[2025-10-14 16:21:30] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45] [32m ✅ 系統開始追蹤裝置主題: pet/+/conn[0m
+[2025-10-14 16:21:30] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:35] [32m已訂閱主題: pet/+/conn[0m
+[2025-10-14 16:21:30] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45] [32m ✅ 系統開始追蹤裝置主題: pet/+/conn[0m
+[2025-10-14 16:21:30] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initInfra.go:19] [36m ✅ 成功初始化裝置設定[0m
+[2025-10-14 16:21:30] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:23] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-10-14 17:11:41] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/http/device/01-create.go:34] [31m身份認證錯誤, error: JWT 解析失敗: token is malformed: token contains an invalid number of segments[0m
+[2025-10-14 17:12:15] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/http/device/01-create.go:34] [31m身份認證錯誤, error: JWT 解析失敗: token is malformed: token contains an invalid number of segments[0m
+[2025-10-14 17:12:31] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/http/device/01-create.go:40] [31m裝置新增失敗，請稍後嘗試, error: 無權限新增裝置[0m
+[2025-10-14 17:14:16] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/http/device/01-create.go:40] [31m裝置新增失敗，請稍後嘗試, error: 無權限新增裝置[0m
+[2025-10-14 17:17:01] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:35] [32m已訂閱主題: pet/+/conn[0m
+[2025-10-14 17:17:01] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45] [32m ✅ 系統開始追蹤裝置主題: pet/+/conn[0m
+[2025-10-14 17:19:50] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:47] [32m收到終止訊號，開始優雅關閉...[0m
+[2025-10-14 17:19:50] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:55] [32m伺服器成功關閉[0m
+[2025-10-14 17:19:53] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initDb.go:33] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-10-14 17:19:53] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-10-14 17:19:53] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:33] [36m ✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-14 17:19:54] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:35] [32m已訂閱主題: pet/+/conn[0m
+[2025-10-14 17:19:54] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:35] [32m已訂閱主題: pet/+/conn[0m
+[2025-10-14 17:19:54] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45] [32m ✅ 系統開始追蹤裝置主題: pet/+/conn[0m
+[2025-10-14 17:19:54] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45] [32m ✅ 系統開始追蹤裝置主題: pet/+/conn[0m
+[2025-10-14 17:19:54] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initInfra.go:19] [36m ✅ 成功初始化裝置設定[0m
+[2025-10-14 17:19:54] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:23] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-10-14 17:19:56] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/http/device/02-recording.go:33] [31m身份認證錯誤, error: JWT 解析失敗: token is malformed: token contains an invalid number of segments[0m
+[2025-10-14 17:22:11] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/http/member/01-addDevice.go:24] [31mJson 格式錯誤, error: EOF[0m
+[2025-10-14 17:27:15] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:47] [32m收到終止訊號，開始優雅關閉...[0m
+[2025-10-14 17:27:15] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:55] [32m伺服器成功關閉[0m
+[2025-10-14 17:27:17] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initDb.go:33] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-10-14 17:27:17] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-10-14 17:27:18] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:33] [36m ✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-14 17:27:18] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:35] [32m已訂閱主題: pet/+/conn[0m
+[2025-10-14 17:27:18] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45] [32m ✅ 系統開始追蹤裝置主題: pet/+/conn[0m
+[2025-10-14 17:27:18] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initInfra.go:19] [36m ✅ 成功初始化裝置設定[0m
+[2025-10-14 17:27:18] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:23] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-10-14 17:27:18] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:35] [32m已訂閱主題: pet/+/conn[0m
+[2025-10-14 17:27:18] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45] [32m ✅ 系統開始追蹤裝置主題: pet/+/conn[0m
+[2025-10-14 17:48:40] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:47] [32m收到終止訊號，開始優雅關閉...[0m
+[2025-10-14 17:48:40] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:55] [32m伺服器成功關閉[0m
+[2025-10-14 17:48:43] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initDb.go:33] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-10-14 17:48:43] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-10-14 17:48:44] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:33] [36m ✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-14 17:48:44] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:35] [32m已訂閱主題: pet/+/conn[0m
+[2025-10-14 17:48:44] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:35] [32m已訂閱主題: pet/+/conn[0m
+[2025-10-14 17:48:44] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45] [32m ✅ 系統開始追蹤裝置主題: pet/+/conn[0m
+[2025-10-14 17:48:44] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45] [32m ✅ 系統開始追蹤裝置主題: pet/+/conn[0m
+[2025-10-14 17:48:44] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initInfra.go:19] [36m ✅ 成功初始化裝置設定[0m
+[2025-10-14 17:48:44] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:23] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-10-14 18:00:27] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:35] [32m已訂閱主題: pet/+/conn[0m
+[2025-10-14 18:00:27] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45] [32m ✅ 系統開始追蹤裝置主題: pet/+/conn[0m
+[2025-10-15 09:58:04] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:35] [32m已訂閱主題: pet/+/conn[0m
+[2025-10-15 09:58:04] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:45] [32m ✅ 系統開始追蹤裝置主題: pet/+/conn[0m
+[2025-10-15 10:01:39] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:47] [32m收到終止訊號，開始優雅關閉...[0m
+[2025-10-15 10:01:39] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:55] [32m伺服器成功關閉[0m

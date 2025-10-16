@@ -7,61 +7,66 @@ import (
 )
 
 type Account struct {
-    Uuid            uuid.UUID  `gorm:"type:char(36);primaryKey" json:"uuid"`
-    MemberId        int64      `gorm:"not null" json:"memberId"`
-    Username        string     `gorm:"type:varchar(255);unique;not null" json:"username"`
-    Password        string     `gorm:"type:varchar(255);not null" json:"password"`
-    Email           string     `gorm:"type:varchar(255);unique;not null" json:"email"`
-    Identity        string     `gorm:"type:varchar(50)" json:"identity"`
-    LastLoginTime   time.Time  `gorm:"type:datetime" json:"lastLoginTime"`
-    CreatedAt       time.Time  `gorm:"autoCreateTime" json:"createdAt"`
+	Uuid          uuid.UUID `gorm:"type:char(36);primaryKey" json:"uuid"`
+	MemberId      int64     `gorm:"not null" json:"memberId"`
+	Username      string    `gorm:"type:varchar(255);unique;not null" json:"username"`
+	Password      string    `gorm:"type:varchar(255);not null" json:"password"`
+	Email         string    `gorm:"type:varchar(255);unique;not null" json:"email"`
+	Identity      string    `gorm:"type:varchar(50)" json:"identity"`
+	LastLoginTime time.Time `gorm:"type:datetime" json:"lastLoginTime"`
+	CreatedAt     time.Time `gorm:"autoCreateTime" json:"createdAt"`
 }
-func (a *Account)TableName()string{
-    return "account"
+
+func (a *Account) TableName() string {
+	return "account"
 }
 
 type PasswordHistory struct {
-    Id              int64     `gorm:"primaryKey;autoIncrement" json:"id"`
-    AccountUuid     uuid.UUID `gorm:"type:char(36);not null" json:"accountUuid"`
-    Password        string    `gorm:"type:varchar(255);not null" json:"password"`
-    CreatedAt       time.Time `gorm:"autoCreateTime" json:"createdAt"`
+	Id          int64     `gorm:"primaryKey;autoIncrement" json:"id"`
+	AccountUuid uuid.UUID `gorm:"type:char(36);not null" json:"accountUuid"`
+	Password    string    `gorm:"type:varchar(255);not null" json:"password"`
+	CreatedAt   time.Time `gorm:"autoCreateTime" json:"createdAt"`
 }
-func (pp *PasswordHistory)TableName()string{
-    return "password_history"
+
+func (pp *PasswordHistory) TableName() string {
+	return "password_history"
 }
 
 type Member struct {
-    Id        int64     `gorm:"primaryKey;autoIncrement" json:"id"`
-    LastName  string    `gorm:"type:varchar(255)" json:"lastName"`
-    FirstName string    `gorm:"type:varchar(255)" json:"firstName"`
-    NickName  string    `gorm:"type:varchar(255)" json:"nickName"`
-    Email     string    `gorm:"type:varchar(255)" json:"email"`
-    CreatedAt time.Time `gorm:"autoCreateTime" json:"createdAt"`
+	Id        int64     `gorm:"primaryKey;autoIncrement" json:"id"`
+	LastName  string    `gorm:"type:varchar(255)" json:"lastName"`
+	FirstName string    `gorm:"type:varchar(255)" json:"firstName"`
+	NickName  string    `gorm:"type:varchar(255)" json:"nickName"`
+	Email     string    `gorm:"type:varchar(255)" json:"email"`
+	CreatedAt time.Time `gorm:"autoCreateTime" json:"createdAt"`
 }
-func (m *Member)TableName()string{
-    return "member"
+
+func (m *Member) TableName() string {
+	return "member"
 }
 
 type MemberDevice struct {
-    Id              int64     `gorm:"primaryKey;autoIncrement" json:"id"`
-    MemberId        int64     `gorm:"not null" json:"memberId"`
-    DeviceId        string    `gorm:"type:char(36);not null" json:"deviceId"`
-    DeviceName      string    `gorm:"type:varchar(255)" json:"deviceName"`
-    CreatedAt       time.Time `gorm:"autoCreateTime" json:"createdAt"`
+	Id         int64     `gorm:"primaryKey;autoIncrement" json:"id"`
+	MemberId   int64     `gorm:"not null" json:"memberId"`
+	DeviceId   string    `gorm:"type:char(36);not null" json:"deviceId"`
+	DeviceName string    `gorm:"type:varchar(255)" json:"deviceName"`
+	CreatedAt  time.Time `gorm:"autoCreateTime" json:"createdAt"`
 }
-func (md *MemberDevice)TableName()string{
-    return "member_device"
+
+func (md *MemberDevice) TableName() string {
+	return "member_device"
 }
 
 type Device struct {
-    Uuid            uuid.UUID   `gorm:"type:char(36);primaryKey" json:"uuid"`
-    DeviceId        string      `gorm:"type:varchar(255)" json:"deviceId"`
-    DeviceType      string      `gorm:"type:varchar(50)" json:"deviceType"`
-    CreateByMember  int64       `gorm:"not null" json:"memberId"`
-    Remark          string      `gorm:"type:char(50)" json:"remark"`
+	Uuid           uuid.UUID `gorm:"type:char(36);primaryKey" json:"uuid"`
+	DeviceId       string    `gorm:"type:varchar(255)" json:"deviceId"`
+	DeviceType     string    `gorm:"type:varchar(50)" json:"deviceType"`
+	CreateByMember int64     `gorm:"not null" json:"memberId"`
+	Remark         string    `gorm:"type:char(50)" json:"remark"`
 }
-func (d *Device)TableName()string{
-    return "device"
+
+func (d *Device) TableName() string {
+	return "device"
 }
 
 // CREATE TABLE member (
@@ -81,7 +86,6 @@ func (d *Device)TableName()string{
 //     remark CHAR(50),
 //     CONSTRAINT fk_device_create_by_member FOREIGN KEY (create_by_member) REFERENCES member(id)
 // );
-
 
 // CREATE TABLE member_device (
 //     id BIGINT AUTO_INCREMENT PRIMARY KEY,
