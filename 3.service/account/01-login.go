@@ -12,6 +12,12 @@ import (
 )
 
 func Login(ip, accountName, password string) (map[string]interface{}, error) {
+
+	// 參數驗證
+	if err := validateLogin(accountName, password); err != nil {
+		return nil, err
+	}
+
 	tx := global.Repository.DB.Reading.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -59,4 +65,11 @@ func Login(ip, accountName, password string) (map[string]interface{}, error) {
 		"loginTime": now,
 	}
 	return data, nil
+}
+
+func validateLogin(accountName, password string) error {
+	if accountName == "" || password == "" {
+		return fmt.Errorf("帳號或密碼不可為空")
+	}
+	return nil
 }

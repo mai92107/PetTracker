@@ -5,7 +5,6 @@ import (
 	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
 	deviceService "batchLog/3.service/device"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -13,30 +12,32 @@ import (
 )
 
 type request01 struct {
-	DeviceType string `json:"deviceType"`
+	DeviceType  string `json:"deviceType"`
+	SubscribeTo string `json:"subscribeTo"`
 }
 
-func Create(request, jwt, ip string) {
+func Create(payload, jwt, ip string) {
 	requestTime := time.Now().UTC()
+	errTopic := "error/device/create/" + payload
+
 	userData, err := jwtUtil.GetUserDataFromJwt(jwt)
-	if err != nil {
+	if err != nil || userData.Identity != "ADMIN" {
 		logafa.Error("身份認證錯誤, error: %+v", err)
 		response.ErrorMqtt("ERROR/"+jwt, http.StatusForbidden, requestTime, "身份認證錯誤")
 		return
 	}
-	topic := "create/" + fmt.Sprintf("%d", userData.MemberId)
 	var req request01
-	if err := jsoniter.UnmarshalFromString(request, &req); err != nil {
+	if err := jsoniter.UnmarshalFromString(payload, &req); err != nil {
 		logafa.Error("Json 格式錯誤, error: %+v", err)
-		response.ErrorMqtt(topic, http.StatusBadRequest, requestTime, "Json 格式錯誤")
+		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, "Json 格式錯誤")
 		return
 	}
 
-	deviceId, err := deviceService.Create(userData.Identity, req.DeviceType, userData.MemberId)
+	deviceId, err := deviceService.Create(req.DeviceType, userData.MemberId)
 	if err != nil {
 		logafa.Error("裝置新增失敗, error: %+v", err)
-		response.ErrorMqtt(topic, http.StatusInternalServerError, requestTime, "裝置新增失敗，請稍後嘗試")
+		response.ErrorMqtt(errTopic, http.StatusInternalServerError, requestTime, "裝置新增失敗，請稍後嘗試")
 		return
 	}
-	response.SuccessMqtt(topic, requestTime, deviceId)
+	response.SuccessMqtt(req.SubscribeTo, requestTime, deviceId)
 }

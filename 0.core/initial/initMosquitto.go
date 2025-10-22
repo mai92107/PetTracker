@@ -19,9 +19,7 @@ func InitMosquitto(setting jsonModal.MosquittoConfig) mqtt.Client {
 	opts := mqtt.NewClientOptions().
 		AddBroker(fmt.Sprintf("tcp://%s:%s", setting.BrokerHost, setting.BrokerPort)).
 		SetClientID(setting.ClientID).
-		SetAutoReconnect(true).
-		SetConnectRetry(true).                    // 開啟自動重試
-		SetConnectRetryInterval(5 * time.Second). // 每 5 秒嘗試重連一次
+		SetCleanSession(false).
 		SetDefaultPublishHandler(router.OnMessageReceived).
 		SetConnectionLostHandler(onConnectionLost).
 		SetOnConnectHandler(func(c mqtt.Client) {
@@ -41,8 +39,6 @@ func InitMosquitto(setting jsonModal.MosquittoConfig) mqtt.Client {
 
 	logafa.Info("✅ 已連接到 Mosquitto 伺服器")
 	global.IsConnected.Store(true)
-
-	subscribeVagueTopic(client, vagueTopic)
 
 	// 啟動監測 Goroutine
 	go monitorMqttConnection(client, vagueTopic)

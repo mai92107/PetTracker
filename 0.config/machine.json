@@ -33,7 +33,7 @@
     "in_use": true,
     "broker_host": "test.mosquitto.org",
     "broker_port": "1883",
-    "vague_topic": ["request/+"],
+    "vague_topic": ["req/+/+/+"],
     "client_id": "go-backend-tracker"
   }
 }

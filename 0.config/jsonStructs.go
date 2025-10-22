@@ -1,13 +1,12 @@
 package jsonModal
 
 type Config struct {
-	Port                  string `json:"port"`
-	JwtSecretKey          string `json:"jwt_secret_key"`
-	CryptoSecretKey       string `json:"crypto_secret_key"`
-	DevicePrefix          string `json:"device_prefix"`
-	DeviceSequence        string `json:"device_sequence"`
-	MqttRequestSecretKey  string `json:"mqtt_request_secret_key"`
-	MqttResponseSecretKey string `json:"mqtt_response_secret_key"`
+	Port             string `json:"port"`
+	JwtSecretKey     string `json:"jwt_secret_key"`
+	CryptoSecretKey  string `json:"crypto_secret_key"`
+	DevicePrefix     string `json:"device_prefix"`
+	DeviceSequence   string `json:"device_sequence"`
+	DefaultSecretKey string `json:"default_secret_key"`
 }
 type Machine struct {
 	MariaDB         MariaDbConfig   `json:"mariaDb"`

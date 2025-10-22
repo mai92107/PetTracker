@@ -1,7 +1,6 @@
 package mqttUtils
 
 import (
-	"batchLog/0.core/global"
 	mqttUtil "batchLog/0.core/mqtt"
 	"crypto/aes"
 	"crypto/cipher"
@@ -12,8 +11,8 @@ import (
 	"io"
 )
 
-func Encrypt(data string) (string, error) {
-	key := []byte(global.ConfigSetting.MqttRequestSecretKey)
+func Encrypt(data, secretKey string) (string, error) {
+	key := []byte(secretKey)
 	if len(key) != 16 && len(key) != 24 && len(key) != 32 {
 		fmt.Print(key)
 		return "", errors.New("invalid AES key size (must be 16, 24, or 32 bytes)")
@@ -40,8 +39,8 @@ func Encrypt(data string) (string, error) {
 	return res, err
 }
 
-func Decrypt(data string) (string, error) {
-	key := []byte(global.ConfigSetting.MqttRequestSecretKey)
+func Decrypt(data, secretKey string) (string, error) {
+	key := []byte(secretKey)
 	if len(key) != 16 && len(key) != 24 && len(key) != 32 {
 		return "", errors.New("invalid AES key size (must be 16, 24, or 32 bytes)")
 	}

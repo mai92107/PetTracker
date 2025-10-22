@@ -6,6 +6,5 @@
   "device_prefix":"AA",
   "device_sequence":"0",
 
-  "mqtt_request_secret_key":"dojiaegbhjoire;wgijkepvsg5twojio",
-  "mqtt_response_secret_key":"cvowe9ifeujtbh8oieryhntopsmvaoiu"
+  "default_secret_key":"fewiohfglawehjg;oiewqj4844836"
 }

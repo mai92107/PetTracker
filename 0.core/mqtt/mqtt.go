@@ -10,10 +10,8 @@ import (
 func SubTopic(client mqtt.Client, topic string, handler mqtt.MessageHandler) error {
 	token := client.Subscribe(topic, 1, handler)
 	if token.Wait() && token.Error() != nil {
-		logafa.Error("訂閱失敗: %+v", token.Error())
 		return token.Error()
 	}
-	logafa.Info("已訂閱主題: %s", topic)
 	return nil
 }
 
