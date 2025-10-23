@@ -16,7 +16,7 @@ import (
 
 func RouteFunction(topic string, payload string, qos byte) {
 
-	if strings.HasPrefix(topic, "request") {
+	if strings.HasPrefix(topic, "req") {
 		requestType, jwt, ip := extractRequestFromTopic(topic)
 
 		switch requestType {

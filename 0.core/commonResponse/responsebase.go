@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	"batchLog/0.core/logafa"
 	mqttUtil "batchLog/0.core/mqtt"
 
 	"github.com/gin-gonic/gin"
@@ -49,7 +50,10 @@ func SuccessMqtt[T any](topic string, requestTime time.Time, data T) {
 		RequestedTime: requestTime,
 		RespondedTime: time.Now().UTC(),
 	})
-	mqttUtil.PubMsgToTopic(topic, response)
+	err := mqttUtil.PubMsgToTopic(topic, response)
+	if err != nil {
+		logafa.Error("❌ 發送 MQTT 訊息失敗: %v", err)
+	}
 }
 
 // 錯誤回傳 (可自訂 HTTP status 與錯誤代碼)
@@ -61,5 +65,8 @@ func ErrorMqtt(topic string, code int, requestTime time.Time, msg string) {
 		RequestedTime: requestTime,
 		RespondedTime: time.Now().UTC(),
 	})
-	mqttUtil.PubMsgToTopic(topic, response)
+	err := mqttUtil.PubMsgToTopic(topic, response)
+	if err != nil {
+		logafa.Error("❌ 發送 MQTT 訊息失敗: %v", err)
+	}
 }

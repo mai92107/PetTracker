@@ -14,14 +14,19 @@ type request01 struct {
 }
 
 func SayHello(payload string) {
-	requestedTime := time.Now().UTC()
-	errTopic := "error/home/sayHello/" + payload
+	requestTime := time.Now().UTC()
+	errTopic := "errReq/home/sayHello/" + payload
+	if payload == "" || payload == "{}" {
+		logafa.Error("Payload 為空")
+		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, "Payload 為空")
+		return
+	}
 	var req request01
 	if err := jsoniter.UnmarshalFromString(payload, &req); err != nil {
 		logafa.Error("Json 格式錯誤, error: %+v", err)
-		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestedTime, "Json 格式錯誤")
+		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, "Json 格式錯誤")
 		return
 	}
 	data := "hello my world"
-	response.SuccessMqtt(req.SubscribeTo, requestedTime, data)
+	response.SuccessMqtt(req.SubscribeTo, requestTime, data)
 }

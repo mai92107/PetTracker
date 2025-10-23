@@ -1,0 +1,205 @@
+[2025-10-23 10:13:55] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initDb.go:33] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-10-23 10:13:55] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-10-23 10:13:55] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:27] [32m✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-23 10:13:55] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initInfra.go:19] [36m ✅ 成功初始化裝置設定[0m
+[2025-10-23 10:13:55] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:23] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-10-23 10:13:56] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:57] [32m ✅ 系統開始追蹤裝置主題: req/+/+/+[0m
+[2025-10-23 10:14:53] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:62] [36m📥 收到 MQTT 訊息！[0m
+[2025-10-23 10:14:53] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:63] [36m主題: req/account_register//0:0:0:0[0m
+[2025-10-23 10:14:53] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:64] [36m內容: {
+  "username": "rafa",
+  "password": "pass",
+  "email": "rafa@gmail.com",
+  "subscribeTo": "deivceUuid"
+}[0m
+[2025-10-23 10:14:53] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/mqtt/account/02-register.go:40] [31m註冊發生錯誤, error: 使用者名稱不可為空[0m
+[2025-10-23 10:14:56] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/commonResponse/responsebase.go:70] [31m❌ 發送 MQTT 訊息失敗: 發送訊息逾時[0m
+[2025-10-23 10:14:56] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:27] [32m✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-23 10:14:57] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:55] [31m ❌ 主題:req/+/+/+, 訂閱失敗： reconnecting state and cleansession is true[0m
+[2025-10-23 10:14:57] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:27] [32m✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-23 10:14:58] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:55] [31m ❌ 主題:req/+/+/+, 訂閱失敗： reconnecting state and cleansession is true[0m
+[2025-10-23 10:14:59] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:47] [32m收到終止訊號，開始優雅關閉...[0m
+[2025-10-23 10:14:59] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:55] [32m伺服器成功關閉[0m
+[2025-10-23 10:15:15] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initDb.go:33] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-10-23 10:15:15] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-10-23 10:15:15] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:27] [32m✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-23 10:15:15] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initInfra.go:19] [36m ✅ 成功初始化裝置設定[0m
+[2025-10-23 10:15:15] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:23] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-10-23 10:15:16] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:58] [32m ✅ 系統開始追蹤裝置主題: req/+/+/+[0m
+[2025-10-23 10:15:20] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:62] [36m📥 收到 MQTT 訊息！[0m
+[2025-10-23 10:15:20] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:63] [36m主題: req/account_register//0:0:0:0[0m
+[2025-10-23 10:15:20] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:64] [36m內容: {
+  "username": "rafa",
+  "password": "pass",
+  "email": "rafa@gmail.com"
+  "subscribeTo": "deivceUuid"
+}[0m
+[2025-10-23 10:15:20] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/mqtt/account/02-register.go:34] [31mJson 格式錯誤, error: struct Decode: expect }, but found ", error found in #10 byte of ...|l.com"
+  "subscribeT|..., bigger context ...|password": "pass",
+  "email": "rafa@gmail.com"
+  "subscribeTo": "deivceUuid"
+}|...[0m
+[2025-10-23 10:15:23] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/commonResponse/responsebase.go:70] [31m❌ 發送 MQTT 訊息失敗: 發送訊息逾時[0m
+[2025-10-23 10:15:23] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:27] [32m✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-23 10:15:24] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:56] [31m ❌ 主題:req/+/+/+, 訂閱失敗： reconnecting state and cleansession is true[0m
+[2025-10-23 10:15:24] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:27] [32m✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-23 10:15:25] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:56] [31m ❌ 主題:req/+/+/+, 訂閱失敗： reconnecting state and cleansession is true[0m
+[2025-10-23 10:15:26] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:47] [32m收到終止訊號，開始優雅關閉...[0m
+[2025-10-23 10:15:26] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:55] [32m伺服器成功關閉[0m
+[2025-10-23 10:21:52] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initDb.go:33] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-10-23 10:21:52] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-10-23 10:21:52] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:50] [32m🔌 正在連接到 MQTT Broker: localhost:1883[0m
+[2025-10-23 10:21:52] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:64] [32m✅ MQTT 客戶端初始化成功[0m
+[2025-10-23 10:21:52] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:38] [32m✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-23 10:21:52] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initInfra.go:19] [36m ✅ 成功初始化裝置設定[0m
+[2025-10-23 10:21:52] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:23] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-10-23 10:21:52] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:104] [32m✅ 系統開始追蹤裝置主題: req/+/+/+[0m
+[2025-10-23 10:21:56] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:62] [36m📥 收到 MQTT 訊息！[0m
+[2025-10-23 10:21:56] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:63] [36m主題: req/account_register//0:0:0:0[0m
+[2025-10-23 10:21:56] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:64] [36m內容: {
+  "username": "rafa",
+  "password": "pass",
+  "email": "rafa@gmail.com"
+  "subscribeTo": "deivceUuid"
+}[0m
+[2025-10-23 10:21:56] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/mqtt/account/02-register.go:34] [31mJson 格式錯誤, error: struct Decode: expect }, but found ", error found in #10 byte of ...|l.com"
+  "subscribeT|..., bigger context ...|password": "pass",
+  "email": "rafa@gmail.com"
+  "subscribeTo": "deivceUuid"
+}|...[0m
+[2025-10-23 10:21:59] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/commonResponse/responsebase.go:70] [31m❌ 發送 MQTT 訊息失敗: 發送訊息逾時[0m
+[2025-10-23 10:21:59] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:120] [31m🚫 Mosquitto 伺服器連線斷開: EOF[0m
+[2025-10-23 10:21:59] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:44] [32m🔄 正在重新連接到 Mosquitto 伺服器...[0m
+[2025-10-23 10:21:59] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:38] [32m✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-23 10:21:59] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:62] [36m📥 收到 MQTT 訊息！[0m
+[2025-10-23 10:21:59] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:63] [36m主題: req/account_register//0:0:0:0[0m
+[2025-10-23 10:21:59] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:64] [36m內容: {
+  "username": "rafa",
+  "password": "pass",
+  "email": "rafa@gmail.com"
+  "subscribeTo": "deivceUuid"
+}[0m
+[2025-10-23 10:21:59] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/mqtt/account/02-register.go:34] [31mJson 格式錯誤, error: struct Decode: expect }, but found ", error found in #10 byte of ...|l.com"
+  "subscribeT|..., bigger context ...|password": "pass",
+  "email": "rafa@gmail.com"
+  "subscribeTo": "deivceUuid"
+}|...[0m
+[2025-10-23 10:22:02] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/commonResponse/responsebase.go:70] [31m❌ 發送 MQTT 訊息失敗: 發送訊息逾時[0m
+[2025-10-23 10:22:02] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:120] [31m🚫 Mosquitto 伺服器連線斷開: EOF[0m
+[2025-10-23 10:22:02] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:108] [31m⚠️  主題 req/+/+/+ 訂閱失敗(嘗試 1/3): connection lost before Subscribe completed[0m
+[2025-10-23 10:22:02] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:97] [32m🔄 重試訂閱主題 req/+/+/+ (第 1 次)[0m
+[2025-10-23 10:22:03] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:108] [31m⚠️  主題 req/+/+/+ 訂閱失敗(嘗試 2/3): not currently connected and ResumeSubs not set[0m
+[2025-10-23 10:22:03] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:97] [32m🔄 重試訂閱主題 req/+/+/+ (第 2 次)[0m
+[2025-10-23 10:22:03] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:44] [32m🔄 正在重新連接到 Mosquitto 伺服器...[0m
+[2025-10-23 10:22:03] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:38] [32m✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-23 10:22:03] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:62] [36m📥 收到 MQTT 訊息！[0m
+[2025-10-23 10:22:03] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:63] [36m主題: req/account_register//0:0:0:0[0m
+[2025-10-23 10:22:03] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:64] [36m內容: {
+  "username": "rafa",
+  "password": "pass",
+  "email": "rafa@gmail.com"
+  "subscribeTo": "deivceUuid"
+}[0m
+[2025-10-23 10:22:03] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/mqtt/account/02-register.go:34] [31mJson 格式錯誤, error: struct Decode: expect }, but found ", error found in #10 byte of ...|l.com"
+  "subscribeT|..., bigger context ...|password": "pass",
+  "email": "rafa@gmail.com"
+  "subscribeTo": "deivceUuid"
+}|...[0m
+[2025-10-23 10:22:05] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:108] [31m⚠️  主題 req/+/+/+ 訂閱失敗(嘗試 3/3): not currently connected and ResumeSubs not set[0m
+[2025-10-23 10:22:05] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:113] [31m❌ 主題 req/+/+/+ 訂閱失敗(已重試 3 次): not currently connected and ResumeSubs not set[0m
+[2025-10-23 10:22:05] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:108] [31m⚠️  主題 req/+/+/+ 訂閱失敗(嘗試 1/3): not currently connected and ResumeSubs not set[0m
+[2025-10-23 10:22:05] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:97] [32m🔄 重試訂閱主題 req/+/+/+ (第 1 次)[0m
+[2025-10-23 10:22:06] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:108] [31m⚠️  主題 req/+/+/+ 訂閱失敗(嘗試 2/3): not currently connected and ResumeSubs not set[0m
+[2025-10-23 10:22:06] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:97] [32m🔄 重試訂閱主題 req/+/+/+ (第 2 次)[0m
+[2025-10-23 10:22:06] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/commonResponse/responsebase.go:70] [31m❌ 發送 MQTT 訊息失敗: 發送訊息逾時[0m
+[2025-10-23 10:22:06] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:120] [31m🚫 Mosquitto 伺服器連線斷開: EOF[0m
+[2025-10-23 10:22:08] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:108] [31m⚠️  主題 req/+/+/+ 訂閱失敗(嘗試 3/3): not currently connected and ResumeSubs not set[0m
+[2025-10-23 10:22:08] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:113] [31m❌ 主題 req/+/+/+ 訂閱失敗(已重試 3 次): not currently connected and ResumeSubs not set[0m
+[2025-10-23 10:22:08] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:44] [32m🔄 正在重新連接到 Mosquitto 伺服器...[0m
+[2025-10-23 10:22:08] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:38] [32m✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-23 10:22:08] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:62] [36m📥 收到 MQTT 訊息！[0m
+[2025-10-23 10:22:08] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:63] [36m主題: req/account_register//0:0:0:0[0m
+[2025-10-23 10:22:08] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:64] [36m內容: {
+  "username": "rafa",
+  "password": "pass",
+  "email": "rafa@gmail.com"
+  "subscribeTo": "deivceUuid"
+}[0m
+[2025-10-23 10:22:08] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/mqtt/account/02-register.go:34] [31mJson 格式錯誤, error: struct Decode: expect }, but found ", error found in #10 byte of ...|l.com"
+  "subscribeT|..., bigger context ...|password": "pass",
+  "email": "rafa@gmail.com"
+  "subscribeTo": "deivceUuid"
+}|...[0m
+[2025-10-23 10:22:09] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:47] [32m收到終止訊號，開始優雅關閉...[0m
+[2025-10-23 10:22:09] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:55] [32m伺服器成功關閉[0m
+[2025-10-23 10:22:43] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initDb.go:33] [36m ✅ MariaDB 資料庫連接成功[0m
+[2025-10-23 10:22:43] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initRedis.go:37] [36m ✅ Redis 資料庫連接成功[0m
+[2025-10-23 10:22:43] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:50] [32m🔌 正在連接到 MQTT Broker: localhost:1883[0m
+[2025-10-23 10:22:43] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:64] [32m✅ MQTT 客戶端初始化成功[0m
+[2025-10-23 10:22:43] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:38] [32m✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-23 10:22:43] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initInfra.go:19] [36m ✅ 成功初始化裝置設定[0m
+[2025-10-23 10:22:43] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:23] [32m http server 已啟動, 使用 PORT: 8000[0m
+[2025-10-23 10:22:43] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:104] [32m✅ 系統開始追蹤裝置主題: req/+/+/+[0m
+[2025-10-23 10:22:46] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:62] [36m📥 收到 MQTT 訊息！[0m
+[2025-10-23 10:22:46] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:63] [36m主題: req/account_register//0:0:0:0[0m
+[2025-10-23 10:22:46] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:64] [36m內容: {}[0m
+[2025-10-23 10:22:46] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/mqtt/account/02-register.go:28] [31mPayload 為空[0m
+[2025-10-23 10:22:46] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:57] [36m✅ topic: errReq/account/register/{} 已發送訊息: {"code":400,"message":"Payload 為空","data":null,"requestedTime":"2025-10-23T02:22:46.921272Z","respondedTime":"2025-10-23T02:22:46.921337Z"}[0m
+[2025-10-23 10:23:51] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:62] [36m📥 收到 MQTT 訊息！[0m
+[2025-10-23 10:23:51] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:63] [36m主題: req/account_register//0:0:0:0[0m
+[2025-10-23 10:23:51] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:64] [36m內容: {}[0m
+[2025-10-23 10:23:51] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/mqtt/account/02-register.go:28] [31mPayload 為空[0m
+[2025-10-23 10:23:51] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/0.core/mqtt/mqtt.go:57] [36m✅ topic: errReq/account/register/{} 已發送訊息: {"code":400,"message":"Payload 為空","data":null,"requestedTime":"2025-10-23T02:23:51.198956Z","respondedTime":"2025-10-23T02:23:51.198974Z"}[0m
+[2025-10-23 10:24:17] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:62] [36m📥 收到 MQTT 訊息！[0m
+[2025-10-23 10:24:17] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:63] [36m主題: req/account_register//0:0:0:0[0m
+[2025-10-23 10:24:17] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:64] [36m內容: {
+  "username": "rafa",
+  "password": "pass",
+  "email": "rafa@gmail.com"
+  "subscribeTo": "deivceUuid"
+}[0m
+[2025-10-23 10:24:17] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/mqtt/account/02-register.go:34] [31mJson 格式錯誤, error: struct Decode: expect }, but found ", error found in #10 byte of ...|l.com"
+  "subscribeT|..., bigger context ...|password": "pass",
+  "email": "rafa@gmail.com"
+  "subscribeTo": "deivceUuid"
+}|...[0m
+[2025-10-23 10:24:20] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/commonResponse/responsebase.go:70] [31m❌ 發送 MQTT 訊息失敗: 發送訊息逾時[0m
+[2025-10-23 10:24:20] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:120] [31m🚫 Mosquitto 伺服器連線斷開: EOF[0m
+[2025-10-23 10:24:20] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:44] [32m🔄 正在重新連接到 Mosquitto 伺服器...[0m
+[2025-10-23 10:24:20] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:38] [32m✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-23 10:24:20] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:62] [36m📥 收到 MQTT 訊息！[0m
+[2025-10-23 10:24:20] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:63] [36m主題: req/account_register//0:0:0:0[0m
+[2025-10-23 10:24:20] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:64] [36m內容: {
+  "username": "rafa",
+  "password": "pass",
+  "email": "rafa@gmail.com"
+  "subscribeTo": "deivceUuid"
+}[0m
+[2025-10-23 10:24:20] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/mqtt/account/02-register.go:34] [31mJson 格式錯誤, error: struct Decode: expect }, but found ", error found in #10 byte of ...|l.com"
+  "subscribeT|..., bigger context ...|password": "pass",
+  "email": "rafa@gmail.com"
+  "subscribeTo": "deivceUuid"
+}|...[0m
+[2025-10-23 10:24:23] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/commonResponse/responsebase.go:70] [31m❌ 發送 MQTT 訊息失敗: 發送訊息逾時[0m
+[2025-10-23 10:24:23] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:120] [31m🚫 Mosquitto 伺服器連線斷開: EOF[0m
+[2025-10-23 10:24:23] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:108] [31m⚠️  主題 req/+/+/+ 訂閱失敗(嘗試 1/3): connection lost before Subscribe completed[0m
+[2025-10-23 10:24:23] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:97] [32m🔄 重試訂閱主題 req/+/+/+ (第 1 次)[0m
+[2025-10-23 10:24:24] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:44] [32m🔄 正在重新連接到 Mosquitto 伺服器...[0m
+[2025-10-23 10:24:24] [ERROR] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:108] [31m⚠️  主題 req/+/+/+ 訂閱失敗(嘗試 2/3): not currently connected and ResumeSubs not set[0m
+[2025-10-23 10:24:24] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:97] [32m🔄 重試訂閱主題 req/+/+/+ (第 2 次)[0m
+[2025-10-23 10:24:24] [INFO] [/Users/rafaelmai/Documents/PetTracker/0.core/initial/initMosquitto.go:38] [32m✅ 已連接到 Mosquitto 伺服器[0m
+[2025-10-23 10:24:24] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:62] [36m📥 收到 MQTT 訊息！[0m
+[2025-10-23 10:24:24] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:63] [36m主題: req/account_register//0:0:0:0[0m
+[2025-10-23 10:24:24] [DEBUG] [/Users/rafaelmai/Documents/PetTracker/1.router/mqtt.go:64] [36m內容: {
+  "username": "rafa",
+  "password": "pass",
+  "email": "rafa@gmail.com"
+  "subscribeTo": "deivceUuid"
+}[0m
+[2025-10-23 10:24:24] [ERROR] [/Users/rafaelmai/Documents/PetTracker/2.api/mqtt/account/02-register.go:34] [31mJson 格式錯誤, error: struct Decode: expect }, but found ", error found in #10 byte of ...|l.com"
+  "subscribeT|..., bigger context ...|password": "pass",
+  "email": "rafa@gmail.com"
+  "subscribeTo": "deivceUuid"
+}|...[0m
+[2025-10-23 10:24:24] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:47] [32m收到終止訊號，開始優雅關閉...[0m
+[2025-10-23 10:24:24] [INFO] [/Users/rafaelmai/Documents/PetTracker/main.go:55] [32m伺服器成功關閉[0m

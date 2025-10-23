@@ -39,9 +39,12 @@ type RedisDbSetting struct {
 }
 
 type MosquittoConfig struct {
-	InUser     bool     `json:"in_use"`
-	BrokerHost string   `json:"broker_host"`
-	BrokerPort string   `json:"broker_port"`
-	VagueTopic []string `json:"vague_topic"`
-	ClientID   string   `json:"client_id"`
+	InUser          bool     `json:"in_use"`
+	BrokerHostCloud string   `json:"broker_host_cloud"`
+	BrokerHostLocal string   `json:"broker_host_local"`
+	BrokerPort      string   `json:"broker_port"`
+	Username        string   `json:"username"`
+	Password        string   `json:"password"`
+	VagueTopic      []string `json:"vague_topic"`
+	ClientID        string   `json:"client_id"`
 }

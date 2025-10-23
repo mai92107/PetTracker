@@ -31,8 +31,11 @@
   },
   "mosquittoBroker": {
     "in_use": true,
-    "broker_host": "test.mosquitto.org",
+    "broker_host_cloud": "test.mosquitto.org",
+    "broker_host_local": "localhost",
     "broker_port": "1883",
+    "username": "",
+    "password": "",
     "vague_topic": ["req/+/+/+"],
     "client_id": "go-backend-tracker"
   }

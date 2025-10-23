@@ -9,7 +9,7 @@ import (
 
 func Register(ip, username, password, email, lastName, firstName, nickName string) (map[string]interface{}, error) {
 
-	err := validateRequest(email, nickName, username, password)
+	err := validateRegister(email, nickName, username, password)
 	if err != nil {
 		return nil, err
 	}
@@ -44,18 +44,18 @@ func Register(ip, username, password, email, lastName, firstName, nickName strin
 	return Login(ip, username, password)
 }
 
-func validateRequest(email, nickName, username, password string) error {
-	if email == "" {
-		return fmt.Errorf("電子信箱不可為空")
-	}
-	if nickName == "" {
-		return fmt.Errorf("使用者名稱不可為空")
-	}
+func validateRegister(email, nickName, username, password string) error {
 	if username == "" {
 		return fmt.Errorf("使用者帳號不可為空")
 	}
 	if password == "" {
 		return fmt.Errorf("使用者密碼不可為空")
+	}
+	if email == "" {
+		return fmt.Errorf("電子信箱不可為空")
+	}
+	if nickName == "" {
+		return fmt.Errorf("使用者名稱不可為空")
 	}
 	return nil
 }

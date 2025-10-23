@@ -17,8 +17,13 @@ type request01 struct {
 
 func SystemStatus(payload string) {
 	requestTime := time.Now().UTC()
+	errTopic := "errReq/system/status/" + payload
 
-	errTopic := "error/system/status/" + payload
+	if payload == "" || payload == "{}" {
+		logafa.Error("Payload 為空")
+		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, "Payload 為空")
+		return
+	}
 	var req request01
 	if err := jsoniter.UnmarshalFromString(payload, &req); err != nil {
 		logafa.Error("Json 格式錯誤, error: %+v", err)

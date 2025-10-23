@@ -19,8 +19,18 @@ type request01 struct {
 
 func AddDevice(payload, jwt, ip string) {
 	requestTime := time.Now().UTC()
-	errTopic := "error/member/addDevice/" + payload
+	errTopic := "errReq/member/addDevice/" + payload
 
+	if jwt == "" {
+		logafa.Error("JWT 參數錯誤, JWT: %s", jwt)
+		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, "JWT 參數錯誤")
+		return
+	}
+	if payload == "" || payload == "{}" {
+		logafa.Error("Payload 為空")
+		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, "Payload 為空")
+		return
+	}
 	userData, err := jwtUtil.GetUserDataFromJwt(jwt)
 	if err != nil {
 		logafa.Error("身份認證錯誤, error: %+v", err)

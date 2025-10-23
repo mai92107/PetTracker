@@ -28,7 +28,7 @@ func Register(c *gin.Context) {
 	ip := c.ClientIP()
 	loginInfo, err := accountService.Register(ip, req.Username, req.Password, req.Email, req.LastName, req.FirstName, req.NickName)
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, requestTime, "註冊發生錯誤 : "+err.Error())
+		response.Error(c, http.StatusInternalServerError, requestTime, "註冊發生錯誤")
 		return
 	}
 	response.Success(c, requestTime, loginInfo)

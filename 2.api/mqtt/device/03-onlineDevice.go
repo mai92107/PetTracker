@@ -18,15 +18,24 @@ type request03 struct {
 
 func MqttOnlineDevice(payload, jwt, ip string) {
 	requestTime := time.Now().UTC()
-	errTopic := "error/device/mqttOnlineDevice/" + payload
+	errTopic := "errReq/device/mqttOnlineDevice/" + payload
 
+	if jwt == "" {
+		logafa.Error("JWT 參數錯誤, JWT: %s", jwt)
+		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, "JWT 參數錯誤")
+		return
+	}
+	if payload == "" || payload == "{}" {
+		logafa.Error("Payload 為空")
+		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, "Payload 為空")
+		return
+	}
 	userData, err := jwtUtil.GetUserDataFromJwt(jwt)
 	if err != nil || userData.Identity != "ADMIN" {
 		logafa.Error("身份認證錯誤, error: %+v", err)
-		response.ErrorMqtt("ERROR/"+jwt, http.StatusForbidden, requestTime, "身份認證錯誤")
+		response.ErrorMqtt(errTopic, http.StatusForbidden, requestTime, "身份認證錯誤")
 		return
 	}
-
 	var req request03
 	if err := jsoniter.UnmarshalFromString(payload, &req); err != nil {
 		logafa.Error("Json 格式錯誤, error: %+v", err)

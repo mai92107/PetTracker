@@ -19,8 +19,18 @@ type request02 struct {
 
 func Recording(payload, jwt, ip string) {
 	requestTime := time.Now().UTC()
-	errTopic := "error/device/recording/" + payload
+	errTopic := "errReq/device/recording/" + payload
 
+	if jwt == "" {
+		logafa.Error("JWT 參數錯誤, JWT: %s", jwt)
+		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, "JWT 參數錯誤")
+		return
+	}
+	if payload == "" || payload == "{}" {
+		logafa.Error("Payload 為空")
+		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, "Payload 為空")
+		return
+	}
 	var req request02
 	err := jsoniter.UnmarshalFromString(payload, &req)
 	if err != nil {
