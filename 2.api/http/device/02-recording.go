@@ -13,8 +13,8 @@ import (
 )
 
 type request02 struct {
-	Longitude string `json:"lng"`
-	Latitude  string `json:"lat"`
+	Longitude float64 `json:"lng"`
+	Latitude  float64 `json:"lat"`
 	DeviceID  string `json:"deviceId"`
 }
 

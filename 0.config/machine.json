@@ -16,6 +16,25 @@
       "name": "pettrack"
     }
   },
+  "mongoDb": {
+    "in_use": true,
+    "reading": {
+      "user": "bunbun",
+      "password": "bunbun",
+      "host": "localhost",
+      "port": "27017",
+      "name": "pettrack",
+      "timeout_range":5
+    },
+    "writing": {
+      "user": "bunbun",
+      "password": "bunbun",
+      "host": "localhost",
+      "port": "27017",
+      "name": "pettrack",
+      "timeout_range":5
+    }
+  },
   "redisDb": {
     "in_use": true,
     "reading": {
@@ -36,7 +55,7 @@
     "broker_port": "1883",
     "username": "",
     "password": "",
-    "vague_topic": ["req/+/+/+"],
+    "vague_topic": ["req/+/+/+/+"],
     "client_id": "go-backend-tracker"
   }
 }

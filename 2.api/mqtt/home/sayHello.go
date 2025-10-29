@@ -13,9 +13,9 @@ type request01 struct {
 	SubscribeTo string `json:"subscribeTo"`
 }
 
-func SayHello(payload string) {
+func SayHello(payload, clientId string) {
 	requestTime := time.Now().UTC()
-	errTopic := "errReq/home/sayHello/" + payload
+	errTopic := "errReq/" + clientId
 	if payload == "" || payload == "{}" {
 		logafa.Error("Payload 為空")
 		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, "Payload 為空")

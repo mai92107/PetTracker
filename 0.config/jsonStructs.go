@@ -10,6 +10,7 @@ type Config struct {
 }
 type Machine struct {
 	MariaDB         MariaDbConfig   `json:"mariaDb"`
+	MongoDB         MongoDbConfig   `json:"mongoDb"`
 	Redis           RedisDbConfig   `json:"redisDb"`
 	MosquittoBroker MosquittoConfig `json:"mosquittoBroker"`
 }
@@ -19,12 +20,26 @@ type MariaDbConfig struct {
 	Reading MariaDbSetting `json:"reading"`
 	Writing MariaDbSetting `json:"writing"`
 }
+type MongoDbConfig struct {
+	InUse   bool           `json:"in_use"`
+	Reading MongoDbSetting `json:"reading"`
+	Writing MongoDbSetting `json:"writing"`
+}
 type MariaDbSetting struct {
 	User     string `json:"user"`
 	Password string `json:"password"`
 	Host     string `json:"host"`
 	Port     string `json:"port"`
 	Name     string `json:"name"`
+}
+
+type MongoDbSetting struct {
+	User     string `json:"user"`
+	Password string `json:"password"`
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	Name     string `json:"name"`
+	TimeoutRange int `json:"timeout_range"`
 }
 type RedisDbConfig struct {
 	InUse   bool           `json:"in_use"`

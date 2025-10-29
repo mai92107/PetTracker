@@ -18,9 +18,10 @@ func Login(ip, accountName, password string) (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	tx := global.Repository.DB.Reading.Begin()
+	tx := global.Repository.DB.MariaDb.Reading.Begin()
 	defer func() {
 		if r := recover(); r != nil {
+			tx.Rollback()
 			logafa.Error("登入失敗, r: %+v", r)
 		}
 	}()

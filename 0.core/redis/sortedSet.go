@@ -3,38 +3,46 @@ package redis
 import (
 	"batchLog/0.core/global"
 	"fmt"
+	"time"
 
 	"github.com/redis/go-redis/v9"
 )
 
 // 封裝方法：寫入一筆 資料（ZADD）
+// 並設定過期時間為 24 小時
 func ZAddData(key string, score float64, byteData []byte) error {
-	return global.Repository.Cache.Writing.ZAdd(global.Repository.Cache.CTX, key, redis.Z{
+	ctx := global.Repository.Cache.CTX
+
+	pipe := global.Repository.Cache.Writing.Pipeline()
+	pipe.ZAdd(ctx, key, redis.Z{
 		Score:  score,
 		Member: byteData,
-	}).Err()
+	})
+	pipe.Expire(ctx, key, 24*time.Hour)
+
+	_, err := pipe.Exec(ctx)
+	return err
 }
 
 // 封裝方法：依指定pattern 取得所有 key 值
 func KeyScan(pattern string) ([]string, error) {
-    var cursor uint64
-    var keys []string
+	var cursor uint64
+	var keys []string
 
-    for {
-        var k []string
-        var err error
-        k, cursor, err = global.Repository.Cache.Reading.Scan(global.Repository.Cache.CTX, cursor, pattern, 100).Result()
-        if err != nil {
-            return nil, fmt.Errorf("scan keys failed: %w", err)
-        }
-        keys = append(keys, k...)
-        if cursor == 0 {
-            break
-        }
-    }
-    return keys, nil
+	for {
+		var k []string
+		var err error
+		k, cursor, err = global.Repository.Cache.Reading.Scan(global.Repository.Cache.CTX, cursor, pattern, 100).Result()
+		if err != nil {
+			return nil, fmt.Errorf("scan keys failed: %w", err)
+		}
+		keys = append(keys, k...)
+		if cursor == 0 {
+			break
+		}
+	}
+	return keys, nil
 }
-
 
 // 封裝方法：依 score 讀取區間資料（ZRANGE）
 func ZRangeByScore(key string, startTs, endTs int64) ([]string, error) {
@@ -49,7 +57,11 @@ func ZRangeByScore(key string, startTs, endTs int64) ([]string, error) {
 }
 
 // ✅ 移除指定 key 的資料指定時間區段資料
-func ZRemRangeByScore(client *redis.Client,key string, startTs, endTs int64) error {
-	_, err := client.ZRemRangeByScore(global.Repository.Cache.CTX, key, fmt.Sprintf("%v",startTs), fmt.Sprintf("%v",endTs)).Result()
-	return err
+func ZRemRangeByScore(client *redis.Client, key string, startTs, endTs int64) error {
+	// 移除指定區間資料
+	_, err := client.ZRemRangeByScore(global.Repository.Cache.CTX, key, fmt.Sprintf("%v", startTs), fmt.Sprintf("%v", endTs)).Result()
+	if err != nil {
+		return err
+	}
+	return nil
 }

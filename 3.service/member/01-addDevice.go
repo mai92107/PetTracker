@@ -6,12 +6,12 @@ import (
 )
 
 func AddDevice(memberId int64, deviceId, deviceName string) error {
-	readingDB := global.Repository.DB.Reading
+	readingDB := global.Repository.DB.MariaDb.Reading
 	device, err := repo.FindDeviceByDeviceId(readingDB, deviceId)
 	if err != nil {
 		return err
 	}
-	writingDB := global.Repository.DB.Writing
+	writingDB := global.Repository.DB.MariaDb.Writing
 	err = repo.AddDevice(writingDB, memberId, device.DeviceId, deviceName)
 	if err != nil {
 		return err

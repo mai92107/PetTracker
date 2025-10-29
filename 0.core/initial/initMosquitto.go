@@ -22,7 +22,7 @@ func InitMosquitto(setting jsonModal.MosquittoConfig) (mqtt.Client) {
 	vagueTopic := setting.VagueTopic
 
 	opts := mqtt.NewClientOptions().
-		AddBroker(fmt.Sprintf("tcp://%s:%s", setting.BrokerHostLocal, setting.BrokerPort)).
+		AddBroker(fmt.Sprintf("tcp://%s:%s", setting.BrokerHostCloud, setting.BrokerPort)).
 		SetClientID(fmt.Sprintf("%s-%d", setting.ClientID, time.Now().UnixNano())).
 		SetUsername(setting.Username).
 		SetPassword(setting.Password).
@@ -35,7 +35,7 @@ func InitMosquitto(setting jsonModal.MosquittoConfig) (mqtt.Client) {
 		SetMaxReconnectInterval(60 * time.Second).
 		SetCleanSession(false).
 		SetOnConnectHandler(func(c mqtt.Client) {
-			logafa.Info("✅ 已連接到 Mosquitto 伺服器")
+			logafa.Debug("✅ 已連接到 Mosquitto 伺服器")
 			// 使用 goroutine 避免阻塞連線處理
 			go subscribeVagueTopic(c, vagueTopic)
 		}).
@@ -47,7 +47,7 @@ func InitMosquitto(setting jsonModal.MosquittoConfig) (mqtt.Client) {
 	client := mqtt.NewClient(opts)
 
 	// 初次連線
-	logafa.Info("🔌 正在連接到 MQTT Broker: %s:%s", setting.BrokerHostLocal, setting.BrokerPort)
+	logafa.Debug("🔌 正在連接到 MQTT Broker: %s:%s...", setting.BrokerHostLocal, setting.BrokerPort)
 	token := client.Connect()
 	
 	// 等待連線完成,最多 30 秒
@@ -61,7 +61,7 @@ func InitMosquitto(setting jsonModal.MosquittoConfig) (mqtt.Client) {
 		return nil
 	}
 
-	logafa.Info("✅ MQTT 客戶端初始化成功")
+	logafa.Debug("✅ MQTT 客戶端初始化成功")
 	return client
 }
 
@@ -94,14 +94,14 @@ func subscribeVagueTopic(client mqtt.Client, vagueTopic []string) {
 		var err error
 		for retry := 0; retry < 3; retry++ {
 			if retry > 0 {
-				logafa.Info("🔄 重試訂閱主題 %s (第 %d 次)", topic, retry)
+				logafa.Debug("🔄 重試訂閱主題 %s (第 %d 次)", topic, retry)
 				time.Sleep(time.Second * time.Duration(retry))
 			}
 
 			err = mqttUtil.SubTopic(client, topic, nil)
 			if err == nil {
 				subscribedTopics[topic] = true
-				logafa.Info("✅ 系統開始追蹤裝置主題: %s", topic)
+				logafa.Debug("✅ 系統開始追蹤裝置主題: %s", topic)
 				break
 			}
 
@@ -123,25 +123,4 @@ func onConnectionLost(client mqtt.Client, err error) {
 	subscriptionMutex.Lock()
 	subscribedTopics = make(map[string]bool)
 	subscriptionMutex.Unlock()
-}
-
-// UnsubscribeAll 取消所有訂閱(可選的清理函數)
-func UnsubscribeAll(client mqtt.Client) error {
-	subscriptionMutex.Lock()
-	defer subscriptionMutex.Unlock()
-
-	if !client.IsConnected() {
-		return fmt.Errorf("客戶端未連線")
-	}
-
-	for topic := range subscribedTopics {
-		if token := client.Unsubscribe(topic); token.Wait() && token.Error() != nil {
-			logafa.Error("❌ 取消訂閱主題 %s 失敗: %v", topic, token.Error())
-		} else {
-			logafa.Info("✅ 已取消訂閱主題: %s", topic)
-		}
-	}
-
-	subscribedTopics = make(map[string]bool)
-	return nil
 }

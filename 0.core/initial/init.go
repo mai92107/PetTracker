@@ -16,6 +16,7 @@ import (
 
 var (
 	MariaDBSetting jsonModal.MariaDbConfig
+	MongoDBSetting jsonModal.MongoDbConfig
 	RedisDBSetting jsonModal.RedisDbConfig
 
 	MosquittoBrokerSetting jsonModal.MosquittoConfig
@@ -123,6 +124,7 @@ func loadMachineJson() error {
 	}
 
 	MariaDBSetting = machine.MariaDB
+	MongoDBSetting = machine.MongoDB
 	RedisDBSetting = machine.Redis
 	MosquittoBrokerSetting = machine.MosquittoBroker
 
@@ -131,7 +133,10 @@ func loadMachineJson() error {
 
 func initMachine() {
 	global.Repository = &global.Repo{
-		DB:    InitMariaDB(MariaDBSetting),
+		DB:    &global.DataBase{
+			MariaDb: InitMariaDB(MariaDBSetting),
+			MongoDb: InitMongoDB(MongoDBSetting),
+		},
 		Cache: InitRedis(RedisDBSetting),
 	}
 	global.GlobalBroker = InitMosquitto(MosquittoBrokerSetting)

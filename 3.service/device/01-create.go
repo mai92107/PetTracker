@@ -12,7 +12,7 @@ func Create(deviceType string, memberId int64) (string, error) {
 		return "", err
 	}
 
-	db := global.Repository.DB.Writing
+	db := global.Repository.DB.MariaDb.Writing
 	// 取得用戶資料
 	deviceId, err := repo.CreateDevice(db, deviceType, memberId)
 	if err != nil {

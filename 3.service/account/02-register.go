@@ -14,25 +14,30 @@ func Register(ip, username, password, email, lastName, firstName, nickName strin
 		return nil, err
 	}
 
-	tx := global.Repository.DB.Writing.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			logafa.Error("註冊失敗")
-		}
-	}()
+	tx := global.Repository.DB.MariaDb.Writing.Begin()
+    defer func() {
+        if r := recover(); r != nil {
+            tx.Rollback()
+            logafa.Error("註冊失敗(panic): %v", r)
+            panic(r) // 重新拋出
+        }
+    }()
 
 	memberId, err := repo.CreateMember(tx, lastName, firstName, nickName, email)
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
 
 	accountUuid, err := repo.CreateAccount(tx, memberId, username, password, email)
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
 
 	err = repo.CreatePasswordHistory(tx, accountUuid, password)
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
 

@@ -11,7 +11,7 @@ import (
 
 func FindByJwt(jwt string) (*gormTable.Member, error) {
 
-	db := global.Repository.DB.Reading
+	db := global.Repository.DB.MariaDb.Reading
 	// 解讀 JWT
 	userData, err := jwtUtil.GetUserDataFromJwt(jwt)
 	if err != nil {

@@ -60,7 +60,7 @@ func CreateAccount(tx *gorm.DB, memberId int64, username, password, email string
 	if err != nil {
 		if strings.Contains(err.Error(), "Duplicate entry") {
 			if strings.Contains(err.Error(), "username") {
-				return uuid.Nil, fmt.Errorf("用戶名 %s 已存在", username)
+				return uuid.Nil, fmt.Errorf("使用者帳號 %s 已存在", username)
 			}
 			if strings.Contains(err.Error(), "email") {
 				return uuid.Nil, fmt.Errorf("電子郵件 %s 已存在", email)

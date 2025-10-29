@@ -15,9 +15,9 @@ type request01 struct {
 	SubscribeTo string `json:"subscribeTo"`
 }
 
-func SystemStatus(payload string) {
+func SystemStatus(payload, clientId string) {
 	requestTime := time.Now().UTC()
-	errTopic := "errReq/system/status/" + payload
+	errTopic := "errReq/" + clientId
 
 	if payload == "" || payload == "{}" {
 		logafa.Error("Payload 為空")

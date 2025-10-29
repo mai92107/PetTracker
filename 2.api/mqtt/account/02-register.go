@@ -20,9 +20,9 @@ type request02 struct {
 	SubscribeTo string `json:"subscribeTo"`
 }
 
-func Register(payload, ip string) {
+func Register(payload, clientId, ip string) {
 	requestTime := time.Now().UTC()
-	errTopic := "errReq/account/register/" + payload
+	errTopic := "errReq/" + clientId
 
 	if payload == "" || payload == "{}" {
 		logafa.Error("Payload 為空")

@@ -17,33 +17,33 @@ import (
 func RouteFunction(topic string, payload string, qos byte) {
 
 	if strings.HasPrefix(topic, "req") {
-		requestType, jwt, ip := extractRequestFromTopic(topic)
+		requestType, jwt, clientId, ip := extractRequestFromTopic(topic)
 
 		switch requestType {
 		// no need verify jwt
 		case "account_login":
-			accountMqtt.Login(payload, ip)
+			accountMqtt.Login(payload, clientId, ip)
 		case "account_register":
-			accountMqtt.Register(payload, ip)
+			accountMqtt.Register(payload, clientId, ip)
 		case "home_hello":
-			homeMqtt.SayHello(payload)
+			homeMqtt.SayHello(payload, clientId)
 		case "config_status":
-			systemMqtt.SystemStatus(payload)
+			systemMqtt.SystemStatus(payload, clientId)
 
 		// need verify jwt
 		// admin
 		case "device_create":
-			deviceMqtt.Create(payload, jwt, ip)
+			deviceMqtt.Create(payload, jwt, clientId, ip)
 		case "device_online":
-			deviceMqtt.MqttOnlineDevice(payload, jwt, ip)
+			deviceMqtt.MqttOnlineDevice(payload, jwt, clientId, ip)
 		case "device_status":
-			deviceMqtt.DeviceStatus(payload, jwt, ip)
+			deviceMqtt.DeviceStatus(payload, jwt, clientId, ip)
 
 		// member
 		case "device_recording":
-			deviceMqtt.Recording(payload, jwt, ip)
+			deviceMqtt.Recording(payload, jwt, clientId, ip)
 		case "member_addDevice":
-			memberMqtt.AddDevice(payload, jwt, ip)
+			memberMqtt.AddDevice(payload, jwt, clientId, ip)
 
 		// debug utils
 		case "encrypt":
@@ -62,16 +62,17 @@ func OnMessageReceived(client mqtt.Client, msg mqtt.Message) {
 	logafa.Debug("📥 收到 MQTT 訊息！")
 	logafa.Debug("主題: %s", msg.Topic())
 	logafa.Debug("內容: %s", string(msg.Payload()))
+
 	RouteFunction(msg.Topic(), string(msg.Payload()), msg.Qos())
 }
 
-func extractRequestFromTopic(topic string) (requestType, jwt, ip string) {
+func extractRequestFromTopic(topic string) (requestType, jwt, clientId, ip string) {
 
 	// 取得 requestType 和 ip
-	// hashedValue 的格式為 request/{requestType}/{jwt}/{ip}
+	// hashedValue 的格式為 request/{requestType}/{jwt}/{clientId}/{ip}
 	parts := strings.Split(topic, "/")
-	if len(parts) < 4 {
-		return "", "", ""
+	if len(parts) < 5 {
+		return "", "", "", ""
 	}
-	return parts[1], parts[2], parts[3]
+	return parts[1], parts[2], parts[3], parts[4]
 }

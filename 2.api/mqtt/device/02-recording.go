@@ -11,15 +11,15 @@ import (
 )
 
 type request02 struct {
-	Longitude   string `json:"lng"`
-	Latitude    string `json:"lat"`
+	Longitude   float64 `json:"lng"`
+	Latitude    float64 `json:"lat"`
 	DeviceID    string `json:"deviceId"`
 	SubscribeTo string `json:"subscribeTo"`
 }
 
-func Recording(payload, jwt, ip string) {
+func Recording(payload, jwt, clientId, ip string) {
 	requestTime := time.Now().UTC()
-	errTopic := "errReq/device/recording/" + payload
+	errTopic := "errReq/" + clientId
 
 	if jwt == "" {
 		logafa.Error("JWT 參數錯誤, JWT: %s", jwt)

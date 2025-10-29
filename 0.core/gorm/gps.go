@@ -1,19 +1,36 @@
 package gormTable
 
-import "time"
+import (
+	"time"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
-type GPS struct{
-	DeviceId	string		`json:"deviceId"`
-	Longitude	string		`json:"lng"`
-	Latitude	string		`json:"lat"`
-	RecordTime string		`json:"time"`
+type GPS struct {
+	DeviceId   string `json:"deviceId"`
+	Longitude  float64 `json:"lng"`
+	Latitude   float64 `json:"lat"`
+	RecordTime string `json:"time"`
 }
 
+// GeoJSONPoint 地理位置點
+type GeoJSONPoint struct {
+    Type        string     `bson:"type" json:"type"`               // 固定為 "Point"
+    Coordinates [2]float64 `bson:"coordinates" json:"coordinates"` // [經度, 緯度] - 必須是 float64!
+}
+
+// DeviceLocation MongoDB 裝置位置記錄
 type DeviceLocation struct {
-	UUID        string    `gorm:"type:char(36);primaryKey" json:"uuid"`
-	Device      string    `gorm:"type:varchar(32)" json:"device"`
-	Lat         string    `gorm:"type:varchar(32)" json:"lat"`
-	Lng         string    `gorm:"type:varchar(32)" json:"lng"`
-	RecordedAt  string	  `gorm:"column:recorded_at" json:"recorded_at"` // GPS 傳送時間
-	CreatedAt   time.Time `gorm:"column:created_at;autoCreateTime" json:"created_at"` // DB 寫入時間
+    ID         primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+    DeviceID   string             `bson:"device_id" json:"device_id"`
+    Location   GeoJSONPoint       `bson:"location" json:"location"`
+    RecordedAt time.Time          `bson:"recorded_at" json:"recorded_at"` // 改用 time.Time
+    CreatedAt  time.Time          `bson:"created_at" json:"created_at"`
+}
+
+// NewGeoJSONPoint 建立 GeoJSON Point
+func NewGeoJSONPoint(lng, lat float64) GeoJSONPoint {
+    return GeoJSONPoint{
+        Type:        "Point",
+        Coordinates: [2]float64{lng, lat}, // MongoDB GeoJSON 順序: [經度, 緯度]
+    }
 }

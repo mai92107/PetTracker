@@ -17,9 +17,9 @@ type request01 struct {
 	SubscribeTo string `json:"subscribeTo"`
 }
 
-func AddDevice(payload, jwt, ip string) {
+func AddDevice(payload, jwt, clientId, ip string) {
 	requestTime := time.Now().UTC()
-	errTopic := "errReq/member/addDevice/" + payload
+	errTopic := "errReq/" + clientId
 
 	if jwt == "" {
 		logafa.Error("JWT 參數錯誤, JWT: %s", jwt)
