@@ -17,6 +17,7 @@ import (
 )
 
 func main() {
+	logafa.CreateLogFileNow()
 	initial.InitAll()
 
 	port := global.ConfigSetting.Port
@@ -45,6 +46,8 @@ func gracefulShutdown(srv *http.Server) {
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 	<-quit // 等待訊號
 	logafa.Info("收到終止訊號，開始優雅關閉...")
+
+	logafa.ShutdownRotator()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

@@ -19,9 +19,15 @@ func CronStart() {
 	// 	logafa.Debug("%v秒執行完畢", time.Now().Second())
 	// })
 
-	// 每分鐘執行一次（整分）
-	c.AddFunc("0 * * * * *", func() {
-		logafa.Debug("每分執行程序, 現在時間: %+v", time.Now().Format(TIME_LAYOUT))
+	// // 每分鐘執行一次
+	// c.AddFunc("0 * * * * *", func() {
+	// 	logafa.Debug("每分執行程序, 現在時間: %+v", time.Now().Format(TIME_LAYOUT))
+	// 	logafa.Debug("%v分執行完畢", time.Now().Minute())
+	// })
+
+	// 每15分鐘執行一次
+	c.AddFunc("0 */15 * * * *", func() {
+		logafa.Debug("每15分鍾執行程序, 現在時間: %+v", time.Now().Format(TIME_LAYOUT))
 		persist.SaveGpsFmRedisToMaria()
 		logafa.Debug("%v分執行完畢", time.Now().Minute())
 	})
@@ -38,9 +44,16 @@ func CronStart() {
 	// 	logafa.Debug("%v點執行完畢", time.Now().Hour())
 	// })
 
+	// 每半天執行一次（每日00:00, 12:00）
+	c.AddFunc("0 0 0,12 * * *", func() {
+		logafa.Debug("每半天執行程序, 現在時間: %+v", time.Now().Format(TIME_LAYOUT))
+		logafa.RotateLogFile()
+		logafa.Debug("每日執行完畢")
+	})
+
 	// // 每天執行一次（每日00:00）
 	// c.AddFunc("0 0 0 * * *", func() {
-	// 	logafa.Debug("每天 00:00 執行, 現在時間: %+v", time.Now().Format(TIME_LAYOUT))
+	// 	logafa.Debug("每天 00:00 執行程序, 現在時間: %+v", time.Now().Format(TIME_LAYOUT))
 	// 	logafa.Debug("每日執行完畢")
 	// })
 

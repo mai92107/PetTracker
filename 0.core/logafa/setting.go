@@ -56,9 +56,9 @@ func logMessage(level LogLevel, levelStr, msg string) {
 	}
 
 	formatted := fmt.Sprintf("%s %s\n", prefix, coloredMsg)
-	fmt.Print(formatted)
 	// 寫入檔案
 	if LogFile != nil {
 		LogFile.WriteString(formatted)
 	}
+	print(formatted)
 }

@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"time"
 
 	jsoniter "github.com/json-iterator/go"
 )
@@ -26,7 +25,7 @@ func InitAll() {
 	env := initEnv()
 
 	loadEnvFromJSON()
-	logafaInit(env)
+	initLogafa(env)
 
 	initMachine()
 
@@ -84,8 +83,7 @@ func loadConfigJson() error {
 	return nil
 }
 
-func logafaInit(env string) {
-
+func initLogafa(env string) {
 	switch env {
 	case "dev":
 		logafa.CurrentLevel = logafa.DEBUG
@@ -95,16 +93,6 @@ func logafaInit(env string) {
 		logafa.CurrentLevel = logafa.WARN
 	default:
 		logafa.CurrentLevel = logafa.DEBUG
-	}
-
-	now := time.Now()
-
-	var err error
-	wd, _ := os.Getwd()
-	filePath := filepath.Join(wd, "log", now.Format("2006-01-02")+".log")
-	logafa.LogFile, err = os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		panic(fmt.Sprintf("無法打開 log 檔案: %v", err))
 	}
 }
 
@@ -133,7 +121,7 @@ func loadMachineJson() error {
 
 func initMachine() {
 	global.Repository = &global.Repo{
-		DB:    &global.DataBase{
+		DB: &global.DataBase{
 			MariaDb: InitMariaDB(MariaDBSetting),
 			MongoDb: InitMongoDB(MongoDBSetting),
 		},
