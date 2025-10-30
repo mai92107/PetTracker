@@ -13,8 +13,9 @@ import (
 type request02 struct {
 	Longitude   float64 `json:"lng"`
 	Latitude    float64 `json:"lat"`
-	DeviceID    string `json:"deviceId"`
-	SubscribeTo string `json:"subscribeTo"`
+	DeviceID    string  `json:"deviceId"`
+	SubscribeTo string  `json:"subscribeTo"`
+	RecordAt    string  `json:"recordAt"`
 }
 
 func Recording(payload, jwt, clientId, ip string) {
@@ -38,8 +39,7 @@ func Recording(payload, jwt, clientId, ip string) {
 		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, "Json 格式錯誤")
 		return
 	}
-	time := requestTime.Format("2006-01-02 15:04:05")
-	err = deviceService.Recording(req.Latitude, req.Longitude, req.DeviceID, time)
+	err = deviceService.Recording(req.Latitude, req.Longitude, req.DeviceID, req.RecordAt)
 	if err != nil {
 		logafa.Error("裝置回傳資料錯誤, error: %+v", err)
 		response.ErrorMqtt(errTopic, http.StatusInternalServerError, requestTime, "裝置回傳資料錯誤")

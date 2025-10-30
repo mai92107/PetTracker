@@ -16,6 +16,8 @@ type request02 struct {
 	Longitude float64 `json:"lng"`
 	Latitude  float64 `json:"lat"`
 	DeviceID  string `json:"deviceId"`
+	SubscribeTo string  `json:"subscribeTo"`
+	RecordAt    string  `json:"recordAt"`
 }
 
 func Recording(c *gin.Context) {
@@ -26,7 +28,6 @@ func Recording(c *gin.Context) {
 		response.Error(c, http.StatusBadRequest, requestTime, global.COMMON_REQUEST_ERROR)
 		return
 	}
-	time := requestTime.Format("2006-01-02 15:04:05")
 	jwt := c.GetHeader("jwt")
 	_, err = jwtUtil.GetUserDataFromJwt(jwt)
 	if err != nil {
@@ -35,6 +36,6 @@ func Recording(c *gin.Context) {
 		return
 	}
 
-	deviceService.Recording(req.Latitude, req.Longitude, req.DeviceID, time)
+	deviceService.Recording(req.Latitude, req.Longitude, req.DeviceID, req.RecordAt)
 	response.Success(c, requestTime, "")
 }
