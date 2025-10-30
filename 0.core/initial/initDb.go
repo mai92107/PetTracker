@@ -258,7 +258,7 @@ func initMongoIndexes(client *mongo.Client) {
 			Name: "idx_created_at_ttl",
 			Model: mongo.IndexModel{
 				Keys:    bson.D{{Key: "created_at", Value: 1}},
-				Options: options.Index().SetName("idx_created_at_ttl").SetExpireAfterSeconds(90 * 24 * 60 * 60),
+				Options: options.Index().SetName("idx_created_at_ttl").SetExpireAfterSeconds(int32(global.ConfigSetting.TrackingDataSurvivingDays) * 24 * 60 * 60),
 			},
 		},
 	}

@@ -69,7 +69,7 @@ func OnMessageReceived(client mqtt.Client, msg mqtt.Message) {
 func extractRequestFromTopic(topic string) (requestType, jwt, clientId, ip string) {
 
 	// 取得 requestType 和 ip
-	// hashedValue 的格式為 request/{requestType}/{jwt}/{clientId}/{ip}
+	// 格式為 request/{requestType}/{jwt}/{clientId}/{ip}
 	parts := strings.Split(topic, "/")
 	if len(parts) < 5 {
 		return "", "", "", ""

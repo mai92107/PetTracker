@@ -1,12 +1,13 @@
 package jsonModal
 
 type Config struct {
-	Port             string `json:"port"`
-	JwtSecretKey     string `json:"jwt_secret_key"`
-	CryptoSecretKey  string `json:"crypto_secret_key"`
-	DevicePrefix     string `json:"device_prefix"`
-	DeviceSequence   string `json:"device_sequence"`
-	DefaultSecretKey string `json:"default_secret_key"`
+	Port                      string `json:"port"`
+	JwtSecretKey              string `json:"jwt_secret_key"`
+	CryptoSecretKey           string `json:"crypto_secret_key"`
+	DevicePrefix              string `json:"device_prefix"`
+	DeviceSequence            string `json:"device_sequence"`
+	DefaultSecretKey          string `json:"default_secret_key"`
+	TrackingDataSurvivingDays int    `json:"tracking_data_surviving_days"`
 }
 type Machine struct {
 	MariaDB         MariaDbConfig   `json:"mariaDb"`
@@ -34,12 +35,12 @@ type MariaDbSetting struct {
 }
 
 type MongoDbSetting struct {
-	User     string `json:"user"`
-	Password string `json:"password"`
-	Host     string `json:"host"`
-	Port     string `json:"port"`
-	Name     string `json:"name"`
-	TimeoutRange int `json:"timeout_range"`
+	User         string `json:"user"`
+	Password     string `json:"password"`
+	Host         string `json:"host"`
+	Port         string `json:"port"`
+	Name         string `json:"name"`
+	TimeoutRange int    `json:"timeout_range"`
 }
 type RedisDbConfig struct {
 	InUse   bool           `json:"in_use"`

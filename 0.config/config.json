@@ -6,5 +6,7 @@
   "device_prefix":"AA",
   "device_sequence":"0",
 
-  "default_secret_key":"fewiohfglawehjg;oiewqj4844836"
+  "default_secret_key":"fewiohfglawehjg;oiewqj4844836",
+
+  "tracking_data_surviving_days": 90
 }
