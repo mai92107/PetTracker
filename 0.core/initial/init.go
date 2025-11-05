@@ -22,6 +22,7 @@ var (
 )
 
 func InitAll() {
+	initWorkers()
 	env := initEnv()
 
 	loadEnvFromJSON()
@@ -31,6 +32,24 @@ func InitAll() {
 
 	InitDeviceSequence()
 	cron.CronStart()
+}
+
+func initWorkers() {
+	maxPriorWorkers := 20
+	maxNormalWorkers := 50
+	// 區隔工人 做 故障隔離
+	// 高級勞工
+	global.PriorWorkerPool = make(chan struct{}, maxPriorWorkers)
+	for i := 0; i < maxPriorWorkers; i++ {
+		global.PriorWorkerPool <- struct{}{}
+	}
+	logafa.Debug("👮🏻‍♀️高級勞工%v名 聘請成功", maxPriorWorkers)
+	// 城市打工人
+	global.NormalWorkerPool = make(chan struct{}, maxNormalWorkers)
+	for i := 0; i < maxNormalWorkers; i++ {
+		global.NormalWorkerPool <- struct{}{}
+	}
+	logafa.Debug("👷🏻城市打工人%v名 聘請成功", maxNormalWorkers)
 }
 
 func initEnv() (env string) {

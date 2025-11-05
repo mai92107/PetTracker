@@ -15,7 +15,6 @@ import (
 )
 
 func RouteFunction(topic string, payload string, qos byte) {
-
 	if strings.HasPrefix(topic, "req") {
 		requestType, jwt, clientId, ip := extractRequestFromTopic(topic)
 
@@ -59,11 +58,22 @@ func RouteFunction(topic string, payload string, qos byte) {
 
 // 處理接收到的訊息
 func OnMessageReceived(client mqtt.Client, msg mqtt.Message) {
+	payloadStr := string(msg.Payload()) // 只轉一次
 	logafa.Debug("📥 收到 MQTT 訊息！")
 	logafa.Debug("主題: %s", msg.Topic())
-	logafa.Debug("內容: %s", string(msg.Payload()))
+	logafa.Debug("內容: %s", payloadStr)
 
-	RouteFunction(msg.Topic(), string(msg.Payload()), msg.Qos())
+	// 呼叫工人
+	<-global.NormalWorkerPool
+	go func() {
+		defer func() {
+			global.NormalWorkerPool <- struct{}{}
+			if r := recover(); r != nil {
+				logafa.Error("MQTT handler panic: %v", r)
+			}
+		}()
+		RouteFunction(msg.Topic(), payloadStr, msg.Qos())
+	}()
 }
 
 func extractRequestFromTopic(topic string) (requestType, jwt, clientId, ip string) {

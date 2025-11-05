@@ -26,6 +26,11 @@ var (
 	IsConnected       atomic.Bool                           // 確認目前連線狀態
 )
 
+var(
+	PriorWorkerPool chan struct{}
+	NormalWorkerPool chan struct{}
+)
+
 type Repo struct {
 	DB    *DataBase
 	Cache *Cache
