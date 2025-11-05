@@ -11,8 +11,13 @@ import (
 const TIME_LAYOUT = "15:04:05"
 
 func CronStart() {
-	c := cron.New(cron.WithSeconds())
-
+	loc, _ := time.LoadLocation("Asia/Taipei")
+	c := cron.New(
+		cron.WithLocation(loc),
+		cron.WithChain(
+			cron.Recover(cron.DefaultLogger),
+		),
+	)
 	// // 每秒鐘執行一次
 	// c.AddFunc("* * * * * *", func() {
 	// 	logafa.Debug("每秒執行程序, 現在時間: %+v", time.Now().Format(TIME_LAYOUT))
@@ -28,7 +33,7 @@ func CronStart() {
 	// 每15分鐘執行一次
 	c.AddFunc("0 */15 * * * *", func() {
 		logafa.Debug("每15分鍾執行程序, 現在時間: %+v", time.Now().Format(TIME_LAYOUT))
-		persist.SaveGpsFmRedisToMaria()
+		go persist.SaveGpsFmRedisToMaria()
 		logafa.Debug("%v分執行完畢", time.Now().Minute())
 	})
 
@@ -47,7 +52,7 @@ func CronStart() {
 	// 每半天執行一次（每日00:00, 12:00）
 	c.AddFunc("0 0 0,12 * * *", func() {
 		logafa.Debug("每半天執行程序, 現在時間: %+v", time.Now().Format(TIME_LAYOUT))
-		logafa.RotateLogFile()
+		go logafa.RotateLogFile()
 		logafa.Debug("每日執行完畢")
 	})
 
