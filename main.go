@@ -4,6 +4,8 @@ import (
 	"batchLog/0.core/global"
 	"batchLog/0.core/initial"
 	"batchLog/0.core/logafa"
+	cron "batchLog/0.cron"
+	log "batchLog/0.cron/logafa"
 	router "batchLog/1.router"
 	"context"
 	"fmt"
@@ -17,7 +19,7 @@ import (
 )
 
 func main() {
-	logafa.CreateLogFileNow()
+	log.CreateLogFileNow()
 	initial.InitAll()
 
 	port := global.ConfigSetting.Port
@@ -47,7 +49,7 @@ func gracefulShutdown(srv *http.Server) {
 	<-quit // 等待訊號
 	logafa.Info("收到終止訊號，開始優雅關閉...")
 
-	logafa.ShutdownRotator()
+	cron.CheckIsCronJobsFinished()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
