@@ -18,10 +18,13 @@ var (
 
 // InitMosquitto 初始化 MQTT 連線
 func InitMosquitto(setting jsonModal.MosquittoConfig) mqtt.Client {
+
+	currentHost := setting.BrokerHostCloud
+
 	vagueTopic := setting.VagueTopic
 
 	opts := mqtt.NewClientOptions().
-		AddBroker(fmt.Sprintf("tcp://%s:%s", setting.BrokerHostCloud, setting.BrokerPort)).
+		AddBroker(fmt.Sprintf("tcp://%s:%s", currentHost, setting.BrokerPort)).
 		SetClientID(fmt.Sprintf("%s-%d", setting.ClientID, time.Now().UnixNano())).
 		SetUsername(setting.Username).
 		SetPassword(setting.Password).
@@ -46,7 +49,7 @@ func InitMosquitto(setting jsonModal.MosquittoConfig) mqtt.Client {
 	client := mqtt.NewClient(opts)
 
 	// 初次連線
-	logafa.Debug("🔌 正在連接到 MQTT Broker: %s:%s...", setting.BrokerHostLocal, setting.BrokerPort)
+	logafa.Debug("🔌 正在連接到 MQTT Broker: %s:%s...", currentHost, setting.BrokerPort)
 
 	// 初次連線（非阻塞）
 	if token := client.Connect(); token.WaitTimeout(30*time.Second) && token.Error() != nil {

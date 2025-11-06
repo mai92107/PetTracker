@@ -25,6 +25,11 @@ func SaveGpsFmRedisToMaria() {
 		return
 	}
 
+	if len(keys) == 0 {
+		logafa.Debug("取得 %v 筆裝置資料, 罷工回家睡覺", len(keys))
+		return
+	}
+
 	logafa.Debug("取得 %v 筆裝置資料, 開始讀取", len(keys))
 
 	end := time.Now().UTC()
