@@ -2,6 +2,7 @@ package deviceService
 
 import (
 	"batchLog/0.core/global"
+	repo "batchLog/4.repo"
 	"fmt"
 	"time"
 )
@@ -21,12 +22,7 @@ func MqttOnlineDevice() ([]string, error) {
 	}
 	defer global.ActiveDevicesLock.Unlock()
 
-	deviceList := make([]string, 0, len(global.ActiveDevices))
-	for deviceId, info := range global.ActiveDevices {
-		if !info.Online {
-			continue
-		}
-		deviceList = append(deviceList, deviceId)
-	}
-	return deviceList, nil
+	deviceIds, err := repo.GetOnlineDevices()
+
+	return deviceIds, err
 }

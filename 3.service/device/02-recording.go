@@ -5,12 +5,14 @@ import (
 	"batchLog/0.core/logafa"
 	repo "batchLog/4.repo"
 	"fmt"
+	"slices"
 )
 
-func Recording(lat, lng float64, deviceId, recordTime string) error {
+func Recording(lat, lng float64, memberId int64, deviceId, recordTime string) error {
 	err := validateRecording(lat, lng, deviceId)
 	if err != nil {
-		return fmt.Errorf("驗證失敗, error: %+v", err)
+		logafa.Error("驗證失敗, error: %+v", err)
+		return fmt.Errorf("驗證失敗")
 	}
 	tx := global.Repository.DB.MariaDb.Reading.Begin()
 	defer func() {
@@ -19,13 +21,19 @@ func Recording(lat, lng float64, deviceId, recordTime string) error {
 		}
 	}()
 
-	memberInfo, err := repo.FindMemberByDeviceId(tx, deviceId)
+	deviceIds, err := repo.GetDeviceIdsByMemberId(tx, memberId)
 	if err != nil {
-		return fmt.Errorf("查無此會員, error: %+v", err)
+		return err
 	}
-	err = repo.SaveLocation(lat, lng, deviceId, memberInfo.NickName, recordTime)
+
+	if len(deviceIds) == 0 || !slices.Contains(deviceIds, deviceId) {
+		logafa.Error("使用者: %v, 查無該裝置:%v",memberId, deviceId)
+		return fmt.Errorf("使用者查無該裝置")
+	}
+
+	err = repo.SaveLocation(lat, lng, deviceId, recordTime)
 	if err != nil {
-		return fmt.Errorf("裝置定位儲存失敗, error: %+v", err)
+		return err
 	}
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()

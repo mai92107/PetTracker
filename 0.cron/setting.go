@@ -2,8 +2,9 @@ package cron
 
 import (
 	"batchLog/0.core/global"
-	log "batchLog/0.cron/logafa"
 	logafa "batchLog/0.core/logafa"
+	"batchLog/0.cron/data"
+	log "batchLog/0.cron/logafa"
 	"batchLog/0.cron/persist"
 	"sync"
 	"time"
@@ -66,11 +67,12 @@ func CronStart() {
 	executeJob(c, HalfHour, []func(){})
 
 	// 每小時執行一次
-	executeJob(c, Hour, []func(){})
+	executeJob(c, Hour, []func(){
+		data.GetOnlineDevice,
+	})
 
 	// 每半天執行一次（每日00:00, 12:00）
-	executeJob(c, HalfDay, []func(){
-	})
+	executeJob(c, HalfDay, []func(){})
 
 	// 每天執行一次（每日00:00）
 	executeJob(c, Day, []func(){

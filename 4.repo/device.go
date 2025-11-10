@@ -6,6 +6,7 @@ import (
 	"batchLog/0.core/logafa"
 	"batchLog/0.core/redis"
 	"fmt"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -13,6 +14,26 @@ import (
 	"github.com/google/uuid"
 	jsoniter "github.com/json-iterator/go"
 )
+
+func GetDeviceIdsByMemberId(tx *gorm.DB, memberId int64) ([]string, error) {
+    var deviceIds []string
+
+    err := tx.Model(&gormTable.MemberDevice{}).
+             Where("member_id = ?", memberId).
+             Pluck("device_id", &deviceIds).Error
+
+    if err != nil {
+        logafa.Error("查詢會員 deviceId 失敗, memberId: %v, error: %+v", memberId, err)
+        return nil, fmt.Errorf("查無此會員或查詢失敗")
+    }
+
+    if len(deviceIds) == 0 {
+        logafa.Warn("會員存在但無綁定 device, memberId: %v", memberId)
+        return []string{}, nil
+    }
+
+    return deviceIds, nil
+}
 
 func FindDeviceByDeviceId(tx *gorm.DB, deviceId string) (*gormTable.Device, error) {
 	var device gormTable.Device
@@ -50,10 +71,10 @@ func generateDeviceId() string {
 	return fmt.Sprintf("%s-%06d", prefix, sequence)
 }
 
-func SaveLocation(lat, lng float64, deviceId, nickname, recordTime string) error {
+func SaveLocation(lat, lng float64, deviceId, recordTime string) error {
 	now := time.Now().UTC()
 	// 存入 redis 臨時保存
-	key := fmt.Sprintf("device:%s:%s", nickname, deviceId)
+	key := fmt.Sprintf("device:%s", deviceId)
 	score := float64(now.UnixMilli())
 	gps := gormTable.GPS{
 		DeviceId:   deviceId,
@@ -73,4 +94,26 @@ func SaveLocation(lat, lng float64, deviceId, nickname, recordTime string) error
 		return fmt.Errorf(global.COMMON_SYSTEM_ERROR)
 	}
 	return nil
+}
+
+func GetOnlineDevices() ([]string, error) {
+	keys, err := redis.KeyScan("device:*")
+	if err != nil {
+		logafa.Error("redis 掃描 device:* 失敗: %v", err)
+		return nil, fmt.Errorf("%s: redis scan error", global.COMMON_SYSTEM_ERROR)
+	}
+
+	deviceIds := make([]string, 0, len(keys))
+	for _, key := range keys {
+		if !strings.HasPrefix(key, "device:") {
+			continue // 防呆
+		}
+		parts := strings.SplitN(key, ":", 2) // 只切一次
+		if len(parts) == 2 {
+			deviceIds = append(deviceIds, parts[1])
+		}
+	}
+
+	logafa.Info("目前在線裝置數量: %d", len(deviceIds))
+	return deviceIds, nil
 }

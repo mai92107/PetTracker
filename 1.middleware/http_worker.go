@@ -15,6 +15,7 @@ func WorkerMiddleware() gin.HandlerFunc {
 		// 確保最後釋放
 		defer func() {
 			global.NormalWorkerPool <- struct{}{}
+			logafa.Debug("工作完畢")
 			if r := recover(); r != nil {
 				logafa.Error("Handler panic recovered: %v", r)
 				c.JSON(500, gin.H{"error": "internal server error"})
