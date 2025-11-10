@@ -50,7 +50,7 @@
   },
   "mosquittoBroker": {
     "in_use": true,
-    "broker_host_cloud": "test.mosquitto.org",
+    "broker_host_cloud": "mqttgo.io",
     "broker_host_local": "localhost",
     "broker_port": "1883",
     "username": "",
