@@ -2,6 +2,7 @@ package initial
 
 import (
 	jsonModal "batchLog/0.config"
+	"batchLog/0.core/global"
 	"batchLog/0.core/logafa"
 	router "batchLog/1.router"
 	"fmt"
@@ -56,7 +57,8 @@ func InitMosquitto(setting jsonModal.MosquittoConfig) mqtt.Client {
 		logafa.Error("Mosquitto 初始連線失敗：%v", token.Error())
 		return nil
 	}
-
+	// 更新連線狀態
+	global.IsConnected.Swap(true)
 	logafa.Debug("✅ MQTT 客戶端初始化成功")
 	return client
 }
@@ -88,5 +90,7 @@ func onConnectionLost(client mqtt.Client, err error) {
 	logafa.Error("🚫 Mosquitto 伺服器連線斷開: %v", err)
 	subscriptionMutex.Lock()
 	subscribedTopics = make(map[string]bool)
+	// 更新連線狀態
+	global.IsConnected.Swap(false)
 	subscriptionMutex.Unlock()
 }
