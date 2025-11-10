@@ -28,3 +28,7 @@ type Claims struct {
 	LoginIp			string		`json:"loginIp"`
 	jwt.RegisteredClaims
 }
+
+func (c Claims)IsAdmin()bool{
+	return c.Identity == "ADMIN"
+}

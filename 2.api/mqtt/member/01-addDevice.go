@@ -21,11 +21,6 @@ func AddDevice(payload, jwt, clientId, ip string) {
 	requestTime := time.Now().UTC()
 	errTopic := "errReq/" + clientId
 
-	if jwt == "" {
-		logafa.Error("JWT 參數錯誤, JWT: %s", jwt)
-		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, "JWT 參數錯誤")
-		return
-	}
 	if payload == "" || payload == "{}" {
 		logafa.Error("Payload 為空")
 		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, "Payload 為空")

@@ -5,7 +5,6 @@ import (
 	"time"
 
 	response "batchLog/0.core/commonResponse"
-	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
 	deviceService "batchLog/3.service/device"
 
@@ -20,22 +19,12 @@ func MqttOnlineDevice(payload, jwt, clientId, ip string) {
 	requestTime := time.Now().UTC()
 	errTopic := "errReq/" + clientId
 
-	if jwt == "" {
-		logafa.Error("JWT 參數錯誤, JWT: %s", jwt)
-		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, "JWT 參數錯誤")
-		return
-	}
 	if payload == "" || payload == "{}" {
 		logafa.Error("Payload 為空")
 		response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, "Payload 為空")
 		return
 	}
-	userData, err := jwtUtil.GetUserDataFromJwt(jwt)
-	if err != nil || userData.Identity != "ADMIN" {
-		logafa.Error("身份認證錯誤, error: %+v", err)
-		response.ErrorMqtt(errTopic, http.StatusForbidden, requestTime, "身份認證錯誤")
-		return
-	}
+
 	var req request03
 	if err := jsoniter.UnmarshalFromString(payload, &req); err != nil {
 		logafa.Error("Json 格式錯誤, error: %+v", err)

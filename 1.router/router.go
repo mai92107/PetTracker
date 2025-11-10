@@ -13,6 +13,9 @@ import (
 
 func RegisterRoutes(r *gin.Engine) {
 
+	const ADMIN = "ADMIN"
+	const MEMBER = "MEMBER"
+
 	r.Use(middleware.WorkerMiddleware())
 
 	// 註冊路由
@@ -31,19 +34,19 @@ func RegisterRoutes(r *gin.Engine) {
 
 	trackGroup := r.Group("/device")
 	{
-		trackGroup.POST("/create", deviceHttp.Create)
-		trackGroup.POST("/recording", deviceHttp.Recording)
-		trackGroup.GET("/onlineDevice", deviceHttp.MqttOnlineDevice)
-		trackGroup.GET(":deviceId/status", deviceHttp.DeviceStatus)
+		trackGroup.POST("/create", middleware.JWTValidator("ADMIN"), deviceHttp.Create)
+		trackGroup.POST("/recording", middleware.JWTValidator("MEMBER"), deviceHttp.Recording)
+		trackGroup.GET("/onlineDevice", middleware.JWTValidator("ADMIN"), deviceHttp.MqttOnlineDevice)
+		trackGroup.GET(":deviceId/status", middleware.JWTValidator("ADMIN"), deviceHttp.DeviceStatus)
 	}
 
 	memberGroup := r.Group("/member")
 	{
-		memberGroup.POST("/addDevice", memberHttp.AddDevice)
+		memberGroup.POST("/addDevice", middleware.JWTValidator("MEMBER"), memberHttp.AddDevice)
 	}
 
 	systemGroup := r.Group("/system")
 	{
-		systemGroup.GET("/status", systemHttp.SystemStatus)
+		systemGroup.GET("/status", middleware.JWTValidator("MEMBER"), systemHttp.SystemStatus)
 	}
 }

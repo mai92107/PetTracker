@@ -1,7 +1,15 @@
+// router/mqtt_router.go
 package router
 
 import (
+	"fmt"
+	"net/http"
+	"strings"
+	"time"
+
+	response "batchLog/0.core/commonResponse"
 	"batchLog/0.core/global"
+	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
 	mqttUtils "batchLog/2.api/mqtt"
 	accountMqtt "batchLog/2.api/mqtt/account"
@@ -9,80 +17,136 @@ import (
 	homeMqtt "batchLog/2.api/mqtt/home"
 	memberMqtt "batchLog/2.api/mqtt/member"
 	systemMqtt "batchLog/2.api/mqtt/system_config"
-	"strings"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
-func RouteFunction(topic string, payload string, qos byte) {
-	if strings.HasPrefix(topic, "req") {
-		requestType, jwt, clientId, ip := extractRequestFromTopic(topic)
+type MqttHandler func(payload, jwt, clientId, ip string)
 
-		switch requestType {
-		// no need verify jwt
-		case "account_login":
-			accountMqtt.Login(payload, clientId, ip)
-		case "account_register":
-			accountMqtt.Register(payload, clientId, ip)
-		case "home_hello":
-			homeMqtt.SayHello(payload, clientId)
-		case "config_status":
-			systemMqtt.SystemStatus(payload, clientId)
+type Permission int
 
-		// need verify jwt
-		// admin
-		case "device_create":
-			deviceMqtt.Create(payload, jwt, clientId, ip)
-		case "device_online":
-			deviceMqtt.MqttOnlineDevice(payload, jwt, clientId, ip)
-		case "device_status":
-			deviceMqtt.DeviceStatus(payload, jwt, clientId, ip)
+const (
+	PermGuest Permission = iota
+	PermMember
+	PermAdmin
+)
 
-		// member
-		case "device_recording":
-			deviceMqtt.Recording(payload, jwt, clientId, ip)
-		case "member_addDevice":
-			memberMqtt.AddDevice(payload, jwt, clientId, ip)
+type Route struct {
+	Pattern    string
+	Handler    MqttHandler
+	Permission Permission
+}
 
-		// debug utils
-		case "encrypt":
-			mqttUtils.Encrypt(payload, global.ConfigSetting.DefaultSecretKey)
-		case "decrypt":
-			mqttUtils.Decrypt(payload, global.ConfigSetting.DefaultSecretKey)
+var mqttRoutes = []Route{
+	// Guest (無需 JWT)
+	{"account_login", accountMqtt.Login, PermGuest},
+	{"account_register", accountMqtt.Register, PermGuest},
+	{"home_hello", homeMqtt.SayHello, PermGuest},
+	{"system_status", systemMqtt.SystemStatus, PermGuest},
 
-		default:
-			logafa.Warn("⚠️ 未知的 request 類型: %s (topic: %s), payload: %+v", requestType, topic, payload)
+	// Admin
+	{"device_create", deviceMqtt.Create, PermAdmin},
+	{"device_online", deviceMqtt.MqttOnlineDevice, PermAdmin},
+	{"device_status", deviceMqtt.DeviceStatus, PermAdmin},
+
+	// Member
+	{"device_recording", deviceMqtt.Recording, PermMember},
+	{"member_addDevice", memberMqtt.AddDevice, PermMember},
+}
+
+// topic sample : req/action/clientId/jwt/ip
+
+func RouteFunction(action, payload, clientId, jwt, ip string) {
+	// 查找路由
+	for _, route := range mqttRoutes {
+		if action != route.Pattern {
+			continue
 		}
+
+		// 權限檢查
+		if !checkPermission(route.Permission, jwt) {
+			logafa.Warn("權限不足: %s (client: %s)", route.Pattern, clientId)
+			sendBackErrMsg(clientId, "權限不足: %s (client: %s)", route.Pattern, clientId)
+			return
+		}
+
+		route.Handler(payload, jwt, clientId, ip)
+		return
+	}
+
+	routes := []string{}
+	for _,route := range mqttRoutes{
+		routes = append(routes, route.Pattern)
+	}
+
+	// === Debug 工具 ===
+	switch action {
+	case "encrypt":
+		mqttUtils.Encrypt(payload, global.ConfigSetting.DefaultSecretKey)
+	case "decrypt":
+		mqttUtils.Decrypt(payload, global.ConfigSetting.DefaultSecretKey)
+	default:
+		logafa.Warn("未知 MQTT 請求: %s", action)
+		sendBackErrMsg(clientId, "未知 MQTT 請求: %s, 核可請求為: %+v", action, routes)
 	}
 }
 
-// 處理接收到的訊息
 func OnMessageReceived(client mqtt.Client, msg mqtt.Message) {
-	payloadStr := string(msg.Payload()) // 只轉一次
-	logafa.Debug("📥 收到 MQTT 訊息！")
-	logafa.Debug("主題: %s", msg.Topic())
-	logafa.Debug("內容: %s", payloadStr)
+	payload := string(msg.Payload())
+	topic := msg.Topic()
 
-	// 呼叫工人
+	logafa.Debug("收到 MQTT 訊息！Topic: %s | Payload: %s", topic, payload)
+
+	action, clientId, jwt, ip := extractInfoFromTopic(topic)
+	if action == "" || ip == "" {
+		logafa.Warn("無法解析 action 或 ip: %s", topic)
+		sendBackErrMsg(clientId, "無法解析 action 或 ip: %s", topic)
+		return
+	}
+
+	// 使用 worker pool 執行
 	<-global.NormalWorkerPool
 	go func() {
 		defer func() {
 			global.NormalWorkerPool <- struct{}{}
 			if r := recover(); r != nil {
-				logafa.Error("MQTT handler panic: %v", r)
+				logafa.Error("MQTT handler panic: %v\n on %s", r, topic)
 			}
 		}()
-		RouteFunction(msg.Topic(), payloadStr, msg.Qos())
+		RouteFunction(action, payload, clientId, jwt, ip)
 	}()
 }
 
-func extractRequestFromTopic(topic string) (requestType, jwt, clientId, ip string) {
-
-	// 取得 requestType 和 ip
-	// 格式為 request/{requestType}/{jwt}/{clientId}/{ip}
+func extractInfoFromTopic(topic string) (action, clientId, jwt, ip string) {
 	parts := strings.Split(topic, "/")
-	if len(parts) < 5 {
-		return "", "", "", ""
-	}
 	return parts[1], parts[2], parts[3], parts[4]
+}
+
+func checkPermission(perm Permission, jwt string) bool {
+	switch perm {
+	case PermGuest:
+		return true
+	case PermMember, PermAdmin:
+		if jwt == "" {
+			return false
+		}
+		claims, err := jwtUtil.GetUserDataFromJwt(jwt)
+		if err != nil {
+			logafa.Warn("JWT 解析失敗: %v", err)
+			return false
+		}
+		if perm == PermAdmin && !claims.IsAdmin() {
+			return false
+		}
+		return true
+	default:
+		return false
+	}
+}
+
+func sendBackErrMsg(clientId, reason string, args ...interface{}) {
+	requestTime := time.Now().UTC()
+	errTopic := "errReq/" + clientId
+	fullReason := fmt.Sprintf(reason, args...)
+	response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, fullReason)
 }

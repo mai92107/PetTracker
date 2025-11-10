@@ -13,7 +13,7 @@ type request01 struct {
 	SubscribeTo string `json:"subscribeTo"`
 }
 
-func SayHello(payload, clientId string) {
+func SayHello(payload, jwt, clientId, ip string) {
 	requestTime := time.Now().UTC()
 	errTopic := "errReq/" + clientId
 	if payload == "" || payload == "{}" {

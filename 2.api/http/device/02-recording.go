@@ -16,8 +16,7 @@ type request02 struct {
 	Longitude float64 `json:"lng"`
 	Latitude  float64 `json:"lat"`
 	DeviceID  string `json:"deviceId"`
-	SubscribeTo string  `json:"subscribeTo"`
-	RecordAt    string  `json:"recordAt"`
+	RecordAt  string  `json:"recordAt"`
 }
 
 func Recording(c *gin.Context) {
@@ -29,13 +28,13 @@ func Recording(c *gin.Context) {
 		return
 	}
 	jwt := c.GetHeader("jwt")
-	_, err = jwtUtil.GetUserDataFromJwt(jwt)
+	claim, err := jwtUtil.GetUserDataFromJwt(jwt)
 	if err != nil {
 		logafa.Error("身份認證錯誤, error: %+v", err)
 		response.Error(c, http.StatusForbidden, requestTime, "身份認證錯誤")
 		return
 	}
 
-	deviceService.Recording(req.Latitude, req.Longitude, req.DeviceID, req.RecordAt)
+	deviceService.Recording(req.Latitude, req.Longitude, claim.MemberId, req.DeviceID, req.RecordAt)
 	response.Success(c, requestTime, "")
 }
