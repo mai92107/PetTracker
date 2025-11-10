@@ -1,6 +1,7 @@
 package router
 
 import (
+	middleware "batchLog/1.middleware"
 	accountHttp "batchLog/2.api/http/account"
 	deviceHttp "batchLog/2.api/http/device"
 	homeHttp "batchLog/2.api/http/home"
@@ -11,6 +12,8 @@ import (
 )
 
 func RegisterRoutes(r *gin.Engine) {
+
+	r.Use(middleware.WorkerMiddleware())
 
 	// 註冊路由
 	// TODO: 未來需要檢查ip body header 在路徑後加上middleware檢查
