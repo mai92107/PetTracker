@@ -52,6 +52,6 @@ func rotateLogFile() {
 	}
 
 	logafa.LogFile = file
-	logafa.Debug("%+v 分開始使用新 log file", time.Now().Minute())
+	logafa.Debug("%+v 日開始使用新 log file", time.Now().Day())
 	logafa.Info("[LOGAFA] Rotated to: %s", filename)
 }

@@ -70,11 +70,12 @@ func CronStart() {
 
 	// 每半天執行一次（每日00:00, 12:00）
 	executeJob(c, HalfDay, []func(){
-		log.StartRotateFile,
 	})
 
 	// 每天執行一次（每日00:00）
-	executeJob(c, Day, []func(){})
+	executeJob(c, Day, []func(){
+		log.StartRotateFile,
+	})
 
 	c.Start()
 }
