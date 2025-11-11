@@ -39,7 +39,8 @@ func Login(ip, accountName, password string) (map[string]interface{}, error) {
 	// 驗證密碼
 	if !common.BcryptCompare(userAccount.Password, password) {
 		tx.Rollback()
-		return data, err
+
+		return data, fmt.Errorf("密碼錯誤")
 	}
 
 	err = repo.UpdateLoginTime(tx, userAccount.Uuid)
