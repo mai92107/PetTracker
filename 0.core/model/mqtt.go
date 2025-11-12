@@ -31,7 +31,5 @@ type MqttPayload struct{
 }
 
 type DeviceStatus struct {
-	QoS        byte
-	LastSeen   time.Time
-	Online     bool
+	LastSeen   string	`json:"lastSeen"`
 }

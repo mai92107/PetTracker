@@ -29,5 +29,5 @@ func DeviceStatus(c *gin.Context) {
 		response.Error(c, http.StatusInternalServerError, requestTime, "系統發生錯誤, 請稍後嘗試")
 		return
 	}
-	response.Success(c, requestTime, *info)
+	response.Success(c, requestTime, info)
 }

@@ -3,6 +3,7 @@ package deviceService
 import (
 	"batchLog/0.core/global"
 	"batchLog/0.core/logafa"
+	"batchLog/0.core/model"
 	repo "batchLog/4.repo"
 	"fmt"
 	"slices"
@@ -27,7 +28,7 @@ func Recording(lat, lng float64, memberId int64, deviceId, recordTime string) er
 	}
 
 	if len(deviceIds) == 0 || !slices.Contains(deviceIds, deviceId) {
-		logafa.Error("使用者: %v, 查無該裝置:%v",memberId, deviceId)
+		logafa.Error("使用者: %v, 查無該裝置:%v", memberId, deviceId)
 		return fmt.Errorf("使用者查無該裝置")
 	}
 
@@ -35,11 +36,21 @@ func Recording(lat, lng float64, memberId int64, deviceId, recordTime string) er
 	if err != nil {
 		return err
 	}
+	updateGlobalDeviceInfo(deviceId, recordTime)
+
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()
 		return fmt.Errorf("交易提交失敗, error: %+v", err)
 	}
 	return nil
+}
+
+func updateGlobalDeviceInfo(deviceId string, now string) {
+	global.ActiveDevicesLock.Lock()
+	global.ActiveDevices[deviceId] = model.DeviceStatus{
+		LastSeen: now,
+	}
+	global.ActiveDevicesLock.Unlock()
 }
 
 func validateRecording(lat, lng float64, deviceId string) error {

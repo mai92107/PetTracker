@@ -10,10 +10,38 @@ import (
 	"time"
 )
 
-func MqttDeviceStatus(deviceId string, member model.Claims) (*model.DeviceStatus, error) {
+func MqttDeviceStatus(deviceId string, member model.Claims) (map[string]any, error) {
 
-	validateDeviceOwner(deviceId, member)
+	err := validateDeviceOwner(deviceId, member)
+	if err != nil {
+		return nil, err
+	}
 
+	lastSeen,err := getDeviceInfo(deviceId)
+	if err != nil {
+		return nil, err
+	}
+	isOnline, err := getDeviceOnline(deviceId)
+	if err != nil {
+		return nil, err
+	}
+
+	return map[string]any{
+		"lastSeen": lastSeen,
+		"online":   isOnline,
+	}, nil
+}
+
+func getDeviceOnline(deviceId string)(bool,error){
+	devices, err := repo.GetOnlineDevices()
+	if err != nil{
+		return false, err
+	}
+	exist := slices.Contains(devices, deviceId)
+	return exist, nil
+}
+
+func getDeviceInfo(deviceId string) (string, error) {
 	const timeout = 2 * time.Second
 	start := time.Now()
 	for {
@@ -22,15 +50,18 @@ func MqttDeviceStatus(deviceId string, member model.Claims) (*model.DeviceStatus
 		}
 		if time.Since(start) > timeout {
 			// 鎖超時
-			return nil, fmt.Errorf("警告：MqttOnlineDevice() 嘗試加鎖超過 2 秒，放棄。")
+			return "", fmt.Errorf("警告：MqttOnlineDevice() 嘗試加鎖超過 2 秒，放棄。")
 		}
 		time.Sleep(10 * time.Millisecond)
 	}
 	defer global.ActiveDevicesLock.Unlock()
 
 	info := global.ActiveDevices[deviceId]
-
-	return &info, nil
+	last := info.LastSeen
+	if last == ""{
+		last = "----/--/-- --:--:--"
+	}
+	return last, nil
 }
 
 func validateDeviceOwner(deviceId string, member model.Claims) error {
@@ -48,7 +79,7 @@ func validateDeviceOwner(deviceId string, member model.Claims) error {
 	if err != nil {
 		return err
 	}
-	if !slices.Contains(deviceIds, deviceId){
+	if !slices.Contains(deviceIds, deviceId) {
 		logafa.Debug("用戶 %v 嘗試讀取裝置 %s 資訊", member.MemberId, deviceId)
 		return fmt.Errorf("無權限執行此操作")
 	}

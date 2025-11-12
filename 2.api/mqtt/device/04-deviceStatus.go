@@ -48,5 +48,5 @@ func DeviceStatus(payload, jwt, clientId, ip string) {
 		response.ErrorMqtt(errTopic, http.StatusInternalServerError, requestTime, "系統發生錯誤, 請稍後嘗試")
 		return
 	}
-	response.SuccessMqtt(req.SubscribeTo, requestTime, *info)
+	response.SuccessMqtt(req.SubscribeTo, requestTime, info)
 }

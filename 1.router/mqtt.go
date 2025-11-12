@@ -55,7 +55,6 @@ var mqttRoutes = []Route{
 }
 
 // topic sample : req/action/clientId/jwt/ip
-
 func RouteFunction(action, payload, clientId, jwt, ip string) {
 	// 查找路由
 	for _, route := range mqttRoutes {
