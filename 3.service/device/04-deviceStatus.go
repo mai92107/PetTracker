@@ -16,14 +16,17 @@ func MqttDeviceStatus(deviceId string, member model.Claims) (map[string]any, err
 	if err != nil {
 		return nil, err
 	}
-
-	lastSeen,err := getDeviceInfo(deviceId)
-	if err != nil {
-		return nil, err
-	}
 	isOnline, err := getDeviceOnline(deviceId)
 	if err != nil {
 		return nil, err
+	}
+	var lastSeen = time.Now().UTC().Format(global.TIME_FORMAT)
+
+	if !isOnline{
+		lastSeen,err = getDeviceInfo(deviceId)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return map[string]any{

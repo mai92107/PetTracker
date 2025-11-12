@@ -37,7 +37,7 @@ func RegisterRoutes(r *gin.Engine) {
 		trackGroup.POST("/create", middleware.JWTValidator("ADMIN"), deviceHttp.Create)
 		trackGroup.POST("/recording", middleware.JWTValidator("MEMBER"), deviceHttp.Recording)
 		trackGroup.GET("/onlineDevice", middleware.JWTValidator("ADMIN"), deviceHttp.MqttOnlineDevice)
-		trackGroup.GET(":deviceId/status", middleware.JWTValidator("ADMIN"), deviceHttp.DeviceStatus)
+		trackGroup.GET("/:deviceId/status", middleware.JWTValidator("MEMBER"), deviceHttp.DeviceStatus)
 	}
 
 	memberGroup := r.Group("/member")
