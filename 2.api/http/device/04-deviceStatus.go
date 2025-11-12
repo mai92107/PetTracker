@@ -18,12 +18,12 @@ func DeviceStatus(c *gin.Context) {
 
 	jwt := c.GetHeader("jwt")
 	userInfo, err := jwtUtil.GetUserDataFromJwt(jwt)
-	if err != nil || userInfo.Identity != "ADMIN" {
+	if err != nil {
 		logafa.Error("身份認證錯誤, error: %+v", err)
 		response.Error(c, http.StatusForbidden, requestTime, "身份認證錯誤")
 		return
 	}
-	info, err := deviceService.MqttDeviceStatus(deviceId)
+	info, err := deviceService.MqttDeviceStatus(deviceId, userInfo)
 	if err != nil {
 		logafa.Error("系統發生錯誤, error: %+v", err)
 		response.Error(c, http.StatusInternalServerError, requestTime, "系統發生錯誤, 請稍後嘗試")

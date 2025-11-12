@@ -43,15 +43,15 @@ var mqttRoutes = []Route{
 	{"account_register", accountMqtt.Register, PermGuest},
 	{"home_hello", homeMqtt.SayHello, PermGuest},
 	{"system_status", systemMqtt.SystemStatus, PermGuest},
-
+	
 	// Admin
 	{"device_create", deviceMqtt.Create, PermAdmin},
 	{"device_online", deviceMqtt.MqttOnlineDevice, PermAdmin},
-	{"device_status", deviceMqtt.DeviceStatus, PermAdmin},
-
+	
 	// Member
 	{"device_recording", deviceMqtt.Recording, PermMember},
 	{"member_addDevice", memberMqtt.AddDevice, PermMember},
+	{"device_status", deviceMqtt.DeviceStatus, PermMember},
 }
 
 // topic sample : req/action/clientId/jwt/ip
