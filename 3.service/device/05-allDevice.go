@@ -1,0 +1,27 @@
+package deviceService
+
+import (
+	"batchLog/0.core/global"
+	"batchLog/0.core/logafa"
+	repo "batchLog/4.repo"
+	"fmt"
+)
+
+func AllDevice() ([]string, error) {
+	tx := global.Repository.DB.MariaDb.Reading.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			logafa.Error("DB tx 啟動失敗")
+		}
+	}()
+	deviceIds, err := repo.GetAllDeviceIds(tx)
+	if err != nil {
+		return []string{}, err
+	}
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return []string{}, fmt.Errorf("交易提交失敗, error: %+v", err)
+	}
+
+	return deviceIds, nil
+}

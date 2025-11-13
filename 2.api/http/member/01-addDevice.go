@@ -39,7 +39,7 @@ func AddDevice(c *gin.Context) {
 
 	err = memberService.AddDevice(userData.MemberId, req.DeviceId, req.DeviceName)
 	if err != nil {
-		logafa.Error("身份認證錯誤, error: %+v", err)
+		logafa.Error("裝置新增錯誤, error: %+v", err)
 		response.Error(c, http.StatusInternalServerError, requestTime, "裝置新增錯誤")
 		return
 	}

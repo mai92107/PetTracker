@@ -2,12 +2,19 @@ package memberService
 
 import (
 	"batchLog/0.core/global"
+	"batchLog/0.core/logafa"
 	repo "batchLog/4.repo"
+	"fmt"
 )
 
 func AddDevice(memberId int64, deviceId, deviceName string) error {
-	readingDB := global.Repository.DB.MariaDb.Reading
-	device, err := repo.FindDeviceByDeviceId(readingDB, deviceId)
+	tx := global.Repository.DB.MariaDb.Reading.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			logafa.Error("DB tx 啟動失敗")
+		}
+	}()
+	device, err := repo.FindDeviceByDeviceId(tx, deviceId)
 	if err != nil {
 		return err
 	}
@@ -15,6 +22,10 @@ func AddDevice(memberId int64, deviceId, deviceName string) error {
 	err = repo.AddDevice(writingDB, memberId, device.DeviceId, deviceName)
 	if err != nil {
 		return err
+	}
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return fmt.Errorf("交易提交失敗, error: %+v", err)
 	}
 	return nil
 }

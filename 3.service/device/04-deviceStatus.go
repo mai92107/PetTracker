@@ -74,13 +74,7 @@ func getDeviceInfo(deviceId string) (string, error) {
 }
 
 func getRecordInfo(deviceId string) (string, error) {
-	tx := global.Repository.DB.MongoDb.Reading
-	defer func() {
-		if r := recover(); r != nil {
-			logafa.Error("讀取定位資訊失敗")
-		}
-	}()
-	info, err := repo.GetLatestDeviceRecordByDeviceId(tx, deviceId)
+	info, err := repo.GetLatestDeviceRecordByDeviceId(deviceId)
 	if err != nil {
 		return "", fmt.Errorf("無法取得裝置定位資訊, error: %+v", err)
 	}
@@ -108,6 +102,10 @@ func validateDeviceOwner(deviceId string, member model.Claims) error {
 	if !slices.Contains(deviceIds, deviceId) {
 		logafa.Debug("用戶 %v 嘗試讀取裝置 %s 資訊", member.MemberId, deviceId)
 		return fmt.Errorf("無權限執行此操作")
+	}
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return fmt.Errorf("交易提交失敗, error: %+v", err)
 	}
 	return nil
 }

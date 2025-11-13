@@ -38,11 +38,13 @@ func RegisterRoutes(r *gin.Engine) {
 		trackGroup.POST("/recording", middleware.JWTValidator("MEMBER"), deviceHttp.Recording)
 		trackGroup.GET("/onlineDevice", middleware.JWTValidator("ADMIN"), deviceHttp.MqttOnlineDevice)
 		trackGroup.GET("/:deviceId/status", middleware.JWTValidator("MEMBER"), deviceHttp.DeviceStatus)
+		trackGroup.GET("/all", middleware.JWTValidator("ADMIN"), deviceHttp.AllDevice)
 	}
 
 	memberGroup := r.Group("/member")
 	{
 		memberGroup.POST("/addDevice", middleware.JWTValidator("MEMBER"), memberHttp.AddDevice)
+		memberGroup.GET("/allDevice", middleware.JWTValidator("MEMBER"), memberHttp.MemberDevice)
 	}
 
 	systemGroup := r.Group("/system")

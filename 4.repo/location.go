@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 
+	"batchLog/0.core/global"
 	gormTable "batchLog/0.core/gorm"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -10,8 +11,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func GetLatestDeviceRecordByDeviceId(db *mongo.Database, deviceId string) (*gormTable.DeviceLocation, error) {
-	collection := db.Collection("pettrack")
+func GetLatestDeviceRecordByDeviceId(deviceId string) (*gormTable.DeviceLocation, error) {
+	mongoDb := global.Repository.DB.MongoDb.Reading
+	collection := mongoDb.Collection("pettrack")
 
 	var result gormTable.DeviceLocation
 	err := collection.FindOne(

@@ -15,6 +15,17 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
+func GetAllDeviceIds(tx *gorm.DB)([]string, error){
+	var deviceIds []string
+	err := tx.Model(&gormTable.Device{}).
+	 		Pluck("device_id", &deviceIds).Error
+	if err != nil {
+        logafa.Error("查詢所有 deviceIds 失敗, error: %+v", err)
+        return nil, fmt.Errorf("裝置ID查詢失敗")
+    }
+	return deviceIds,nil
+}
+
 func GetDeviceIdsByMemberId(tx *gorm.DB, memberId int64) ([]string, error) {
     var deviceIds []string
 

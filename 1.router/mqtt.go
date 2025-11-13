@@ -47,11 +47,13 @@ var mqttRoutes = []Route{
 	// Admin
 	{"device_create", deviceMqtt.Create, PermAdmin},
 	{"device_online", deviceMqtt.MqttOnlineDevice, PermAdmin},
+	{"device_all", deviceMqtt.AllDevice, PermAdmin},
 	
 	// Member
 	{"device_recording", deviceMqtt.Recording, PermMember},
 	{"member_addDevice", memberMqtt.AddDevice, PermMember},
 	{"device_status", deviceMqtt.DeviceStatus, PermMember},
+	{"member_devices", memberMqtt.MemberDevices, PermMember},
 }
 
 // topic sample : req/action/clientId/jwt/ip
