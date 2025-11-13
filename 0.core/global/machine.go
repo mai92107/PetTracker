@@ -44,8 +44,8 @@ type SqlDB struct {
 	Writing *gorm.DB
 }
 type NoSqlDB struct {
-	Reading *mongo.Client
-	Writing *mongo.Client
+	Reading *mongo.Database
+	Writing *mongo.Database
 }
 type Cache struct {
 	Reading *redis.Client

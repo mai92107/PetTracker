@@ -69,8 +69,8 @@ func InitMongoDB(setting jsonModal.MongoDbConfig) *global.NoSqlDB {
 	initMongoIndexes(client)
 
 	return &global.NoSqlDB{
-		Reading: client,
-		Writing: client,
+		Reading: client.Database("pettrack"),
+		Writing: client.Database("pettrack"),
 	}
 }
 

@@ -11,8 +11,6 @@ func WorkerMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 搶 worker（會阻塞直到有空位）
 		<-global.NormalWorkerPool
-
-		// 確保最後釋放
 		defer func() {
 			global.NormalWorkerPool <- struct{}{}
 			logafa.Debug("工作完畢")
@@ -21,9 +19,6 @@ func WorkerMiddleware() gin.HandlerFunc {
 				c.JSON(500, gin.H{"error": "internal server error"})
 			}
 		}()
-
-		// 執行真正的 handler
-		logafa.Debug("%s 請完工人, 開始工作",c.Request.RequestURI)
 		c.Next()
 	}
 }

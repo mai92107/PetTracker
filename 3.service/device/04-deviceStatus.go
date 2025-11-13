@@ -1,6 +1,7 @@
 package deviceService
 
 import (
+	common "batchLog/0.core/commonFunction"
 	"batchLog/0.core/global"
 	"batchLog/0.core/logafa"
 	"batchLog/0.core/model"
@@ -20,24 +21,30 @@ func MqttDeviceStatus(deviceId string, member model.Claims) (map[string]any, err
 	if err != nil {
 		return nil, err
 	}
-	var lastSeen = time.Now().UTC().Format(global.TIME_FORMAT)
 
-	if !isOnline{
-		lastSeen,err = getDeviceInfo(deviceId)
-		if err != nil {
-			return nil, err
-		}
+	// 從全癒取得最新資料
+	lastSeenFromGlobal, err := getDeviceInfo(deviceId)
+	if err != nil {
+		return nil, err
 	}
+	// 若 重啟 全域變數會消失 則從DB找最新紀錄
+	lastSeenFromMongo, err := getRecordInfo(deviceId)
+	if err != nil {
+		return nil, err
+	}
+	lastSeenDefault := "----/--/-- --:--:--"
 
+	lastSeen := common.Coalesce(lastSeenFromGlobal, lastSeenFromMongo, lastSeenDefault)
+	
 	return map[string]any{
 		"lastSeen": lastSeen,
 		"online":   isOnline,
 	}, nil
 }
 
-func getDeviceOnline(deviceId string)(bool,error){
+func getDeviceOnline(deviceId string) (bool, error) {
 	devices, err := repo.GetOnlineDevices()
-	if err != nil{
+	if err != nil {
 		return false, err
 	}
 	exist := slices.Contains(devices, deviceId)
@@ -59,12 +66,28 @@ func getDeviceInfo(deviceId string) (string, error) {
 	}
 	defer global.ActiveDevicesLock.Unlock()
 
-	info := global.ActiveDevices[deviceId]
-	last := info.LastSeen
-	if last == ""{
-		last = "----/--/-- --:--:--"
+	info, exist := global.ActiveDevices[deviceId]
+	if !exist {
+		return "", nil
 	}
-	return last, nil
+	return info.LastSeen, nil
+}
+
+func getRecordInfo(deviceId string) (string, error) {
+	tx := global.Repository.DB.MongoDb.Reading
+	defer func() {
+		if r := recover(); r != nil {
+			logafa.Error("讀取定位資訊失敗")
+		}
+	}()
+	info, err := repo.GetLatestDeviceRecordByDeviceId(tx, deviceId)
+	if err != nil {
+		return "", fmt.Errorf("無法取得裝置定位資訊, error: %+v", err)
+	}
+	if info == nil {
+		return "", nil
+	}
+	return info.RecordedAt.Format(global.TIME_FORMAT), nil
 }
 
 func validateDeviceOwner(deviceId string, member model.Claims) error {

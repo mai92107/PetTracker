@@ -93,7 +93,6 @@ func saveToDB(records []gormTable.DeviceLocation) error {
 	defer cancel()
 
 	collection := global.Repository.DB.MongoDb.Writing.
-		Database("pettrack").
 		Collection("pettrack")
 
 	// 使用 BulkWrite 進行 upsert,防止重複資料
