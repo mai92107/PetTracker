@@ -15,8 +15,9 @@ import (
 type request02 struct {
 	Longitude float64 `json:"lng"`
 	Latitude  float64 `json:"lat"`
-	DeviceID  string `json:"deviceId"`
+	DeviceID  string  `json:"deviceId"`
 	RecordAt  string  `json:"recordAt"`
+	DataRef   string  `json:"dataRef"`
 }
 
 func Recording(c *gin.Context) {
@@ -35,6 +36,6 @@ func Recording(c *gin.Context) {
 		return
 	}
 
-	deviceService.Recording(req.Latitude, req.Longitude, claim.MemberId, req.DeviceID, req.RecordAt)
+	deviceService.Recording(req.Latitude, req.Longitude, claim.MemberId, req.DeviceID, req.RecordAt, req.DataRef)
 	response.Success(c, requestTime, "")
 }

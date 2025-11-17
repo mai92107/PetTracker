@@ -61,6 +61,7 @@ func SaveGpsFmRedisToMaria() {
 				DeviceID:   data.DeviceId,
 				Location:   gormTable.NewGeoJSONPoint(data.Longitude, data.Latitude),
 				RecordedAt: recordTime,
+				DataRef:    data.DataRef,
 				CreatedAt:  time.Now().UTC(),
 			}
 			records = append(records, record)
@@ -108,7 +109,8 @@ func saveToDB(records []gormTable.DeviceLocation) error {
 				"device_id":   record.DeviceID,
 				"location":    record.Location,
 				"recorded_at": record.RecordedAt,
-				"created_at":  time.Now().UTC(),
+				"data_ref":    record.DataRef,
+				"created_at":  record.CreatedAt,
 			},
 		}
 

@@ -15,35 +15,35 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
-func GetAllDeviceIds(tx *gorm.DB)([]string, error){
+func GetAllDeviceIds(tx *gorm.DB) ([]string, error) {
 	var deviceIds []string
 	err := tx.Model(&gormTable.Device{}).
-	 		Pluck("device_id", &deviceIds).Error
+		Pluck("device_id", &deviceIds).Error
 	if err != nil {
-        logafa.Error("查詢所有 deviceIds 失敗, error: %+v", err)
-        return nil, fmt.Errorf("裝置ID查詢失敗")
-    }
-	return deviceIds,nil
+		logafa.Error("查詢所有 deviceIds 失敗, error: %+v", err)
+		return nil, fmt.Errorf("裝置ID查詢失敗")
+	}
+	return deviceIds, nil
 }
 
 func GetDeviceIdsByMemberId(tx *gorm.DB, memberId int64) ([]string, error) {
-    var deviceIds []string
+	var deviceIds []string
 
-    err := tx.Model(&gormTable.MemberDevice{}).
-             Where("member_id = ?", memberId).
-             Pluck("device_id", &deviceIds).Error
+	err := tx.Model(&gormTable.MemberDevice{}).
+		Where("member_id = ?", memberId).
+		Pluck("device_id", &deviceIds).Error
 
-    if err != nil {
-        logafa.Error("查詢會員 deviceId 失敗, memberId: %v, error: %+v", memberId, err)
-        return nil, fmt.Errorf("查無此會員或查詢失敗")
-    }
+	if err != nil {
+		logafa.Error("查詢會員 deviceId 失敗, memberId: %v, error: %+v", memberId, err)
+		return nil, fmt.Errorf("查無此會員或查詢失敗")
+	}
 
-    if len(deviceIds) == 0 {
-        logafa.Warn("會員存在但無綁定 device, memberId: %v", memberId)
-        return []string{}, nil
-    }
+	if len(deviceIds) == 0 {
+		logafa.Warn("會員存在但無綁定 device, memberId: %v", memberId)
+		return []string{}, nil
+	}
 
-    return deviceIds, nil
+	return deviceIds, nil
 }
 
 func FindDeviceByDeviceId(tx *gorm.DB, deviceId string) (*gormTable.Device, error) {
@@ -82,7 +82,7 @@ func generateDeviceId() string {
 	return fmt.Sprintf("%s-%06d", prefix, sequence)
 }
 
-func SaveLocation(lat, lng float64, deviceId, recordTime string) error {
+func SaveLocation(lat, lng float64, deviceId, recordTime, dataRef string) error {
 	now := time.Now().UTC()
 	// 存入 redis 臨時保存
 	key := fmt.Sprintf("device:%s", deviceId)
@@ -92,6 +92,7 @@ func SaveLocation(lat, lng float64, deviceId, recordTime string) error {
 		Latitude:   lat,
 		Longitude:  lng,
 		RecordTime: recordTime,
+		DataRef:    dataRef,
 	}
 	byteData, err := jsoniter.Marshal(gps)
 	if err != nil {

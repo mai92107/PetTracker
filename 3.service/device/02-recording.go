@@ -9,7 +9,7 @@ import (
 	"slices"
 )
 
-func Recording(lat, lng float64, memberId int64, deviceId, recordTime string) error {
+func Recording(lat, lng float64, memberId int64, deviceId, recordTime, dataRef string) error {
 	err := validateRecording(lat, lng, deviceId)
 	if err != nil {
 		logafa.Error("驗證失敗, error: %+v", err)
@@ -32,7 +32,7 @@ func Recording(lat, lng float64, memberId int64, deviceId, recordTime string) er
 		return fmt.Errorf("使用者查無該裝置")
 	}
 
-	err = repo.SaveLocation(lat, lng, deviceId, recordTime)
+	err = repo.SaveLocation(lat, lng, deviceId, recordTime, dataRef)
 	if err != nil {
 		return err
 	}
