@@ -68,6 +68,7 @@ func CronStart() {
 
 	// 每小時執行一次
 	executeJob(c, Hour, []func(){
+		persist.GetLastDayTripsWithDistance,
 		data.GetOnlineDevice,
 	})
 

@@ -36,7 +36,7 @@ func InitMosquitto(setting jsonModal.MosquittoConfig) mqtt.Client {
 		SetConnectRetry(true).
 		SetConnectRetryInterval(5 * time.Second).
 		SetMaxReconnectInterval(60 * time.Second).
-		SetCleanSession(false).
+		SetCleanSession(true).
 		SetOnConnectHandler(func(c mqtt.Client) {
 			logafa.Debug("✅ 已連接到 Mosquitto 伺服器")
 			// 使用 goroutine 避免阻塞連線處理
