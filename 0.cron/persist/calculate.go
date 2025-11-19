@@ -13,7 +13,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// 輸出結構
 type TripSummary struct {
 	DataRef         string    `bson:"data_ref"`
 	DeviceID        string    `bson:"device_id"`
@@ -24,12 +23,20 @@ type TripSummary struct {
 	DistanceKM      float64   `bson:"distance_km"`
 }
 
-// 單純只撈資料，距離讓 Go 算（最穩最快）
+type rawData struct {
+	DataRef   string      `bson:"data_ref"`
+	DeviceID  string      `bson:"device_id"`
+	StartTime time.Time   `bson:"start_time"`
+	EndTime   time.Time   `bson:"end_time"`
+	Coords    [][]float64 `bson:"coords"` // [[lng, lat], [lng, lat], ...]
+}
+
+// 計算近一日每趟行程資訊
 func GetLastDayTripsWithDistance() {
 	ctx := context.Background()
 	coll := global.Repository.DB.MongoDb.Reading.Collection("pettrack")
 
-	oneDayAgo := time.Now().UTC().Add(-time.Hour * 24)
+	oneDayAgo := time.Now().UTC().Add(-time.Hour * 36) // 增加重疊部分 以36小時為基準
 
 	pipeline := mongo.Pipeline{
 		{{Key: "$match", Value: bson.D{
@@ -67,34 +74,16 @@ func GetLastDayTripsWithDistance() {
 	var results []TripSummary
 
 	for cursor.Next(ctx) {
-		var temp struct {
-			DataRef   string      `bson:"data_ref"`
-			DeviceID  string      `bson:"device_id"`
-			StartTime time.Time   `bson:"start_time"`
-			EndTime   time.Time   `bson:"end_time"`
-			Coords    [][]float64 `bson:"coords"` // [[lng, lat], [lng, lat], ...]
-		}
-		if err := cursor.Decode(&temp); err != nil {
-			log.Printf("decode error: %v", err)
-			continue
-		}
-
-		// Go 端用 Haversine 算距離（超快超穩）
-		distance := 0.0
-		for i := 1; i < len(temp.Coords); i++ {
-			distance += haversine(
-				temp.Coords[i-1][1], temp.Coords[i-1][0], // lat1, lng1
-				temp.Coords[i][1], temp.Coords[i][0], // lat2, lng2
-			)
-		}
+		rawData := getRawData(cursor)
+		distance := getDistance(*rawData)
 
 		results = append(results, TripSummary{
-			DataRef:         temp.DataRef,
-			DeviceID:        temp.DeviceID,
-			StartTime:       temp.StartTime,
-			EndTime:         temp.EndTime,
-			DurationMinutes: temp.EndTime.Sub(temp.StartTime).Minutes(),
-			PointCount:      len(temp.Coords),
+			DataRef:         rawData.DataRef,
+			DeviceID:        rawData.DeviceID,
+			StartTime:       rawData.StartTime,
+			EndTime:         rawData.EndTime,
+			DurationMinutes: rawData.EndTime.Sub(rawData.StartTime).Minutes(),
+			PointCount:      len(rawData.Coords),
 			DistanceKM:      math.Round(distance*1000) / 1000, // 保留3位
 		})
 	}
@@ -108,12 +97,33 @@ func GetLastDayTripsWithDistance() {
 		}
 	}
 
+	// 逐項處理
+	// TODO: 若有重複DataRef 則更新DB原本資料
 	for _, t := range results {
-		log.Printf("行程 %s | %s | %.3f km | %v 開始 | %v 結束 | 總耗時 %.1f 分鐘",
+		logafa.Info("行程 %s | %s | %.3f km | %v 開始 | %v 結束 | 總耗時 %.1f 分鐘",
 			t.DataRef, t.DeviceID, t.DistanceKM, t.StartTime, t.EndTime, t.DurationMinutes)
 	}
 }
 
+func getDistance(rawData rawData)float64{
+	distance := 0.0
+	for i := 1; i < len(rawData.Coords); i++ {
+		distance += haversine(
+			rawData.Coords[i-1][1], rawData.Coords[i-1][0], // lat1, lng1
+			rawData.Coords[i][1], rawData.Coords[i][0], // lat2, lng2
+		)
+	}
+	return distance
+}
+
+func getRawData(cursor *mongo.Cursor)*rawData{
+	var temp rawData
+	if err := cursor.Decode(&temp); err != nil {
+		log.Printf("decode error: %v", err)
+		return nil
+	}
+	return &temp
+}
 // 經典 Haversine 公式（精確到公尺）
 func haversine(lat1, lng1, lat2, lng2 float64) float64 {
 	const R = 6371000 // 地球半徑（公尺）
