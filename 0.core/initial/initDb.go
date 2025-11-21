@@ -26,12 +26,16 @@ func InitMariaDB(setting jsonModal.MariaDbConfig) *global.SqlDB {
 		setting.Reading.Host, setting.Reading.Port,
 		setting.Reading.Name)
 
-	readingDb, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	readingDb, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: logafa.NewGormLogger(),
+	})
 	if err != nil {
 		logafa.Error(" ❌ 無法連接讀取資料庫: %v", err)
 	}
 
-	writingDb, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	writingDb, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: logafa.NewGormLogger(),
+	})
 	if err != nil {
 		logafa.Error(" ❌ 無法連接寫入資料庫: %v", err)
 	}
@@ -64,7 +68,7 @@ func InitMongoDB(setting jsonModal.MongoDbConfig) *global.NoSqlDB {
 		panic(err)
 	}
 	logafa.Debug("✅ 成功連線 MongoDB!")
-		
+
 	// 初始化index
 	initMongoIndexes(client)
 
@@ -90,11 +94,11 @@ func initSQLTables(db *gorm.DB) {
 	tables := map[string]string{
 		"member": `
 			CREATE TABLE member (
-				id BIGINT AUTO_INCREMENT PRIMARY KEY,
-				last_name VARCHAR(255),
+				id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+				last_name  VARCHAR(255),
 				first_name VARCHAR(255),
-				nick_name VARCHAR(255),
-				email VARCHAR(255),
+				nick_name  VARCHAR(255),
+				email      VARCHAR(255),
 				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`,
 
@@ -111,11 +115,12 @@ func initSQLTables(db *gorm.DB) {
 
 		"member_device": `
 			CREATE TABLE member_device (
-				id BIGINT AUTO_INCREMENT PRIMARY KEY,
-				member_id BIGINT NOT NULL,
-				device_id VARCHAR(36) NOT NULL,
+				id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+				member_id   BIGINT NOT NULL,
+				device_id   VARCHAR(36) NOT NULL,
 				device_name VARCHAR(255),
-				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				
 				CONSTRAINT fk_member_device_member 
 					FOREIGN KEY (member_id) REFERENCES member(id) ON DELETE CASCADE,
 				CONSTRAINT fk_member_device_device 
@@ -125,26 +130,41 @@ func initSQLTables(db *gorm.DB) {
 
 		"account": `
 			CREATE TABLE account (
-				uuid CHAR(36) PRIMARY KEY,
-				member_id BIGINT NOT NULL,
-				username VARCHAR(255) NOT NULL UNIQUE,
-				password VARCHAR(255) NOT NULL,
-				email VARCHAR(255) NOT NULL UNIQUE,
-				identity VARCHAR(50),
+				uuid            CHAR(36) PRIMARY KEY,
+				member_id       BIGINT NOT NULL,
+				username        VARCHAR(255) NOT NULL UNIQUE,
+				password        VARCHAR(255) NOT NULL,
+				email           VARCHAR(255) NOT NULL UNIQUE,
+				identity        VARCHAR(50),
 				last_login_time DATETIME,
-				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				
 				CONSTRAINT fk_account_member 
 					FOREIGN KEY (member_id) REFERENCES member(id) ON DELETE CASCADE
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`,
 
 		"password_history": `
 			CREATE TABLE password_history (
-				id BIGINT AUTO_INCREMENT PRIMARY KEY,
-				account_uuid CHAR(36) NOT NULL,
-				password VARCHAR(255) NOT NULL,
-				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				id BIGINT     AUTO_INCREMENT PRIMARY KEY,
+				account_uuid  CHAR(36) NOT NULL,
+				password      VARCHAR(255) NOT NULL,
+				created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+				
 				CONSTRAINT fk_password_history_account 
 					FOREIGN KEY (account_uuid) REFERENCES account(uuid) ON DELETE CASCADE
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`,
+
+		"record_summary": `
+			CREATE TABLE trip_summary (
+				data_ref         varchar(64) NOT NULL PRIMARY KEY COMMENT '行程唯一編號',
+				device_id        varchar(64) NOT NULL COMMENT '裝置/寵物ID',
+				start_time       datetime(3) NOT NULL COMMENT '開始時間',
+				end_time         datetime(3) NOT NULL COMMENT '結束時間',
+				duration_minutes double DEFAULT 0 COMMENT '總耗時(分鐘)',
+				point_count      int DEFAULT 0 COMMENT 'GPS點數量',
+				distance_km      decimal(10,3) DEFAULT 0.000 COMMENT '總距離(km)',
+				created_at       datetime(3),
+				updated_at       datetime(3)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`,
 	}
 
@@ -156,7 +176,7 @@ func initSQLTables(db *gorm.DB) {
 		"account",
 		"password_history",
 	}
-	
+
 	// 計算開了多少TABLE
 	newTable := 0
 
@@ -195,7 +215,7 @@ func initSQLTables(db *gorm.DB) {
 		}
 		newTable++
 	}
-	if newTable == 0{
+	if newTable == 0 {
 		return
 	}
 
@@ -216,7 +236,7 @@ func initMongoIndexes(client *mongo.Client) {
 
 	collection := client.Database("pettrack").Collection("pettrack")
 
-// 定義索引：{ name, model }
+	// 定義索引：{ name, model }
 	type namedIndex struct {
 		Name  string
 		Model mongo.IndexModel
