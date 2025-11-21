@@ -82,7 +82,7 @@ func generateDeviceId() string {
 	return fmt.Sprintf("%s-%06d", prefix, sequence)
 }
 
-func SaveLocation(lat, lng float64, deviceId, recordTime, dataRef string) error {
+func SaveLocation(lat, lng float64, deviceId string, recordTime time.Time, dataRef string) error {
 	now := time.Now().UTC()
 	// 存入 redis 臨時保存
 	key := fmt.Sprintf("device:%s", deviceId)

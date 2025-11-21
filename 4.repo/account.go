@@ -16,29 +16,29 @@ import (
 	"github.com/google/uuid"
 )
 
-func FindAccountByAccountName(tx *gorm.DB,userAccount string) (*gormTable.Account, error) {
+func FindAccountByAccountName(tx *gorm.DB, userAccount string) (*gormTable.Account, error) {
 
-	if strings.Contains(userAccount, "@"){
-		return FindAccountByEmail(tx,userAccount)
+	if strings.Contains(userAccount, "@") {
+		return FindAccountByEmail(tx, userAccount)
 	}
-	return FindAccountByUsername(tx,userAccount)
+	return FindAccountByUsername(tx, userAccount)
 }
 
-func FindAccountByUsername(tx *gorm.DB,username string) (*gormTable.Account, error) {
+func FindAccountByUsername(tx *gorm.DB, username string) (*gormTable.Account, error) {
 	var account gormTable.Account
 	err := tx.First(&account, "username = ?", username).Error
-	if err != nil{
-		logafa.Error("查詢帳戶發生錯誤, error: %+v",err)
+	if err != nil {
+		logafa.Error("查詢帳戶發生錯誤, error: %+v", err)
 		return nil, fmt.Errorf("查詢帳戶發生錯誤")
 	}
 	return &account, nil
 }
 
-func FindAccountByEmail(tx *gorm.DB,email string) (*gormTable.Account, error) {
+func FindAccountByEmail(tx *gorm.DB, email string) (*gormTable.Account, error) {
 	var account gormTable.Account
 	err := tx.First(&account, "email = ?", email).Error
-	if err != nil{
-		logafa.Error("查詢帳戶發生錯誤, error: %+v",err)
+	if err != nil {
+		logafa.Error("查詢帳戶發生錯誤, error: %+v", err)
 		return nil, fmt.Errorf("查詢帳戶發生錯誤")
 	}
 	return &account, nil
@@ -49,11 +49,11 @@ func CreateAccount(tx *gorm.DB, memberId int64, username, password, email string
 	hashedPassword, _ := common.BcryptHash(password)
 	account := gormTable.Account{
 		Uuid:          uuid.New(),
-		MemberId: 	   memberId,
+		MemberId:      memberId,
 		Username:      username,
 		Password:      hashedPassword,
 		Email:         email,
-		Identity: 	   model.MEMBER.ToString(),
+		Identity:      model.MEMBER.ToString(),
 		LastLoginTime: now,
 	}
 	err := tx.Create(&account).Error
@@ -100,4 +100,3 @@ func UpdateLoginTime(tx *gorm.DB, accountUUID uuid.UUID) error {
 // 	}
 // 	return data, nil
 // }
-

@@ -25,6 +25,8 @@ type cronInfo struct {
 const (
 	Second CronType = iota
 	Minute
+	Five	 // 每 5 分
+	Ten      // 每 10 分
 	Quarter  // 每 15 分
 	HalfHour // 每 30 分
 	Hour
@@ -35,11 +37,13 @@ const (
 var cronSpecs = map[CronType]cronInfo{
 	Second:   {spec: "*/1 * * * * *", infoName: "每秒"},
 	Minute:   {spec: "0 * * * * *", infoName: "每分鐘"},
-	Quarter:  {spec: "0 */15 * * * *", infoName: "每 15 分鐘"},
-	HalfHour: {spec: "0 */30 * * * *", infoName: "每 30 分鐘"},
-	Hour:     {spec: "0 0 * * * *", infoName: "每小時"},
-	HalfDay:  {spec: "0 0 0,12 * * *", infoName: "每半天"},
-	Day:      {spec: "0 0 0 * * *", infoName: "每天"},
+	Five:  	  {spec: "5 */5 * * * *", infoName: "每 5 分鐘"},
+	Ten:      {spec: "10 */10 * * * *", infoName: "每 10 分鐘"},
+	Quarter:  {spec: "15 */15 * * * *", infoName: "每 15 分鐘"},
+	HalfHour: {spec: "20 */30 * * * *", infoName: "每 30 分鐘"},
+	Hour:     {spec: "25 0 * * * *", infoName: "每小時"},
+	HalfDay:  {spec: "30 0 0,12 * * *", infoName: "每半天"},
+	Day:      {spec: "35 0 0 * * *", infoName: "每天"},
 }
 
 func CronStart() {
@@ -57,18 +61,27 @@ func CronStart() {
 		// 	}
 		// },
 	})
+	// 每5分鐘執行一次
+	executeJob(c, Five, []func(){
+		persist.SaveGpsFmRdsToMongo,
+	})
+
+	// 每10分鐘執行一次
+	executeJob(c, Ten, []func(){
+		persist.SaveTripFmMongoToMaria,
+	})
 
 	// 每15分鐘執行一次
 	executeJob(c, Quarter, []func(){
-		persist.SaveGpsFmRedisToMaria,
 	})
 
 	// 每半小時執行一次
-	executeJob(c, HalfHour, []func(){})
+	executeJob(c, HalfHour, []func(){
+		
+	})
 
 	// 每小時執行一次
 	executeJob(c, Hour, []func(){
-		persist.GetLastDayTripsWithDistance,
 		data.GetOnlineDevice,
 	})
 
@@ -114,7 +127,7 @@ func submitJobAsync(job func(), localWg *sync.WaitGroup) {
 			localWg.Done()
 			global.NormalWorkerPool <- struct{}{}
 		}()
-		start := time.Now()
+		start := time.Now().UTC()
 		job()
 		logafa.Debug("單一任務完成，耗時: %v", time.Since(start))
 	}()

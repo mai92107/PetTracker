@@ -10,7 +10,7 @@ type GPS struct {
 	DeviceId   string  `json:"deviceId"`
 	Longitude  float64 `json:"lng"`
 	Latitude   float64 `json:"lat"`
-	RecordTime string  `json:"time"`
+	RecordTime time.Time  `json:"time"`
 	DataRef    string  `json:"dataRef"`
 }
 

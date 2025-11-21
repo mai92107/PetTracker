@@ -2,26 +2,21 @@ package persist
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"math"
 	"time"
 
 	"batchLog/0.core/global"
+	gormTable "batchLog/0.core/gorm"
 	"batchLog/0.core/logafa"
+
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
-
-type TripSummary struct {
-	DataRef         string    `bson:"data_ref"`
-	DeviceID        string    `bson:"device_id"`
-	StartTime       time.Time `bson:"start_time"`
-	EndTime         time.Time `bson:"end_time"`
-	DurationMinutes float64   `bson:"duration_minutes"`
-	PointCount      int       `bson:"point_count"`
-	DistanceKM      float64   `bson:"distance_km"`
-}
 
 type rawData struct {
 	DataRef   string      `bson:"data_ref"`
@@ -32,11 +27,11 @@ type rawData struct {
 }
 
 // 計算近一日每趟行程資訊
-func GetLastDayTripsWithDistance() {
+func SaveTripFmMongoToMaria() {
 	ctx := context.Background()
 	coll := global.Repository.DB.MongoDb.Reading.Collection("pettrack")
 
-	oneDayAgo := time.Now().UTC().Add(-time.Hour * 36) // 增加重疊部分 以36小時為基準
+	oneDayAgo := time.Now().UTC().Add(-time.Minute * 30) // 增加重疊部分 取近 30 分鐘
 
 	pipeline := mongo.Pipeline{
 		{{Key: "$match", Value: bson.D{
@@ -71,13 +66,13 @@ func GetLastDayTripsWithDistance() {
 	}
 	defer cursor.Close(ctx)
 
-	var results []TripSummary
+	var results []gormTable.TripSummary
 
 	for cursor.Next(ctx) {
-		rawData := getRawData(cursor)
+		rawData := decodeRawData(cursor)
 		distance := getDistance(*rawData)
 
-		results = append(results, TripSummary{
+		results = append(results, gormTable.TripSummary{
 			DataRef:         rawData.DataRef,
 			DeviceID:        rawData.DeviceID,
 			StartTime:       rawData.StartTime,
@@ -88,24 +83,60 @@ func GetLastDayTripsWithDistance() {
 		})
 	}
 
-	// 依時間排序
-	for i := 0; i < len(results)-1; i++ {
-		for j := i + 1; j < len(results); j++ {
-			if results[i].StartTime.After(results[j].StartTime) {
-				results[i], results[j] = results[j], results[i]
-			}
-		}
-	}
-
-	// 逐項處理
-	// TODO: 若有重複DataRef 則更新DB原本資料
-	for _, t := range results {
-		logafa.Info("行程 %s | %s | %.3f km | %v 開始 | %v 結束 | 總耗時 %.1f 分鐘",
-			t.DataRef, t.DeviceID, t.DistanceKM, t.StartTime, t.EndTime, t.DurationMinutes)
+	err = saveTripSummaries(results)
+	if err != nil {
+		logafa.Error("%+v", err)
 	}
 }
 
-func getDistance(rawData rawData)float64{
+func saveTripSummaries(results []gormTable.TripSummary) error {
+	tx := global.Repository.DB.MariaDb.Reading.Begin()
+	if err := tx.Error; err != nil {
+		return fmt.Errorf("開始交易失敗: %w", err)
+	}
+
+	// 確保一定會 rollback（除非我們明確 commit）
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			logafa.Error("交易 panic，已 rollback: %+v", r)
+		}
+	}()
+
+	for i, t := range results {
+		if err := saveTripToDB(tx, &t); err != nil {
+			logafa.Error("第 %d 筆儲存失敗，將 rollback 整批: %v | error: %v", i+1, t.DataRef, err)
+			return fmt.Errorf("儲存失敗: %w", err) // 觸發 rollback
+		}
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		logafa.Error("交易提交失敗: %v", err)
+		return fmt.Errorf("commit 失敗: %w", err)
+	}
+
+	logafa.Info("全部 %d 筆行程摘要寫入成功！", len(results))
+	return nil
+}
+
+func saveTripToDB(tx *gorm.DB, trip *gormTable.TripSummary) error {
+    now := time.Now().UTC()
+    trip.CreatedAt = now
+    trip.UpdatedAt = now
+
+    return tx.Clauses(clause.OnConflict{
+				Columns: []clause.Column{{Name: "data_ref"}},
+				DoUpdates: []clause.Assignment{
+					{Column: clause.Column{Name: "updated_at"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(updated_at), updated_at)")},
+					{Column: clause.Column{Name: "end_time"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(end_time), end_time)")},
+					{Column: clause.Column{Name: "distance_km"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(distance_km), distance_km)")},
+					{Column: clause.Column{Name: "duration_minutes"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(duration_minutes), duration_minutes)")},
+					{Column: clause.Column{Name: "point_count"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(point_count), point_count)")},
+				},
+			}).Create(trip).Error
+}
+
+func getDistance(rawData rawData) float64 {
 	distance := 0.0
 	for i := 1; i < len(rawData.Coords); i++ {
 		distance += haversine(
@@ -116,7 +147,7 @@ func getDistance(rawData rawData)float64{
 	return distance
 }
 
-func getRawData(cursor *mongo.Cursor)*rawData{
+func decodeRawData(cursor *mongo.Cursor) *rawData {
 	var temp rawData
 	if err := cursor.Decode(&temp); err != nil {
 		log.Printf("decode error: %v", err)
@@ -124,6 +155,7 @@ func getRawData(cursor *mongo.Cursor)*rawData{
 	}
 	return &temp
 }
+
 // 經典 Haversine 公式（精確到公尺）
 func haversine(lat1, lng1, lat2, lng2 float64) float64 {
 	const R = 6371000 // 地球半徑（公尺）

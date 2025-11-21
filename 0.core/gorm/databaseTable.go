@@ -69,6 +69,24 @@ func (d *Device) TableName() string {
 	return "device"
 }
 
+type TripSummary struct {
+	ID              uint64    `gorm:"primaryKey;autoIncrement;column:id" bson:"_id,omitempty"`
+	DataRef         string    `gorm:"column:data_ref;uniqueIndex:uk_data_ref;size:64;not null;comment:'行程唯一編號'" bson:"data_ref"`
+	DeviceID        string    `gorm:"column:device_id;index:idx_device_date;size:64;not null;comment:'裝置/寵物ID'" bson:"device_id"`
+	StartTime       time.Time `gorm:"column:start_time;index:idx_device_date;not null;comment:'開始時間'" bson:"start_time"`
+	EndTime         time.Time `gorm:"column:end_time;not null;comment:'結束時間'" bson:"end_time"`
+	DurationMinutes float64   `gorm:"column:duration_minutes;type:double;default:0;comment:'總耗時(分鐘)'" bson:"duration_minutes"`
+	PointCount      int       `gorm:"column:point_count;type:int;default:0;comment:'GPS點數量'" bson:"point_count"`
+	DistanceKM      float64   `gorm:"column:distance_km;type:decimal(10,3);default:0.000;index:idx_distance;comment:'總距離(km)'" bson:"distance_km"`
+
+	CreatedAt 		time.Time `gorm:"column:created_at"`
+	UpdatedAt 		time.Time `gorm:"column:updated_at"`
+}
+
+func (d *TripSummary) TableName() string {
+	return "trip_summary"
+}
+
 // CREATE TABLE member (
 //     id BIGINT AUTO_INCREMENT PRIMARY KEY,
 //     last_name VARCHAR(255),

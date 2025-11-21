@@ -42,7 +42,7 @@ func JWTValidator(role string) gin.HandlerFunc {
 			return
 		}
 
-		if !claims.IsAdmin() && role == ADMIN{
+		if !claims.IsAdmin() && role == ADMIN {
 			logafa.Warn("用戶 %v 無權限執行此 %s 操作", claims.MemberId, c.Request.URL)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error":  "無權限執行此操作",

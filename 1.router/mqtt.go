@@ -43,12 +43,12 @@ var mqttRoutes = []Route{
 	{"account_register", accountMqtt.Register, PermGuest},
 	{"home_hello", homeMqtt.SayHello, PermGuest},
 	{"system_status", systemMqtt.SystemStatus, PermGuest},
-	
+
 	// Admin
 	{"device_create", deviceMqtt.Create, PermAdmin},
 	{"device_online", deviceMqtt.MqttOnlineDevice, PermAdmin},
 	{"device_all", deviceMqtt.AllDevice, PermAdmin},
-	
+
 	// Member
 	{"device_recording", deviceMqtt.Recording, PermMember},
 	{"member_addDevice", memberMqtt.AddDevice, PermMember},
@@ -76,7 +76,7 @@ func RouteFunction(action, payload, clientId, jwt, ip string) {
 	}
 
 	routes := []string{}
-	for _,route := range mqttRoutes{
+	for _, route := range mqttRoutes {
 		routes = append(routes, route.Pattern)
 	}
 

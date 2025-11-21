@@ -15,7 +15,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
-func SaveGpsFmRedisToMaria() {
+func SaveGpsFmRdsToMongo() {
 	logafa.Info("開始執行 GPS DATA 持久化...")
 
 	deviceKeyPattern := "device:*"
@@ -33,7 +33,7 @@ func SaveGpsFmRedisToMaria() {
 	logafa.Debug("取得 %v 筆裝置資料, 開始讀取", len(keys))
 
 	end := time.Now().UTC()
-	start := end.Add(-30 * time.Minute)
+	start := end.Add(-5 * time.Minute)
 
 	for _, key := range keys {
 		datas, err := redis.ZRangeByScore(key, start.UnixMilli(), end.UnixMilli())
@@ -56,18 +56,17 @@ func SaveGpsFmRedisToMaria() {
 				logafa.Error("解析 GPS JSON 失敗, jsonStr: %s, error: %+v", jsonStr, err)
 				continue
 			}
-			recordTime, _ := time.Parse("2006-01-02 15:04:05", data.RecordTime)
 			record := gormTable.DeviceLocation{
 				DeviceID:   data.DeviceId,
 				Location:   gormTable.NewGeoJSONPoint(data.Longitude, data.Latitude),
-				RecordedAt: recordTime,
+				RecordedAt: data.RecordTime,
 				DataRef:    data.DataRef,
 				CreatedAt:  time.Now().UTC(),
 			}
 			records = append(records, record)
 		}
 
-		if err = saveToDB(records); err != nil {
+		if err = saveLocationToDB(records); err != nil {
 			logafa.Error("批次寫入資料至 DB 失敗, error: %+v", err)
 			continue
 		}
@@ -85,7 +84,7 @@ func SaveGpsFmRedisToMaria() {
 	}
 }
 
-func saveToDB(records []gormTable.DeviceLocation) error {
+func saveLocationToDB(records []gormTable.DeviceLocation) error {
 	if len(records) < 1 {
 		return fmt.Errorf("無有效紀錄可存入資料庫")
 	}

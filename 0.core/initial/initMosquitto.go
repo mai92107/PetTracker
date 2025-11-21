@@ -26,7 +26,7 @@ func InitMosquitto(setting jsonModal.MosquittoConfig) mqtt.Client {
 
 	opts := mqtt.NewClientOptions().
 		AddBroker(fmt.Sprintf("tcp://%s:%s", currentHost, setting.BrokerPort)).
-		SetClientID(fmt.Sprintf("%s-%d", setting.ClientID, time.Now().UnixNano())).
+		SetClientID(fmt.Sprintf("%s-%d", setting.ClientID, time.Now().UTC().UnixNano())).
 		SetUsername(setting.Username).
 		SetPassword(setting.Password).
 		SetKeepAlive(120 * time.Second).

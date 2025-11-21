@@ -7,10 +7,26 @@ import (
 	repo "batchLog/4.repo"
 	"fmt"
 	"slices"
+	"time"
 )
 
 func Recording(lat, lng float64, memberId int64, deviceId, recordTime, dataRef string) error {
-	err := validateRecording(lat, lng, deviceId)
+
+	loc,err := time.LoadLocation("Local")
+	if err != nil {
+		logafa.Error("載入當前地區失敗, error: %+v", err)
+		return fmt.Errorf("載入當前地區失敗")
+	}
+
+	recordLocalTime,err := time.ParseInLocation(global.TIME_FORMAT, recordTime, loc)
+	if err != nil {
+		logafa.Error("時區轉換失敗, error: %+v", err)
+		return fmt.Errorf("時區轉換失敗")
+	}
+
+	recordUtcTime := recordLocalTime.UTC()
+
+	err = validateRecording(lat, lng, deviceId)
 	if err != nil {
 		logafa.Error("驗證失敗, error: %+v", err)
 		return fmt.Errorf("驗證失敗")
@@ -32,7 +48,7 @@ func Recording(lat, lng float64, memberId int64, deviceId, recordTime, dataRef s
 		return fmt.Errorf("使用者查無該裝置")
 	}
 
-	err = repo.SaveLocation(lat, lng, deviceId, recordTime, dataRef)
+	err = repo.SaveLocation(lat, lng, deviceId, recordUtcTime, dataRef)
 	if err != nil {
 		return err
 	}
