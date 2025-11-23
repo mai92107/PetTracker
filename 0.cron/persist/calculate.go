@@ -71,13 +71,14 @@ func SaveTripFmMongoToMaria() {
 	for cursor.Next(ctx) {
 		rawData := decodeRawData(cursor)
 		distance := getDistance(*rawData)
+		duration := rawData.EndTime.Sub(rawData.StartTime).Minutes()
 
 		results = append(results, gormTable.TripSummary{
 			DataRef:         rawData.DataRef,
 			DeviceID:        rawData.DeviceID,
 			StartTime:       rawData.StartTime,
 			EndTime:         rawData.EndTime,
-			DurationMinutes: rawData.EndTime.Sub(rawData.StartTime).Minutes(),
+			DurationMinutes: math.Round(duration * 100) / 100, // 先右移小數點兩位並四捨五入，再修正小數點位置左移兩位
 			PointCount:      len(rawData.Coords),
 			DistanceKM:      math.Round(distance*1000) / 1000, // 保留3位
 		})
