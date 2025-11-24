@@ -8,13 +8,12 @@ import (
 
 	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
+	"batchLog/0.core/model/role"
 
 	"github.com/gin-gonic/gin"
 )
 
-func JWTValidator(role string) gin.HandlerFunc {
-
-	const ADMIN = "ADMIN"
+func JWTValidator(identity role.MemberIdentity) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		// 1. 取得 Authorization header
@@ -42,7 +41,7 @@ func JWTValidator(role string) gin.HandlerFunc {
 			return
 		}
 
-		if !claims.IsAdmin() && role == ADMIN {
+		if !claims.IsAdmin() && identity == role.ADMIN {
 			logafa.Warn("用戶 %v 無權限執行此 %s 操作", claims.MemberId, c.Request.URL)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error":  "無權限執行此操作",

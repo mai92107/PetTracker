@@ -1,8 +1,10 @@
 package router
 
 import (
+	"batchLog/0.core/model/role"
 	middleware "batchLog/1.middleware"
 	accountHttp "batchLog/2.api/http/account"
+	debugHttp "batchLog/2.api/http/debug"
 	deviceHttp "batchLog/2.api/http/device"
 	homeHttp "batchLog/2.api/http/home"
 	memberHttp "batchLog/2.api/http/member"
@@ -32,23 +34,32 @@ func RegisterRoutes(r *gin.Engine) {
 		accountGroup.POST("/register", accountHttp.Register)
 	}
 
-	trackGroup := r.Group("/device")
+	deviceGroup := r.Group("/device")
 	{
-		trackGroup.POST("/create", middleware.JWTValidator("ADMIN"), deviceHttp.Create)
-		trackGroup.POST("/recording", middleware.JWTValidator("MEMBER"), deviceHttp.Recording)
-		trackGroup.GET("/onlineDevice", middleware.JWTValidator("ADMIN"), deviceHttp.MqttOnlineDevice)
-		trackGroup.GET("/:deviceId/status", middleware.JWTValidator("MEMBER"), deviceHttp.DeviceStatus)
-		trackGroup.GET("/all", middleware.JWTValidator("ADMIN"), deviceHttp.AllDevice)
+		deviceGroup.POST("/create", middleware.JWTValidator(role.ADMIN), deviceHttp.Create)
+		deviceGroup.GET("/onlineDevice", middleware.JWTValidator(role.ADMIN), deviceHttp.MqttOnlineDevice)
+		deviceGroup.GET("/all", middleware.JWTValidator(role.ADMIN), deviceHttp.AllDevice)
+
+		deviceGroup.POST("/recording", middleware.JWTValidator(role.MEMBER), deviceHttp.Recording)
+		deviceGroup.GET("/:deviceId/status", middleware.JWTValidator(role.MEMBER), deviceHttp.DeviceStatus)
+		deviceGroup.GET("/trips", middleware.JWTValidator(role.MEMBER), deviceHttp.DeviceTrips)
+		deviceGroup.GET("/trip", middleware.JWTValidator(role.MEMBER), deviceHttp.TripDetail)
+
 	}
 
 	memberGroup := r.Group("/member")
 	{
-		memberGroup.POST("/addDevice", middleware.JWTValidator("MEMBER"), memberHttp.AddDevice)
-		memberGroup.GET("/allDevice", middleware.JWTValidator("MEMBER"), memberHttp.MemberDevice)
+		memberGroup.POST("/addDevice", middleware.JWTValidator(role.MEMBER), memberHttp.AddDevice)
+		memberGroup.GET("/allDevice", middleware.JWTValidator(role.MEMBER), memberHttp.MemberDevice)
 	}
 
 	systemGroup := r.Group("/system")
 	{
-		systemGroup.GET("/status", middleware.JWTValidator("MEMBER"), systemHttp.SystemStatus)
+		systemGroup.GET("/status", middleware.JWTValidator(role.MEMBER), systemHttp.SystemStatus)
+	}
+
+	debugGroup := r.Group("/debug")
+	{
+		debugGroup.POST("/flush_to_maria", middleware.JWTValidator(role.ADMIN), debugHttp.FlushToMaria)
 	}
 }

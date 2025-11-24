@@ -1,7 +1,7 @@
 package accountHttp
 
 import (
-	response "batchLog/0.core/commonResponse"
+	response "batchLog/0.core/commonResReq/res"
 	accountService "batchLog/3.service/account"
 	"net/http"
 	"time"

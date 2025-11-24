@@ -26,7 +26,7 @@ func Recording(lat, lng float64, memberId int64, deviceId, recordTime, dataRef s
 
 	recordUtcTime := recordLocalTime.UTC()
 
-	err = validateRecording(lat, lng, deviceId)
+	err = validateRecordingRequest(lat, lng, deviceId)
 	if err != nil {
 		logafa.Error("驗證失敗, error: %+v", err)
 		return fmt.Errorf("驗證失敗")
@@ -69,7 +69,7 @@ func updateGlobalDeviceInfo(deviceId string, now string) {
 	global.ActiveDevicesLock.Unlock()
 }
 
-func validateRecording(lat, lng float64, deviceId string) error {
+func validateRecordingRequest(lat, lng float64, deviceId string) error {
 	if lat == 0 {
 		return fmt.Errorf("lat 參數錯誤")
 	}

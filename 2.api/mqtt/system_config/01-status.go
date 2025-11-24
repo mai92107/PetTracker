@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	response "batchLog/0.core/commonResponse"
+	response "batchLog/0.core/commonResReq/res"
 	"batchLog/0.core/logafa"
 	systemService "batchLog/3.service/system"
 

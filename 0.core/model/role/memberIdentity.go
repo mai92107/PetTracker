@@ -1,4 +1,4 @@
-package model
+package role
 
 type MemberIdentity int
 

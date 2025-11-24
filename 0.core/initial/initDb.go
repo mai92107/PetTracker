@@ -21,7 +21,7 @@ func InitMariaDB(setting jsonModal.MariaDbConfig) *global.SqlDB {
 		return nil
 	}
 	// 暫時共用
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=UTC",
 		setting.Reading.User, setting.Reading.Password,
 		setting.Reading.Host, setting.Reading.Port,
 		setting.Reading.Name)

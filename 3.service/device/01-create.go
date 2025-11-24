@@ -8,7 +8,7 @@ import (
 
 func Create(deviceType string, memberId int64) (string, error) {
 
-	if err := validateRequest(deviceType); err != nil {
+	if err := validateCreateRequest(deviceType); err != nil {
 		return "", err
 	}
 
@@ -21,7 +21,7 @@ func Create(deviceType string, memberId int64) (string, error) {
 	return deviceId, nil
 }
 
-func validateRequest(deviceType string) error {
+func validateCreateRequest(deviceType string) error {
 	if deviceType == "" {
 		return fmt.Errorf("裝置名稱不可為空")
 	}

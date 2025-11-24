@@ -70,7 +70,6 @@ func (d *Device) TableName() string {
 }
 
 type TripSummary struct {
-	ID              uint64    `gorm:"primaryKey;autoIncrement;column:id" bson:"_id,omitempty"`
 	DataRef         string    `gorm:"column:data_ref;uniqueIndex:uk_data_ref;size:64;not null;comment:'行程唯一編號'" bson:"data_ref"`
 	DeviceID        string    `gorm:"column:device_id;index:idx_device_date;size:64;not null;comment:'裝置/寵物ID'" bson:"device_id"`
 	StartTime       time.Time `gorm:"column:start_time;index:idx_device_date;not null;comment:'開始時間'" bson:"start_time"`

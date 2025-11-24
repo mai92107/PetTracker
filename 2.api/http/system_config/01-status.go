@@ -3,7 +3,7 @@ package systemHttp
 import (
 	"time"
 
-	response "batchLog/0.core/commonResponse"
+	response "batchLog/0.core/commonResReq/res"
 	"batchLog/0.core/global"
 
 	"github.com/gin-gonic/gin"

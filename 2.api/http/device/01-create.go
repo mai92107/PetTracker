@@ -1,7 +1,7 @@
 package deviceHttp
 
 import (
-	response "batchLog/0.core/commonResponse"
+	response "batchLog/0.core/commonResReq/res"
 	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
 	deviceService "batchLog/3.service/device"

@@ -4,8 +4,10 @@ import (
 	"batchLog/0.core/global"
 	gormTable "batchLog/0.core/gorm"
 	"batchLog/0.core/logafa"
+	"batchLog/0.core/model"
 	"batchLog/0.core/redis"
 	"fmt"
+	"math"
 	"strings"
 	"time"
 
@@ -69,6 +71,55 @@ func CreateDevice(tx *gorm.DB, deviceType string, memberId int64) (string, error
 		return "", fmt.Errorf("建立裝置資料失敗")
 	}
 	return device.DeviceId, nil
+}
+
+func GetDeviceTrips(tx *gorm.DB, deviceId string, pageable model.Pageable) ([]gormTable.TripSummary, int64, int64,  error) {
+	var deviceTrips []gormTable.TripSummary
+	var totalCount int64
+	var totalPage int64
+
+	// 查總筆數
+	if err := tx.Model(&gormTable.TripSummary{}).
+		Where("device_id = ?", deviceId).
+		Count(&totalCount).Error; err != nil {
+		logafa.Error("統計裝置行程數量失敗 deviceId=%s, error: %+v", deviceId, err)
+		return deviceTrips, totalCount, totalPage, fmt.Errorf("統計行程數量失敗")
+	}
+
+	// 如果總筆數為 0，直接回傳空陣列
+	if totalCount == 0 {
+		logafa.Info("裝置 %s 無任何行程紀錄", deviceId)
+		return deviceTrips, totalCount, totalPage, nil
+	}
+
+	totalPage = int64(math.Ceil(float64(totalCount) / float64(pageable.Size)))
+
+	// 2. 正式查詢資料（分頁 + 排序）
+	err := tx.Where("device_id = ?", deviceId).
+		Offset(pageable.Offset()).    // 分頁
+		Limit(pageable.Limit()).      // 每頁筆數
+		Order(pageable.OrderBySQL()). // 排序
+		Find(&deviceTrips).Error
+
+	if err != nil {
+		logafa.Error("查詢裝置行程失敗 deviceId=%s, error: %+v", deviceId, err)
+		return deviceTrips, totalCount, totalPage, fmt.Errorf("查詢行程失敗")
+	}
+
+	return deviceTrips, totalCount, totalPage, nil
+}
+
+func GetTripDetail(tx *gorm.DB, tripUuid string) (gormTable.TripSummary, error) {
+	var trip gormTable.TripSummary
+
+	err := tx.Where("data_ref = ?", tripUuid).
+		First(&trip).Error
+	if err != nil {
+		logafa.Error("查詢裝置行程失敗 data_ref=%s, error: %+v", tripUuid, err)
+		return trip, fmt.Errorf("查詢行程失敗")
+	}
+
+	return trip, nil
 }
 
 func generateDeviceId() string {

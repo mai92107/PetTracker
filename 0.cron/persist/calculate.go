@@ -7,6 +7,7 @@ import (
 	"math"
 	"time"
 
+	common "batchLog/0.core/commonFunction"
 	"batchLog/0.core/global"
 	gormTable "batchLog/0.core/gorm"
 	"batchLog/0.core/logafa"
@@ -26,16 +27,19 @@ type rawData struct {
 	Coords    [][]float64 `bson:"coords"` // [[lng, lat], [lng, lat], ...]
 }
 
-// 計算近一日每趟行程資訊
 func SaveTripFmMongoToMaria() {
+	FlushTripFmMongoToMaria(30)
+}
+
+// 計算近 30min 每趟行程資訊
+func FlushTripFmMongoToMaria(timeDuration int) {
 	ctx := context.Background()
 	coll := global.Repository.DB.MongoDb.Reading.Collection("pettrack")
 
-	oneDayAgo := time.Now().UTC().Add(-time.Minute * 30) // 增加重疊部分 取近 30 分鐘
-
+	duration := time.Now().UTC().Add(time.Minute * -(time.Duration(timeDuration)))
 	pipeline := mongo.Pipeline{
 		{{Key: "$match", Value: bson.D{
-			{Key: "recorded_at", Value: bson.D{{Key: "$gte", Value: oneDayAgo}}},
+			{Key: "recorded_at", Value: bson.D{{Key: "$gte", Value: duration}}},
 			{Key: "location", Value: bson.D{{Key: "$ne", Value: nil}}},
 		}}},
 		{{Key: "$sort", Value: bson.D{
@@ -72,15 +76,18 @@ func SaveTripFmMongoToMaria() {
 		rawData := decodeRawData(cursor)
 		distance := getDistance(*rawData)
 		duration := rawData.EndTime.Sub(rawData.StartTime).Minutes()
+		now := time.Now()
 
 		results = append(results, gormTable.TripSummary{
 			DataRef:         rawData.DataRef,
 			DeviceID:        rawData.DeviceID,
-			StartTime:       rawData.StartTime,
-			EndTime:         rawData.EndTime,
-			DurationMinutes: math.Round(duration * 100) / 100, // 先右移小數點兩位並四捨五入，再修正小數點位置左移兩位
+			StartTime:       common.ToUtcTime(rawData.StartTime),
+			EndTime:         common.ToUtcTime(rawData.EndTime),
+			DurationMinutes: math.Round(duration*100) / 100, // 保留2位
 			PointCount:      len(rawData.Coords),
 			DistanceKM:      math.Round(distance*1000) / 1000, // 保留3位
+			CreatedAt:       common.ToUtcTime(now),
+			UpdatedAt:       common.ToUtcTime(now),
 		})
 	}
 
@@ -121,20 +128,16 @@ func saveTripSummaries(results []gormTable.TripSummary) error {
 }
 
 func saveTripToDB(tx *gorm.DB, trip *gormTable.TripSummary) error {
-    now := time.Now().UTC()
-    trip.CreatedAt = now
-    trip.UpdatedAt = now
-
-    return tx.Clauses(clause.OnConflict{
-				Columns: []clause.Column{{Name: "data_ref"}},
-				DoUpdates: []clause.Assignment{
-					{Column: clause.Column{Name: "updated_at"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(updated_at), updated_at)")},
-					{Column: clause.Column{Name: "end_time"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(end_time), end_time)")},
-					{Column: clause.Column{Name: "distance_km"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(distance_km), distance_km)")},
-					{Column: clause.Column{Name: "duration_minutes"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(duration_minutes), duration_minutes)")},
-					{Column: clause.Column{Name: "point_count"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(point_count), point_count)")},
-				},
-			}).Create(trip).Error
+	return tx.Clauses(clause.OnConflict{
+		Columns: []clause.Column{{Name: "data_ref"}},
+		DoUpdates: []clause.Assignment{
+			{Column: clause.Column{Name: "updated_at"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(updated_at), updated_at)")},
+			{Column: clause.Column{Name: "end_time"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(end_time), end_time)")},
+			{Column: clause.Column{Name: "distance_km"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(distance_km), distance_km)")},
+			{Column: clause.Column{Name: "duration_minutes"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(duration_minutes), duration_minutes)")},
+			{Column: clause.Column{Name: "point_count"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(point_count), point_count)")},
+		},
+	}).Create(trip).Error
 }
 
 func getDistance(rawData rawData) float64 {
@@ -156,8 +159,6 @@ func decodeRawData(cursor *mongo.Cursor) *rawData {
 	}
 	return &temp
 }
-
-// 經典 Haversine 公式（精確到公尺）
 func haversine(lat1, lng1, lat2, lng2 float64) float64 {
 	const R = 6371000 // 地球半徑（公尺）
 	dLat := (lat2 - lat1) * math.Pi / 180
