@@ -12,13 +12,13 @@ import (
 
 func Recording(lat, lng float64, memberId int64, deviceId, recordTime, dataRef string) error {
 
-	loc,err := time.LoadLocation("Local")
+	loc, err := time.LoadLocation("Local")
 	if err != nil {
 		logafa.Error("載入當前地區失敗, error: %+v", err)
 		return fmt.Errorf("載入當前地區失敗")
 	}
 
-	recordLocalTime,err := time.ParseInLocation(global.TIME_FORMAT, recordTime, loc)
+	recordLocalTime, err := time.ParseInLocation(global.TIME_FORMAT, recordTime, loc)
 	if err != nil {
 		logafa.Error("時區轉換失敗, error: %+v", err)
 		return fmt.Errorf("時區轉換失敗")

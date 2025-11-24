@@ -3,7 +3,6 @@ package jwtUtil
 import (
 	"batchLog/0.core/global"
 	"batchLog/0.core/logafa"
-	"batchLog/0.core/model"
 	"fmt"
 	"strings"
 	"time"
@@ -11,15 +10,46 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type LoginType int
+
+const (
+	EMAIL LoginType = iota
+	USERNAME
+)
+
+func (lt LoginType) String() string {
+	switch lt {
+	case EMAIL:
+		return "EMAIL"
+	case USERNAME:
+		return "USERNAME"
+	default:
+		return "UNKNOWN"
+	}
+}
+
+type Claims struct {
+	MemberId    int64  `json:"memberId"`
+	AccountName string `json:"accountName"`
+	LoginType   string `json:"loginType"`
+	Identity    string `json:"identity"`
+	LoginIp     string `json:"loginIp"`
+	jwt.RegisteredClaims
+}
+
+func (c Claims) IsAdmin() bool {
+	return c.Identity == "ADMIN"
+}
+
 func GenerateJwt(accountName, identity string, memberId int64, ip string, currentTime time.Time, expireTime time.Duration) (string, error) {
-	var loginType model.LoginType
+	var loginType LoginType
 	if strings.Contains(accountName, "@") {
-		loginType = model.EMAIL
+		loginType = EMAIL
 	} else {
-		loginType = model.USERNAME
+		loginType = USERNAME
 	}
 	// 產生 JWT
-	claims := &model.Claims{
+	claims := &Claims{
 		LoginType:   loginType.String(),
 		AccountName: accountName,
 		Identity:    identity,
@@ -40,17 +70,17 @@ func GenerateJwt(accountName, identity string, memberId int64, ip string, curren
 	return tokenStr, nil
 }
 
-func GetUserDataFromJwt(tokenStr string) (model.Claims, error) {
-	claims := model.Claims{}
+func GetUserDataFromJwt(tokenStr string) (Claims, error) {
+	claims := Claims{}
 	// Parse token with claims
 	token, err := jwt.ParseWithClaims(tokenStr, &claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(global.ConfigSetting.JwtSecretKey), nil
 	})
 	if err != nil {
-		return model.Claims{}, fmt.Errorf("JWT 解析失敗: %w", err)
+		return Claims{}, fmt.Errorf("JWT 解析失敗: %w", err)
 	}
 	if !token.Valid {
-		return model.Claims{}, fmt.Errorf("JWT 無效")
+		return Claims{}, fmt.Errorf("JWT 無效")
 	}
 	return claims, nil
 }

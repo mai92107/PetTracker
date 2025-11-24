@@ -5,7 +5,6 @@ import (
 	gormTable "batchLog/0.core/gorm"
 	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
-	"batchLog/0.core/model"
 	"fmt"
 )
 
@@ -25,10 +24,10 @@ func FindByJwt(jwt string) (*gormTable.Member, error) {
 		Select("member.*").
 		Joins("JOIN account ON account.uuid = member.account_uuid")
 
-	switch userData.LoginType{
-	case model.EMAIL.String():
+	switch userData.LoginType {
+	case jwtUtil.EMAIL.String():
 		query = query.Where("account.email = ?", userData.AccountName)
-	case model.USERNAME.String():
+	case jwtUtil.USERNAME.String():
 		query = query.Where("account.username = ?", userData.AccountName)
 	}
 	err = query.Take(&member).Error

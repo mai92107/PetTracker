@@ -4,14 +4,24 @@ import "time"
 
 type Subject int
 
-const(
-	LOGIN		Subject	 = iota
+type MqttPayload struct {
+	Subject     string    `json:"subject"`
+	Payload     string    `json:"payload"`
+	CurrentTime time.Time `json:"currentTime"`
+}
+
+type DeviceStatus struct {
+	LastSeen string `json:"lastSeen"`
+}
+
+const (
+	LOGIN Subject = iota
 	LOCATION
 	OFFLINE
 )
 
-func (s Subject)ToString()string{
-	switch s{
+func (s Subject) ToString() string {
+	switch s {
 	case LOGIN:
 		return "LOGIN"
 	case LOCATION:
@@ -21,15 +31,5 @@ func (s Subject)ToString()string{
 	default:
 		return "UNKNOWN"
 	}
-	
-}
 
-type MqttPayload struct{
-	Subject		string		`json:"subject"`
-	Payload		string		`json:"payload"`
-	CurrentTime	time.Time	`json:"currentTime"`
-}
-
-type DeviceStatus struct {
-	LastSeen   string	`json:"lastSeen"`
 }

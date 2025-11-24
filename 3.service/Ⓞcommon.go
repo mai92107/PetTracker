@@ -2,15 +2,15 @@ package service
 
 import (
 	"batchLog/0.core/global"
+	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
-	"batchLog/0.core/model"
 	repo "batchLog/4.repo"
 	"fmt"
 	"slices"
 )
 
 // 驗證會員使否為管理者 或是 裝置擁有者
-func ValidateDeviceOwner(deviceId string, member model.Claims) error {
+func ValidateDeviceOwner(deviceId string, member jwtUtil.Claims) error {
 	if member.Identity == "ADMIN" {
 		return nil
 	}

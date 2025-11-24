@@ -9,7 +9,7 @@ import (
 	"batchLog/0.core/global"
 	gormTable "batchLog/0.core/gorm"
 	"batchLog/0.core/logafa"
-	"batchLog/0.core/model"
+	"batchLog/0.core/model/role"
 
 	"gorm.io/gorm"
 
@@ -53,7 +53,7 @@ func CreateAccount(tx *gorm.DB, memberId int64, username, password, email string
 		Username:      username,
 		Password:      hashedPassword,
 		Email:         email,
-		Identity:      model.MEMBER.ToString(),
+		Identity:      role.MEMBER.ToString(),
 		LastLoginTime: now,
 	}
 	err := tx.Create(&account).Error

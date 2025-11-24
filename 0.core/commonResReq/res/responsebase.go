@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"batchLog/0.core/logafa"
-	mqttUtil "batchLog/0.core/mqtt"
+	"batchLog/0.core/mqtt"
 
 	"github.com/gin-gonic/gin"
 	jsoniter "github.com/json-iterator/go"
@@ -50,7 +50,7 @@ func SuccessMqtt[T any](topic string, requestTime time.Time, data T) {
 		RequestedTime: requestTime,
 		RespondedTime: time.Now().UTC(),
 	})
-	err := mqttUtil.PubMsgToTopic(topic, response)
+	err := mqtt.PubMsgToTopic(topic, response)
 	if err != nil {
 		logafa.Error("❌ 發送 MQTT 訊息失敗: %v", err)
 	}
@@ -65,7 +65,7 @@ func ErrorMqtt(topic string, code int, requestTime time.Time, msg string) {
 		RequestedTime: requestTime,
 		RespondedTime: time.Now().UTC(),
 	})
-	err := mqttUtil.PubMsgToTopic(topic, response)
+	err := mqtt.PubMsgToTopic(topic, response)
 	if err != nil {
 		logafa.Error("❌ 發送 MQTT 訊息失敗: %v", err)
 	}

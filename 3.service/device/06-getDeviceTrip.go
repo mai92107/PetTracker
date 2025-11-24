@@ -2,6 +2,7 @@ package deviceService
 
 import (
 	"batchLog/0.core/global"
+	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
 	"batchLog/0.core/model"
 	service "batchLog/3.service"
@@ -9,7 +10,7 @@ import (
 	"fmt"
 )
 
-func GetDeviceTrips(member model.Claims, deviceId string, pageable model.Pageable) ([]map[string]interface{}, int64, int64, error) {
+func GetDeviceTrips(member jwtUtil.Claims, deviceId string, pageable model.Pageable) ([]map[string]interface{}, int64, int64, error) {
 	trips := []map[string]interface{}{}
 	var total int64
 	var totalPages int64
@@ -18,7 +19,7 @@ func GetDeviceTrips(member model.Claims, deviceId string, pageable model.Pageabl
 	if err != nil {
 		return trips, total, totalPages, err
 	}
-	
+
 	err = service.ValidateDeviceOwner(deviceId, member)
 	if err != nil {
 		return trips, total, totalPages, err

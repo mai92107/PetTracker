@@ -2,14 +2,14 @@ package initial
 
 import (
 	jsonModal "batchLog/0.config"
-	"batchLog/0.core/global"
 	"batchLog/0.core/logafa"
+	"batchLog/0.core/model"
 	"context"
 
 	"github.com/redis/go-redis/v9"
 )
 
-func InitRedis(setting jsonModal.RedisDbConfig) *global.Cache {
+func InitRedis(setting jsonModal.RedisDbConfig) *model.Cache {
 	if !setting.InUse {
 		return nil
 	}
@@ -35,9 +35,9 @@ func InitRedis(setting jsonModal.RedisDbConfig) *global.Cache {
 	}
 
 	logafa.Debug(" ✅ Redis 資料庫連接成功")
-	return &global.Cache{
+	return &model.Cache{
 		Reading: readClient,
 		Writing: writeClient,
-		CTX: context.Background(),
+		CTX:     context.Background(),
 	}
 }

@@ -4,6 +4,7 @@ import (
 	jsonModal "batchLog/0.config"
 	"batchLog/0.core/global"
 	"batchLog/0.core/logafa"
+	"batchLog/0.core/model"
 	cron "batchLog/0.cron"
 	"flag"
 	"fmt"
@@ -139,8 +140,8 @@ func loadMachineJson() error {
 }
 
 func initMachine() {
-	global.Repository = &global.Repo{
-		DB: &global.DataBase{
+	global.Repository = &model.Repo{
+		DB: &model.DataBase{
 			MariaDb: InitMariaDB(MariaDBSetting),
 			MongoDb: InitMongoDB(MongoDBSetting),
 		},

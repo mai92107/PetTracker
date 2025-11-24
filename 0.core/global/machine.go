@@ -3,20 +3,15 @@ package global
 import (
 	jsonModal "batchLog/0.config"
 	"batchLog/0.core/model"
-	"context"
 	"sync"
 	"sync/atomic"
 
-	"go.mongodb.org/mongo-driver/mongo"
-
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"github.com/redis/go-redis/v9"
-	"gorm.io/gorm"
 )
 
 var (
 	ConfigSetting jsonModal.Config
-	Repository    *Repo
+	Repository    *model.Repo
 )
 
 var (
@@ -26,29 +21,7 @@ var (
 	IsConnected       atomic.Bool                           // 確認目前連線狀態
 )
 
-var(
-	PriorWorkerPool chan struct{}
+var (
+	PriorWorkerPool  chan struct{}
 	NormalWorkerPool chan struct{}
 )
-
-type Repo struct {
-	DB    *DataBase
-	Cache *Cache
-}
-type DataBase struct {
-	MariaDb *SqlDB
-	MongoDb *NoSqlDB
-}
-type SqlDB struct {
-	Reading *gorm.DB
-	Writing *gorm.DB
-}
-type NoSqlDB struct {
-	Reading *mongo.Database
-	Writing *mongo.Database
-}
-type Cache struct {
-	Reading *redis.Client
-	Writing *redis.Client
-	CTX     context.Context
-}

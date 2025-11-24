@@ -3,14 +3,14 @@ package deviceService
 import (
 	common "batchLog/0.core/commonFunction"
 	"batchLog/0.core/global"
+	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
-	"batchLog/0.core/model"
 	service "batchLog/3.service"
 	repo "batchLog/4.repo"
 	"fmt"
 )
 
-func GetTripDetail(member model.Claims, deviceId string, tripUuid string) (map[string]interface{}, error) {
+func GetTripDetail(member jwtUtil.Claims, deviceId string, tripUuid string) (map[string]interface{}, error) {
 	trip := map[string]interface{}{}
 
 	err := validateTripDetailRequest(deviceId, tripUuid)

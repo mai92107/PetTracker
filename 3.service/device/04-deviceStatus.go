@@ -3,7 +3,7 @@ package deviceService
 import (
 	common "batchLog/0.core/commonFunction"
 	"batchLog/0.core/global"
-	"batchLog/0.core/model"
+	jwtUtil "batchLog/0.core/jwt"
 	service "batchLog/3.service"
 	repo "batchLog/4.repo"
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func MqttDeviceStatus(deviceId string, member model.Claims) (map[string]any, error) {
+func MqttDeviceStatus(deviceId string, member jwtUtil.Claims) (map[string]any, error) {
 
 	err := service.ValidateDeviceOwner(deviceId, member)
 	if err != nil {

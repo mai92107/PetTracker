@@ -4,6 +4,7 @@ import (
 	jsonModal "batchLog/0.config"
 	"batchLog/0.core/global"
 	"batchLog/0.core/logafa"
+	"batchLog/0.core/model"
 	"context"
 	"fmt"
 	"time"
@@ -16,7 +17,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func InitMariaDB(setting jsonModal.MariaDbConfig) *global.SqlDB {
+func InitMariaDB(setting jsonModal.MariaDbConfig) *model.SqlDB {
 	if !setting.InUse {
 		return nil
 	}
@@ -43,13 +44,13 @@ func InitMariaDB(setting jsonModal.MariaDbConfig) *global.SqlDB {
 
 	initSQLTables(readingDb)
 	initSQLTables(writingDb)
-	return &global.SqlDB{
+	return &model.SqlDB{
 		Reading: readingDb,
 		Writing: writingDb,
 	}
 }
 
-func InitMongoDB(setting jsonModal.MongoDbConfig) *global.NoSqlDB {
+func InitMongoDB(setting jsonModal.MongoDbConfig) *model.NoSqlDB {
 	if !setting.InUse {
 		return nil
 	}
@@ -72,7 +73,7 @@ func InitMongoDB(setting jsonModal.MongoDbConfig) *global.NoSqlDB {
 	// 初始化index
 	initMongoIndexes(client)
 
-	return &global.NoSqlDB{
+	return &model.NoSqlDB{
 		Reading: client.Database("pettrack"),
 		Writing: client.Database("pettrack"),
 	}

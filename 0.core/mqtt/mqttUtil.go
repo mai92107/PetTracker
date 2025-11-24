@@ -1,4 +1,4 @@
-package mqttUtil
+package mqtt
 
 import (
 	"batchLog/0.core/global"
