@@ -1,6 +1,7 @@
 package memberMqtt
 
 import (
+	request "batchLog/0.core/commonResReq/req"
 	response "batchLog/0.core/commonResReq/res"
 	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
@@ -12,7 +13,7 @@ import (
 )
 
 type request02 struct {
-	SubscribeTo string `json:"subscribeTo"`
+	request.MqttReq
 }
 
 func MemberDevices(payload, jwt, clientId, ip string) {

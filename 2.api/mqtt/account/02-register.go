@@ -1,6 +1,7 @@
 package accountMqtt
 
 import (
+	request "batchLog/0.core/commonResReq/req"
 	response "batchLog/0.core/commonResReq/res"
 	"batchLog/0.core/logafa"
 	accountService "batchLog/3.service/account"
@@ -11,13 +12,13 @@ import (
 )
 
 type request02 struct {
-	Username    string `json:"username"`
-	Password    string `json:"password"`
-	Email       string `json:"email"`
-	LastName    string `json:"lastName"`
-	FirstName   string `json:"firstName"`
-	NickName    string `json:"nickName"`
-	SubscribeTo string `json:"subscribeTo"`
+	Username  string `json:"username"`
+	Password  string `json:"password"`
+	Email     string `json:"email"`
+	LastName  string `json:"lastName"`
+	FirstName string `json:"firstName"`
+	NickName  string `json:"nickName"`
+	request.MqttReq
 }
 
 func Register(payload, jwt, clientId, ip string) {

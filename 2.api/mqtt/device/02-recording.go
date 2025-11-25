@@ -1,6 +1,7 @@
 package deviceMqtt
 
 import (
+	request "batchLog/0.core/commonResReq/req"
 	response "batchLog/0.core/commonResReq/res"
 	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
@@ -12,12 +13,12 @@ import (
 )
 
 type request02 struct {
-	Longitude   float64 `json:"lng"`
-	Latitude    float64 `json:"lat"`
-	DeviceID    string  `json:"deviceId"`
-	SubscribeTo string  `json:"subscribeTo"`
-	RecordAt    string  `json:"recordAt"`
-	DataRef     string  `json:"dataRef"`
+	Longitude float64 `json:"lng"`
+	Latitude  float64 `json:"lat"`
+	DeviceID  string  `json:"deviceId"`
+	RecordAt string `json:"recordAt"`
+	DataRef  string `json:"dataRef"`
+	request.MqttReq
 }
 
 func Recording(payload, jwt, clientId, ip string) {

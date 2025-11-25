@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	request "batchLog/0.core/commonResReq/req"
 	response "batchLog/0.core/commonResReq/res"
 	"batchLog/0.core/logafa"
 	systemService "batchLog/3.service/system"
@@ -12,7 +13,7 @@ import (
 )
 
 type request01 struct {
-	SubscribeTo string `json:"subscribeTo"`
+	request.MqttReq
 }
 
 func SystemStatus(payload, jwt, clientId, ip string) {

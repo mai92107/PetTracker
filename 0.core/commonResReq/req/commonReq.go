@@ -1,5 +1,8 @@
 package request
 
+type MqttReq struct{
+	SubscribeTo string `json:"subscribeTo"`
+}
 type PageInfo struct{
 	Page      int    `json:"page"`
 	Size      int    `json:"size"`

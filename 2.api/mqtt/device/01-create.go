@@ -1,6 +1,7 @@
 package deviceMqtt
 
 import (
+	request "batchLog/0.core/commonResReq/req"
 	response "batchLog/0.core/commonResReq/res"
 	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
@@ -12,8 +13,8 @@ import (
 )
 
 type request01 struct {
-	DeviceType  string `json:"deviceType"`
-	SubscribeTo string `json:"subscribeTo"`
+	DeviceType string `json:"deviceType"`
+	request.MqttReq
 }
 
 func Create(payload, jwt, clientId, ip string) {

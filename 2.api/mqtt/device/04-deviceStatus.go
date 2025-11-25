@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	request "batchLog/0.core/commonResReq/req"
 	response "batchLog/0.core/commonResReq/res"
 	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
@@ -13,8 +14,8 @@ import (
 )
 
 type request04 struct {
-	DeviceID    string `json:"deviceId"`
-	SubscribeTo string `json:"subscribeTo"`
+	DeviceID string `json:"deviceId"`
+	request.MqttReq
 }
 
 func DeviceStatus(payload, jwt, clientId, ip string) {

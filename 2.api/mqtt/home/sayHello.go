@@ -1,6 +1,7 @@
 package homeMqtt
 
 import (
+	request "batchLog/0.core/commonResReq/req"
 	response "batchLog/0.core/commonResReq/res"
 	"batchLog/0.core/logafa"
 	"net/http"
@@ -10,7 +11,7 @@ import (
 )
 
 type request01 struct {
-	SubscribeTo string `json:"subscribeTo"`
+	request.MqttReq
 }
 
 func SayHello(payload, jwt, clientId, ip string) {
