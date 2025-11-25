@@ -20,3 +20,7 @@ func ToUtcTimeStr(time time.Time)string{
 func ToLocalTimeStr(time time.Time)string{
 	return time.Local().Format(global.TIME_FORMAT)
 }
+
+func ToLocalTimeShortStr(time time.Time)string{
+	return time.Local().Format("01/02 15:04:05")
+}

@@ -54,6 +54,8 @@ var mqttRoutes = []Route{
 	{"member_addDevice", memberMqtt.AddDevice, PermMember},
 	{"device_status", deviceMqtt.DeviceStatus, PermMember},
 	{"member_devices", memberMqtt.MemberDevices, PermMember},
+	{"trips", deviceMqtt.DeviceTrips, PermMember},
+	{"trip", deviceMqtt.TripDetail, PermMember},
 }
 
 // topic sample : req/action/clientId/jwt/ip

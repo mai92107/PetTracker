@@ -63,6 +63,7 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/redis/go-redis/v9 v9.11.0
 	github.com/robfig/cron/v3 v3.0.1
+	github.com/shopspring/decimal v1.4.0
 	go.mongodb.org/mongo-driver v1.17.6
 	golang.org/x/text v0.25.0 // indirect
 	gorm.io/driver/mysql v1.5.7

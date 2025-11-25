@@ -42,8 +42,11 @@ func DeviceTrips(c *gin.Context) {
 		response.Error(c, http.StatusInternalServerError, requestTime, "系統發生錯誤, 請稍後嘗試")
 		return
 	}
-	info := response.GetPageResponse(req.PageInfo, total, totalPages)
-	info["trips"] = datas
+	pageInfo := response.GetPageResponse(req.PageInfo, total, totalPages)
+	info := map[string]interface{}{
+		"pageInfo": pageInfo,
+		"trips":    datas,
+	}
 
 	response.Success(c, requestTime, info)
 }

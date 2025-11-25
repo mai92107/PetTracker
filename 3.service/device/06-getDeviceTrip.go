@@ -1,6 +1,7 @@
 package deviceService
 
 import (
+	common "batchLog/0.core/commonFunction"
 	"batchLog/0.core/global"
 	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
@@ -45,8 +46,9 @@ func GetDeviceTrips(member jwtUtil.Claims, deviceId string, pageable model.Pagea
 	for _, v := range tripsData {
 		trips = append(trips, map[string]interface{}{
 			"uuid":     v.DataRef,
-			"duration": v.DurationMinutes,
-			"distance": v.DistanceKM,
+			"time":     common.ToLocalTimeShortStr(v.EndTime),
+			"duration": common.FormatDigits(v.DurationMinutes, 4),
+			"distance": common.FormatDigits(v.DistanceKM, 4),
 		})
 	}
 

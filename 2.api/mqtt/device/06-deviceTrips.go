@@ -49,8 +49,11 @@ func DeviceTrips(payload, jwt, clientId, ip string) {
 		response.ErrorMqtt(errTopic, http.StatusInternalServerError, requestTime, "系統發生錯誤, 請稍後嘗試")
 		return
 	}
-	info := response.GetPageResponse(req.PageInfo, total, totalPages)
-	info["trips"] = datas
+	pageInfo := response.GetPageResponse(req.PageInfo, total, totalPages)
+	info := map[string]interface{}{
+		"pageInfo": pageInfo,
+		"trips":    datas,
+	}
 
 	response.SuccessMqtt(req.SubscribeTo, requestTime, info)
 }
