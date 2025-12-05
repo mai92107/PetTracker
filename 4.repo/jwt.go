@@ -5,10 +5,11 @@ import (
 	gormTable "batchLog/0.core/gorm"
 	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
+	"context"
 	"fmt"
 )
 
-func FindByJwt(jwt string) (*gormTable.Member, error) {
+func FindByJwt(ctx context.Context, jwt string) (*gormTable.Member, error) {
 
 	db := global.Repository.DB.MariaDb.Reading
 	// 解讀 JWT
@@ -20,7 +21,7 @@ func FindByJwt(jwt string) (*gormTable.Member, error) {
 
 	// 用 join 一次查出 Member
 	var member gormTable.Member
-	query := db.Table("member").
+	query := db.WithContext(ctx).Table("member").
 		Select("member.*").
 		Joins("JOIN account ON account.uuid = member.account_uuid")
 

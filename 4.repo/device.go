@@ -6,6 +6,7 @@ import (
 	"batchLog/0.core/logafa"
 	"batchLog/0.core/model"
 	"batchLog/0.core/redis"
+	"context"
 	"fmt"
 	"math"
 	"strings"
@@ -17,26 +18,26 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
-func GetAllDeviceIds(tx *gorm.DB) ([]string, error) {
+func GetAllDeviceIds(ctx context.Context, tx *gorm.DB) ([]string, error) {
 	var deviceIds []string
-	err := tx.Model(&gormTable.Device{}).
+	err := tx.WithContext(ctx).Model(&gormTable.Device{}).
 		Pluck("device_id", &deviceIds).Error
 	if err != nil {
-		logafa.Error("查詢所有 deviceIds 失敗, error: %+v", err)
+		logafa.Error("查詢所有 deviceIds 失敗", "error", err)
 		return nil, fmt.Errorf("裝置ID查詢失敗")
 	}
 	return deviceIds, nil
 }
 
-func GetDeviceIdsByMemberId(tx *gorm.DB, memberId int64) ([]string, error) {
+func GetDeviceIdsByMemberId(ctx context.Context, tx *gorm.DB, memberId int64) ([]string, error) {
 	var deviceIds []string
 
-	err := tx.Model(&gormTable.MemberDevice{}).
+	err := tx.WithContext(ctx).Model(&gormTable.MemberDevice{}).
 		Where("member_id = ?", memberId).
 		Pluck("device_id", &deviceIds).Error
 
 	if err != nil {
-		logafa.Error("查詢會員 deviceId 失敗, memberId: %v, error: %+v", memberId, err)
+		logafa.Error("查詢會員 deviceId 失敗", "memberId", memberId, "error", err)
 		return nil, fmt.Errorf("查無此會員或查詢失敗")
 	}
 
@@ -48,41 +49,41 @@ func GetDeviceIdsByMemberId(tx *gorm.DB, memberId int64) ([]string, error) {
 	return deviceIds, nil
 }
 
-func FindDeviceByDeviceId(tx *gorm.DB, deviceId string) (*gormTable.Device, error) {
+func FindDeviceByDeviceId(ctx context.Context, tx *gorm.DB, deviceId string) (*gormTable.Device, error) {
 	var device gormTable.Device
-	err := tx.First(&device, "device_id = ?", deviceId).Error
+	err := tx.WithContext(ctx).First(&device, "device_id = ?", deviceId).Error
 	if err != nil {
-		logafa.Error("查無此裝置, error: %+v", err)
+		logafa.Error("查無此裝置", "error", err)
 		return nil, fmt.Errorf("查無此裝置")
 	}
 	return &device, nil
 }
 
-func CreateDevice(tx *gorm.DB, deviceType string, memberId int64) (string, error) {
+func CreateDevice(ctx context.Context, tx *gorm.DB, deviceType string, memberId int64) (string, error) {
 	device := gormTable.Device{
 		Uuid:           uuid.New(),
-		DeviceId:       generateDeviceId(),
+		DeviceId:       generateDeviceId(ctx),
 		DeviceType:     deviceType,
 		CreateByMember: memberId,
 	}
-	err := tx.Table("device").Create(&device).Error
+	err := tx.WithContext(ctx).Table("device").Create(&device).Error
 	if err != nil {
-		logafa.Error("建立裝置資料失敗, error: %+v", err)
+		logafa.Error("建立裝置資料失敗", "error", err)
 		return "", fmt.Errorf("建立裝置資料失敗")
 	}
 	return device.DeviceId, nil
 }
 
-func GetDeviceTrips(tx *gorm.DB, deviceId string, pageable model.Pageable) ([]gormTable.TripSummary, int64, int64,  error) {
+func GetTripList(ctx context.Context, tx *gorm.DB, deviceId string, pageable model.Pageable) ([]gormTable.TripSummary, int64, int64, error) {
 	var deviceTrips []gormTable.TripSummary
 	var totalCount int64
 	var totalPage int64
 
 	// 查總筆數
-	if err := tx.Model(&gormTable.TripSummary{}).
+	if err := tx.WithContext(ctx).Model(&gormTable.TripSummary{}).
 		Where("device_id = ?", deviceId).
 		Count(&totalCount).Error; err != nil {
-		logafa.Error("統計裝置行程數量失敗 deviceId=%s, error: %+v", deviceId, err)
+		logafa.Error("統計裝置行程數量失敗", "deviceId", deviceId, "error", err)
 		return deviceTrips, totalCount, totalPage, fmt.Errorf("統計行程數量失敗")
 	}
 
@@ -95,45 +96,45 @@ func GetDeviceTrips(tx *gorm.DB, deviceId string, pageable model.Pageable) ([]go
 	totalPage = int64(math.Ceil(float64(totalCount) / float64(pageable.Size)))
 
 	// 2. 正式查詢資料（分頁 + 排序）
-	err := tx.Where("device_id = ?", deviceId).
+	err := tx.WithContext(ctx).Where("device_id = ?", deviceId).
 		Offset(pageable.Offset()).    // 分頁
 		Limit(pageable.Limit()).      // 每頁筆數
 		Order(pageable.OrderBySQL()). // 排序
 		Find(&deviceTrips).Error
 
 	if err != nil {
-		logafa.Error("查詢裝置行程失敗 deviceId=%s, error: %+v", deviceId, err)
+		logafa.Error("查詢裝置行程失敗", "deviceId", deviceId, "error", err)
 		return deviceTrips, totalCount, totalPage, fmt.Errorf("查詢行程失敗")
 	}
 
 	return deviceTrips, totalCount, totalPage, nil
 }
 
-func GetTripDetail(tx *gorm.DB, tripUuid string) (gormTable.TripSummary, error) {
+func GetTripDetail(ctx context.Context, tx *gorm.DB, tripUuid string) (gormTable.TripSummary, error) {
 	var trip gormTable.TripSummary
 
-	err := tx.Where("data_ref = ?", tripUuid).
+	err := tx.WithContext(ctx).Where("data_ref = ?", tripUuid).
 		First(&trip).Error
 	if err != nil {
-		logafa.Error("查詢裝置行程失敗 data_ref=%s, error: %+v", tripUuid, err)
+		logafa.Error("查詢裝置行程失敗", "data_ref", tripUuid, "error", err)
 		return trip, fmt.Errorf("查詢行程失敗")
 	}
 
 	return trip, nil
 }
 
-func generateDeviceId() string {
+func generateDeviceId(ctx context.Context) string {
 
-	prefix := redis.HGetData("device_setting", "device_prefix")
-	sequence, err := global.Repository.Cache.Writing.HIncrBy(global.Repository.Cache.CTX, "device_setting", "device_sequence", 1).Result()
+	prefix := redis.HGetData(ctx, "device_setting", "device_prefix")
+	sequence, err := global.Repository.Cache.Writing.HIncrBy(ctx, "device_setting", "device_sequence", 1).Result()
 	if err != nil {
-		logafa.Error("failed to increment sequence in Redis: %v", err)
+		logafa.Error("failed to increment sequence in Redis", "error", err)
 		return ""
 	}
 	return fmt.Sprintf("%s-%06d", prefix, sequence)
 }
 
-func SaveLocation(lat, lng float64, deviceId string, recordTime time.Time, dataRef string) error {
+func SaveLocation(ctx context.Context, lat, lng float64, deviceId string, recordTime time.Time, dataRef string) error {
 	now := time.Now().UTC()
 	// 存入 redis 臨時保存
 	key := fmt.Sprintf("device:%s", deviceId)
@@ -147,22 +148,22 @@ func SaveLocation(lat, lng float64, deviceId string, recordTime time.Time, dataR
 	}
 	byteData, err := jsoniter.Marshal(gps)
 	if err != nil {
-		logafa.Error("Json Marshal 失敗, error: %+v", err)
+		logafa.Error("Json Marshal 失敗", "error", err)
 		return fmt.Errorf(global.COMMON_SYSTEM_ERROR)
 	}
 	// 存入 redis
-	err = redis.ZAddData(key, score, byteData)
+	err = redis.ZAddData(ctx, key, score, byteData)
 	if err != nil {
-		logafa.Error("redis 儲存失敗, error: %+v", err)
+		logafa.Error("redis 儲存失敗", "error", err)
 		return fmt.Errorf(global.COMMON_SYSTEM_ERROR)
 	}
 	return nil
 }
 
-func GetOnlineDevices() ([]string, error) {
-	keys, err := redis.KeyScan("device:*")
+func GetOnlineDevices(ctx context.Context) ([]string, error) {
+	keys, err := redis.KeyScan(ctx, "device:*")
 	if err != nil {
-		logafa.Error("redis 掃描 device:* 失敗: %v", err)
+		logafa.Error("redis 掃描 device:* 失敗", "error", err)
 		return nil, fmt.Errorf("%s: redis scan error", global.COMMON_SYSTEM_ERROR)
 	}
 
@@ -177,6 +178,6 @@ func GetOnlineDevices() ([]string, error) {
 		}
 	}
 
-	logafa.Info("目前在線裝置數量: %d", len(deviceIds))
+	logafa.Info("目前在線裝置數量", "count", len(deviceIds))
 	return deviceIds, nil
 }

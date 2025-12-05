@@ -1,7 +1,10 @@
 package data
 
-import repo "batchLog/4.repo"
+import (
+	repo "batchLog/4.repo"
+	"context"
+)
 
-func GetOnlineDevice() {
-	repo.GetOnlineDevices()
+func GetOnlineDevice(ctx context.Context) {
+	repo.GetOnlineDevices(ctx)
 }

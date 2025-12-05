@@ -39,7 +39,7 @@ func InitMosquitto(setting jsonModal.MosquittoConfig) mqtt.Client {
 		SetCleanSession(true).
 		SetOnConnectHandler(func(c mqtt.Client) {
 			logafa.Debug("✅ 已連接到 Mosquitto 伺服器")
-			// 使用 goroutine 避免阻塞連線處理
+
 			go subscribeVagueTopic(c, vagueTopic)
 		}).
 		SetConnectionLostHandler(onConnectionLost).
@@ -50,7 +50,7 @@ func InitMosquitto(setting jsonModal.MosquittoConfig) mqtt.Client {
 	client := mqtt.NewClient(opts)
 
 	// 初次連線
-	logafa.Debug("🔌 正在連接到 MQTT Broker: %s:%s...", currentHost, setting.BrokerPort)
+	logafa.Debug("🔌 正在連接到 MQTT Broker", "host", currentHost, "port", setting.BrokerPort)
 
 	// 初次連線（非阻塞）
 	if token := client.Connect(); token.WaitTimeout(30*time.Second) && token.Error() != nil {
@@ -79,7 +79,7 @@ func subscribeVagueTopic(client mqtt.Client, vagueTopic []string) {
 				subscriptionMutex.Lock()
 				subscribedTopics[t] = true
 				subscriptionMutex.Unlock()
-				logafa.Debug("系統開始追蹤裝置主題: %s", t)
+				logafa.Debug("系統開始追蹤裝置主題", "topic", t)
 			}
 		}(topic, token)
 	}

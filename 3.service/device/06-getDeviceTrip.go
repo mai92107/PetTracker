@@ -8,10 +8,11 @@ import (
 	"batchLog/0.core/model"
 	service "batchLog/3.service"
 	repo "batchLog/4.repo"
+	"context"
 	"fmt"
 )
 
-func GetDeviceTrips(member jwtUtil.Claims, deviceId string, pageable model.Pageable) ([]map[string]interface{}, int64, int64, error) {
+func GetTripList(ctx context.Context, member jwtUtil.Claims, deviceId string, pageable model.Pageable) ([]map[string]interface{}, int64, int64, error) {
 	trips := []map[string]interface{}{}
 	var total int64
 	var totalPages int64
@@ -21,7 +22,7 @@ func GetDeviceTrips(member jwtUtil.Claims, deviceId string, pageable model.Pagea
 		return trips, total, totalPages, err
 	}
 
-	err = service.ValidateDeviceOwner(deviceId, member)
+	err = service.ValidateDeviceOwner(ctx, deviceId, member)
 	if err != nil {
 		return trips, total, totalPages, err
 	}
@@ -33,7 +34,7 @@ func GetDeviceTrips(member jwtUtil.Claims, deviceId string, pageable model.Pagea
 		}
 	}()
 
-	tripsData, total, totalPages, err := repo.GetDeviceTrips(tx, deviceId, pageable)
+	tripsData, total, totalPages, err := repo.GetTripList(ctx, tx, deviceId, pageable)
 	if err != nil {
 		return trips, total, totalPages, err
 	}

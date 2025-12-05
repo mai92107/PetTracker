@@ -7,11 +7,12 @@ import (
 	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
 	repo "batchLog/4.repo"
+	"context"
 	"fmt"
 	"time"
 )
 
-func Login(ip, accountName, password string) (map[string]interface{}, error) {
+func Login(ctx context.Context, ip, accountName, password string) (map[string]interface{}, error) {
 
 	// 參數驗證
 	if err := validateLogin(accountName, password); err != nil {
@@ -30,7 +31,7 @@ func Login(ip, accountName, password string) (map[string]interface{}, error) {
 	var err error
 	data := map[string]interface{}{}
 	// 驗證帳號
-	userAccount, err = repo.FindAccountByAccountName(tx, accountName)
+	userAccount, err = repo.FindAccountByAccountName(ctx, tx, accountName)
 	if err != nil {
 		tx.Rollback()
 		return data, err
@@ -43,7 +44,7 @@ func Login(ip, accountName, password string) (map[string]interface{}, error) {
 		return data, fmt.Errorf("密碼錯誤")
 	}
 
-	err = repo.UpdateLoginTime(tx, userAccount.Uuid)
+	err = repo.UpdateLoginTime(ctx, tx, userAccount.Uuid)
 	if err != nil {
 		tx.Rollback()
 		return data, err

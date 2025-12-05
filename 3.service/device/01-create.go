@@ -3,10 +3,11 @@ package deviceService
 import (
 	"batchLog/0.core/global"
 	repo "batchLog/4.repo"
+	"context"
 	"fmt"
 )
 
-func Create(deviceType string, memberId int64) (string, error) {
+func Create(ctx context.Context, deviceType string, memberId int64) (string, error) {
 
 	if err := validateCreateRequest(deviceType); err != nil {
 		return "", err
@@ -14,7 +15,7 @@ func Create(deviceType string, memberId int64) (string, error) {
 
 	db := global.Repository.DB.MariaDb.Writing
 	// 取得用戶資料
-	deviceId, err := repo.CreateDevice(db, deviceType, memberId)
+	deviceId, err := repo.CreateDevice(ctx, db, deviceType, memberId)
 	if err != nil {
 		return "", fmt.Errorf("新增使用者裝置發生錯誤，error: %+v", err)
 	}

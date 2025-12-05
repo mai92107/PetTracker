@@ -5,12 +5,13 @@ import (
 	"batchLog/0.core/logafa"
 	"batchLog/0.core/model"
 	repo "batchLog/4.repo"
+	"context"
 	"fmt"
 	"slices"
 	"time"
 )
 
-func Recording(lat, lng float64, memberId int64, deviceId, recordTime, dataRef string) error {
+func Recording(ctx context.Context, lat, lng float64, memberId int64, deviceId, recordTime, dataRef string) error {
 
 	loc, err := time.LoadLocation("Local")
 	if err != nil {
@@ -38,7 +39,7 @@ func Recording(lat, lng float64, memberId int64, deviceId, recordTime, dataRef s
 		}
 	}()
 
-	deviceIds, err := repo.GetDeviceIdsByMemberId(tx, memberId)
+	deviceIds, err := repo.GetDeviceIdsByMemberId(ctx, tx, memberId)
 	if err != nil {
 		return err
 	}
@@ -48,7 +49,7 @@ func Recording(lat, lng float64, memberId int64, deviceId, recordTime, dataRef s
 		return fmt.Errorf("使用者查無該裝置")
 	}
 
-	err = repo.SaveLocation(lat, lng, deviceId, recordUtcTime, dataRef)
+	err = repo.SaveLocation(ctx, lat, lng, deviceId, recordUtcTime, dataRef)
 	if err != nil {
 		return err
 	}

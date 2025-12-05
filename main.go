@@ -5,7 +5,6 @@ import (
 	"batchLog/0.core/initial"
 	"batchLog/0.core/logafa"
 	cron "batchLog/0.cron"
-	log "batchLog/0.cron/logafa"
 	router "batchLog/1.router"
 	"context"
 	"fmt"
@@ -19,11 +18,11 @@ import (
 )
 
 func main() {
-	log.CreateLogFileNow()
+	logafa.CreateLogFileNow()
 	initial.InitAll()
 
 	port := global.ConfigSetting.Port
-	logafa.Info(" http server 已啟動, 使用 PORT: %s", port)
+	logafa.Info("http server 已啟動", "port", port)
 
 	r := gin.Default()
 	router.RegisterRoutes(r)

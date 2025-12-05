@@ -5,12 +5,13 @@ import (
 	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
 	repo "batchLog/4.repo"
+	"context"
 	"fmt"
 	"slices"
 )
 
 // 驗證會員使否為管理者 或是 裝置擁有者
-func ValidateDeviceOwner(deviceId string, member jwtUtil.Claims) error {
+func ValidateDeviceOwner(ctx context.Context, deviceId string, member jwtUtil.Claims) error {
 	if member.Identity == "ADMIN" {
 		return nil
 	}
@@ -21,7 +22,7 @@ func ValidateDeviceOwner(deviceId string, member jwtUtil.Claims) error {
 			logafa.Error("裝置追蹤失敗")
 		}
 	}()
-	deviceIds, err := repo.GetDeviceIdsByMemberId(tx, member.MemberId)
+	deviceIds, err := repo.GetDeviceIdsByMemberId(ctx, tx, member.MemberId)
 	if err != nil {
 		return err
 	}

@@ -2,154 +2,131 @@
 package router
 
 import (
+	request "batchLog/0.core/commonResReq/req"
+	"batchLog/0.core/global"
+	"batchLog/0.core/logafa"
+	"batchLog/0.core/model/role"
+	middleware "batchLog/1.middleware"
+	"batchLog/1.router/adapter"
+	"batchLog/2.api/account"
+	"batchLog/2.api/device"
+	"batchLog/2.api/member"
+	system "batchLog/2.api/system_config"
+	"batchLog/2.api/test"
 	"fmt"
 	"net/http"
 	"strings"
 	"time"
 
-	response "batchLog/0.core/commonResReq/res"
-	"batchLog/0.core/global"
-	jwtUtil "batchLog/0.core/jwt"
-	"batchLog/0.core/logafa"
-	mqttUtils "batchLog/2.api/mqtt"
-	accountMqtt "batchLog/2.api/mqtt/account"
-	deviceMqtt "batchLog/2.api/mqtt/device"
-	homeMqtt "batchLog/2.api/mqtt/home"
-	memberMqtt "batchLog/2.api/mqtt/member"
-	systemMqtt "batchLog/2.api/mqtt/system_config"
-
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
-type MqttHandler func(payload, jwt, clientId, ip string)
+// MQTT route
+var mqttRoutes = map[string]Route{
 
-type Permission int
+	"hello": {Handler: executeMqtt(test.Hello), Permission: role.GUEST},
 
-const (
-	PermGuest Permission = iota
-	PermMember
-	PermAdmin
-)
+	// account
+	"account_login":    {Handler: executeMqtt(account.Login), Permission: role.GUEST},
+	"account_register": {Handler: executeMqtt(account.Register), Permission: role.GUEST},
 
-type Route struct {
-	Pattern    string
-	Handler    MqttHandler
-	Permission Permission
-}
+	// device
+	"device_create":    {Handler: executeMqtt(device.Create), Permission: role.ADMIN},
+	"device_recording": {Handler: nil, Permission: role.MEMBER},
+	"device_online":    {Handler: executeMqtt(device.OnlineDeviceList), Permission: role.ADMIN},
+	"device_status":    {Handler: nil, Permission: role.MEMBER},
+	"device_all":       {Handler: executeMqtt(device.DeviceList), Permission: role.ADMIN},
 
-var mqttRoutes = []Route{
-	// Guest (無需 JWT)
-	{"account_login", accountMqtt.Login, PermGuest},
-	{"account_register", accountMqtt.Register, PermGuest},
-	{"home_hello", homeMqtt.SayHello, PermGuest},
-	{"system_status", systemMqtt.SystemStatus, PermGuest},
-
-	// Admin
-	{"device_create", deviceMqtt.Create, PermAdmin},
-	{"device_online", deviceMqtt.MqttOnlineDevice, PermAdmin},
-	{"device_all", deviceMqtt.AllDevice, PermAdmin},
+	// trip
+	"trips": {Handler: executeMqtt(device.DeviceList), Permission: role.MEMBER}, /*待改成trip_list*/
+	"trip":  {Handler: executeMqtt(device.TripDetail), Permission: role.MEMBER}, /*待改成trip_detail*/
 
 	// Member
-	{"device_recording", deviceMqtt.Recording, PermMember},
-	{"member_addDevice", memberMqtt.AddDevice, PermMember},
-	{"device_status", deviceMqtt.DeviceStatus, PermMember},
-	{"member_devices", memberMqtt.MemberDevices, PermMember},
-	{"trips", deviceMqtt.DeviceTrips, PermMember},
-	{"trip", deviceMqtt.TripDetail, PermMember},
+	"member_addDevice": {Handler: executeMqtt(member.AddDevice), Permission: role.MEMBER},
+	"member_devices":   {Handler: executeMqtt(member.MemberDeviceList), Permission: role.MEMBER},
+
+	// system
+	"system_status": {Handler: executeMqtt(system.SystemStatus), Permission: role.GUEST},
+}
+
+type MqttHandler func(request.RequestContext)
+type Route struct {
+	Handler    MqttHandler
+	Permission role.MemberIdentity
 }
 
 // topic sample : req/action/clientId/jwt/ip
-func RouteFunction(action, payload, clientId, jwt, ip string) {
-	// 查找路由
-	for _, route := range mqttRoutes {
-		if action != route.Pattern {
-			continue
-		}
-
-		// 權限檢查
-		if !checkPermission(route.Permission, jwt) {
-			logafa.Warn("權限不足: %s (client: %s)", route.Pattern, clientId)
-			sendBackErrMsg(clientId, "權限不足: %s (client: %s)", route.Pattern, clientId)
-			return
-		}
-
-		route.Handler(payload, jwt, clientId, ip)
+func RouteFunction(ctx request.RequestContext, action string) {
+	// route !!!!!!
+	routeInfo, exist := mqttRoutes[action]
+	if !exist || routeInfo.Handler == nil {
+		logafa.Warn("查無此路徑", "action", action)
+		sendBackErrMsg(ctx, "此功能暫未開放")
 		return
 	}
 
-	routes := []string{}
-	for _, route := range mqttRoutes {
-		routes = append(routes, route.Pattern)
-	}
+	// handler !!!!!!!
+	handlerWithMiddlewares(
+		ctx,
+		routeInfo.Handler,
 
-	// === Debug 工具 ===
-	switch action {
-	case "encrypt":
-		mqttUtils.Encrypt(payload, global.ConfigSetting.DefaultSecretKey)
-	case "decrypt":
-		mqttUtils.Decrypt(payload, global.ConfigSetting.DefaultSecretKey)
-	default:
-		logafa.Warn("未知 MQTT 請求: %s", action)
-		sendBackErrMsg(clientId, "未知 MQTT 請求: %s, 核可請求為: %+v", action, routes)
-	}
+		// middleware
+		middleware.MqttJWTMiddleware(routeInfo.Permission),
+		middleware.MqttWorkerMiddleware(),
+		middleware.MqttTimeoutMiddleware(3*time.Second),
+	)
 }
 
 func OnMessageReceived(client mqtt.Client, msg mqtt.Message) {
+	now := global.GetNow()
 	payload := string(msg.Payload())
 	topic := msg.Topic()
 
 	logafa.Debug("收到 MQTT 訊息！Topic: %s | Payload: %s", topic, payload)
-
 	action, clientId, jwt, ip := extractInfoFromTopic(topic)
 	if action == "" || ip == "" {
 		logafa.Warn("無法解析 action 或 ip: %s", topic)
-		sendBackErrMsg(clientId, "無法解析 action 或 ip: %s", topic)
 		return
 	}
+	ctx := adapter.NewMQTTContext(payload, jwt, clientId, ip, now)
 
-	// 使用 worker pool 執行
-	<-global.NormalWorkerPool
-	go func() {
-		defer func() {
-			global.NormalWorkerPool <- struct{}{}
-			if r := recover(); r != nil {
-				logafa.Error("MQTT handler panic: %v\n on %s", r, topic)
-			}
-		}()
-		RouteFunction(action, payload, clientId, jwt, ip)
-	}()
+	RouteFunction(ctx, action)
 }
 
 func extractInfoFromTopic(topic string) (action, clientId, jwt, ip string) {
 	parts := strings.Split(topic, "/")
+	if len(parts) < 5 {
+		return "", "", "", ""
+	}
 	return parts[1], parts[2], parts[3], parts[4]
 }
 
-func checkPermission(perm Permission, jwt string) bool {
-	switch perm {
-	case PermGuest:
-		return true
-	case PermMember, PermAdmin:
-		if jwt == "" {
-			return false
-		}
-		claims, err := jwtUtil.GetUserDataFromJwt(jwt)
-		if err != nil {
-			logafa.Warn("JWT 解析失敗: %v", err)
-			return false
-		}
-		if perm == PermAdmin && !claims.IsAdmin() {
-			return false
-		}
-		return true
-	default:
-		return false
+func sendBackErrMsg(ctx request.RequestContext, reason string, args ...interface{}) {
+	fullReason := fmt.Sprintf(reason, args...)
+	ctx.Error(http.StatusBadRequest, fullReason)
+}
+
+func executeMqtt(handler func(request.RequestContext)) MqttHandler {
+	return func(ctx request.RequestContext) {
+		handler(ctx)
 	}
 }
 
-func sendBackErrMsg(clientId, reason string, args ...interface{}) {
-	requestTime := time.Now().UTC()
-	errTopic := "errReq/" + clientId
-	fullReason := fmt.Sprintf(reason, args...)
-	response.ErrorMqtt(errTopic, http.StatusBadRequest, requestTime, fullReason)
+func handlerWithMiddlewares(ctx request.RequestContext,
+	handler func(request.RequestContext),
+	middlewares ...func(request.RequestContext, func(request.RequestContext)),
+) {
+	// 用遞迴實作 middleware chain
+	var chain func(index int, ctx request.RequestContext)
+	chain = func(index int, ctx request.RequestContext) {
+		if index < len(middlewares) {
+			middlewares[index](ctx, func(ctx request.RequestContext) {
+				chain(index+1, ctx)
+			})
+		} else {
+			// 最後執行 handler
+			handler(ctx)
+		}
+	}
+	chain(0, ctx)
 }

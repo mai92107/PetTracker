@@ -11,13 +11,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func GetLatestDeviceRecordByDeviceId(deviceId string) (*gormTable.DeviceLocation, error) {
+func GetLatestDeviceRecordByDeviceId(ctx context.Context, deviceId string) (*gormTable.DeviceLocation, error) {
 	mongoDb := global.Repository.DB.MongoDb.Reading
 	collection := mongoDb.Collection("pettrack")
 
 	var result gormTable.DeviceLocation
 	err := collection.FindOne(
-		context.TODO(),
+		ctx,
 		bson.M{"device_id": deviceId},
 		options.FindOne().SetSort(bson.D{{"recorded_at", -1}}),
 	).Decode(&result)

@@ -3,7 +3,6 @@ package persist
 import (
 	"context"
 	"fmt"
-	"log"
 	"math"
 	"time"
 
@@ -27,13 +26,12 @@ type rawData struct {
 	Coords    [][]float64 `bson:"coords"` // [[lng, lat], [lng, lat], ...]
 }
 
-func SaveTripFmMongoToMaria() {
-	FlushTripFmMongoToMaria(30)
+func SaveTripFmMongoToMaria(ctx context.Context) {
+	FlushTripFmMongoToMaria(ctx, 30)
 }
 
 // 計算近 30min 每趟行程資訊
-func FlushTripFmMongoToMaria(timeDuration int) {
-	ctx := context.Background()
+func FlushTripFmMongoToMaria(ctx context.Context, timeDuration int) {
 	coll := global.Repository.DB.MongoDb.Reading.Collection("pettrack")
 
 	duration := time.Now().UTC().Add(time.Minute * -(time.Duration(timeDuration)))
@@ -65,7 +63,7 @@ func FlushTripFmMongoToMaria(timeDuration int) {
 
 	cursor, err := coll.Aggregate(ctx, pipeline)
 	if err != nil {
-		logafa.Error("Mongo 資料讀取錯誤, error: %+v", err)
+		logafa.Error("Mongo 資料讀取錯誤", "error", err)
 		return
 	}
 	defer cursor.Close(ctx)
@@ -93,37 +91,37 @@ func FlushTripFmMongoToMaria(timeDuration int) {
 
 	err = saveTripSummaries(results)
 	if err != nil {
-		logafa.Error("%+v", err)
+		logafa.Error("%w", err)
 	}
 }
 
 func saveTripSummaries(results []gormTable.TripSummary) error {
 	tx := global.Repository.DB.MariaDb.Reading.Begin()
 	if err := tx.Error; err != nil {
-		return fmt.Errorf("開始交易失敗: %w", err)
+		return fmt.Errorf("開始交易失敗, %w", err)
 	}
 
 	// 確保一定會 rollback（除非我們明確 commit）
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
-			logafa.Error("交易 panic，已 rollback: %+v", r)
+			logafa.Error("交易 panic，已 rollback", "error", r)
 		}
 	}()
 
 	for i, t := range results {
 		if err := saveTripToDB(tx, &t); err != nil {
-			logafa.Error("第 %d 筆儲存失敗，將 rollback 整批: %v | error: %v", i+1, t.DataRef, err)
+			logafa.Error("某筆儲存失敗，將 rollback 整批", "no", i+1, "data_ref", t.DataRef, "error", err)
 			return fmt.Errorf("儲存失敗: %w", err) // 觸發 rollback
 		}
 	}
 
 	if err := tx.Commit().Error; err != nil {
-		logafa.Error("交易提交失敗: %v", err)
+		logafa.Error("交易提交失敗", "error", err)
 		return fmt.Errorf("commit 失敗: %w", err)
 	}
 
-	logafa.Info("全部 %d 筆行程摘要寫入成功！", len(results))
+	logafa.Info("全部行程摘要寫入成功！", "count", len(results))
 	return nil
 }
 
@@ -154,7 +152,7 @@ func getDistance(rawData rawData) float64 {
 func decodeRawData(cursor *mongo.Cursor) *rawData {
 	var temp rawData
 	if err := cursor.Decode(&temp); err != nil {
-		log.Printf("decode error: %v", err)
+		logafa.Error("decode error", "error", err)
 		return nil
 	}
 	return &temp

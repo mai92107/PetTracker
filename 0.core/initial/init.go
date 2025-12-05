@@ -6,8 +6,8 @@ import (
 	"batchLog/0.core/logafa"
 	"batchLog/0.core/model"
 	cron "batchLog/0.cron"
-	"flag"
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -23,18 +23,29 @@ var (
 )
 
 func InitAll() {
+	InitLogger()
+
 	initWorkers()
-	env := initEnv()
 
 	loadEnvFromJSON()
-	initLogafa(env)
 
 	initMachine()
 
 	InitDeviceSequence()
 	cron.CronStart()
 }
+func InitLogger() {
+	logafa.CreateLogFileNow()
 
+	handler := logafa.NewLogafaHandler(&slog.HandlerOptions{
+		Level:     slog.LevelDebug,
+		AddSource: true,
+	})
+
+	slog.SetDefault(slog.New(handler))
+	logafa.Debug("Logafa 初始化完成")
+
+}
 func initWorkers() {
 	maxPriorWorkers := 20
 	maxNormalWorkers := 50
@@ -44,20 +55,20 @@ func initWorkers() {
 	for i := 0; i < maxPriorWorkers; i++ {
 		global.PriorWorkerPool <- struct{}{}
 	}
-	logafa.Debug("👮🏻‍♀️高級勞工%v名 聘請成功", maxPriorWorkers)
+	logafa.Debug("👮🏻‍♀️高級勞工 聘請成功", "count", maxPriorWorkers)
 	// 城市打工人
 	global.NormalWorkerPool = make(chan struct{}, maxNormalWorkers)
 	for i := 0; i < maxNormalWorkers; i++ {
 		global.NormalWorkerPool <- struct{}{}
 	}
-	logafa.Debug("👷🏻城市打工人%v名 聘請成功", maxNormalWorkers)
+	logafa.Debug("👷🏻城市打工人 聘請成功", "count", maxNormalWorkers)
 }
 
-func initEnv() (env string) {
-	flag.StringVar(&env, "env", "dev", "Environment: dev, prod, test")
-	flag.Parse()
-	return
-}
+// func initEnv() (env string) {
+// 	flag.StringVar(&env, "env", "dev", "Environment: dev, prod, test")
+// 	flag.Parse()
+// 	return
+// }
 
 func loadEnvFromJSON() {
 	err := loadConfigJson()
@@ -101,19 +112,6 @@ func loadConfigJson() error {
 	}
 	global.ConfigSetting = config
 	return nil
-}
-
-func initLogafa(env string) {
-	switch env {
-	case "dev":
-		logafa.CurrentLevel = logafa.DEBUG
-	case "prod":
-		logafa.CurrentLevel = logafa.INFO
-	case "test":
-		logafa.CurrentLevel = logafa.WARN
-	default:
-		logafa.CurrentLevel = logafa.DEBUG
-	}
 }
 
 func loadMachineJson() error {

@@ -4,17 +4,18 @@ import (
 	"batchLog/0.core/global"
 	"batchLog/0.core/logafa"
 	repo "batchLog/4.repo"
+	"context"
 	"fmt"
 )
 
-func AllDevice() ([]string, error) {
+func DeviceList(ctx context.Context) ([]string, error) {
 	tx := global.Repository.DB.MariaDb.Reading.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			logafa.Error("DB tx 啟動失敗")
 		}
 	}()
-	deviceIds, err := repo.GetAllDeviceIds(tx)
+	deviceIds, err := repo.GetAllDeviceIds(ctx, tx)
 	if err != nil {
 		return []string{}, err
 	}

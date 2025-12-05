@@ -3,7 +3,8 @@ package role
 type MemberIdentity int
 
 const (
-	MEMBER MemberIdentity = iota
+	GUEST MemberIdentity = iota
+	MEMBER
 	ADMIN
 )
 
@@ -13,6 +14,8 @@ func (mi MemberIdentity) ToString() string {
 		return "MEMBER"
 	case ADMIN:
 		return "ADMIN"
+	case GUEST:
+		return "GUEST"
 	default:
 		return "UNKNOWN"
 	}

@@ -33,9 +33,9 @@ func PubMsgToTopic(topic, msg string) error {
 		return fmt.Errorf("發送訊息逾時")
 	}
 	if token.Error() != nil {
-		logafa.Error("❌ 發送訊息失敗: %v", token.Error())
+		logafa.Error("❌ 發送訊息失敗", "error", token.Error())
 		return token.Error()
 	}
-	logafa.Debug("✅ topic: %s 已發送訊息: %s", topic, msg)
+	logafa.Debug("✅", "topic", topic, "msg", msg)
 	return nil
 }

@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"time"
@@ -16,17 +17,17 @@ import (
 	"github.com/google/uuid"
 )
 
-func FindAccountByAccountName(tx *gorm.DB, userAccount string) (*gormTable.Account, error) {
+func FindAccountByAccountName(ctx context.Context, tx *gorm.DB, userAccount string) (*gormTable.Account, error) {
 
 	if strings.Contains(userAccount, "@") {
-		return FindAccountByEmail(tx, userAccount)
+		return FindAccountByEmail(ctx, tx, userAccount)
 	}
-	return FindAccountByUsername(tx, userAccount)
+	return FindAccountByUsername(ctx, tx, userAccount)
 }
 
-func FindAccountByUsername(tx *gorm.DB, username string) (*gormTable.Account, error) {
+func FindAccountByUsername(ctx context.Context, tx *gorm.DB, username string) (*gormTable.Account, error) {
 	var account gormTable.Account
-	err := tx.First(&account, "username = ?", username).Error
+	err := tx.WithContext(ctx).First(&account, "username = ?", username).Error
 	if err != nil {
 		logafa.Error("查詢帳戶發生錯誤, error: %+v", err)
 		return nil, fmt.Errorf("查詢帳戶發生錯誤")
@@ -34,9 +35,9 @@ func FindAccountByUsername(tx *gorm.DB, username string) (*gormTable.Account, er
 	return &account, nil
 }
 
-func FindAccountByEmail(tx *gorm.DB, email string) (*gormTable.Account, error) {
+func FindAccountByEmail(ctx context.Context, tx *gorm.DB, email string) (*gormTable.Account, error) {
 	var account gormTable.Account
-	err := tx.First(&account, "email = ?", email).Error
+	err := tx.WithContext(ctx).First(&account, "email = ?", email).Error
 	if err != nil {
 		logafa.Error("查詢帳戶發生錯誤, error: %+v", err)
 		return nil, fmt.Errorf("查詢帳戶發生錯誤")
@@ -44,7 +45,7 @@ func FindAccountByEmail(tx *gorm.DB, email string) (*gormTable.Account, error) {
 	return &account, nil
 }
 
-func CreateAccount(tx *gorm.DB, memberId int64, username, password, email string) (uuid.UUID, error) {
+func CreateAccount(ctx context.Context, tx *gorm.DB, memberId int64, username, password, email string) (uuid.UUID, error) {
 	now := time.Now().UTC()
 	hashedPassword, _ := common.BcryptHash(password)
 	account := gormTable.Account{
@@ -56,7 +57,7 @@ func CreateAccount(tx *gorm.DB, memberId int64, username, password, email string
 		Identity:      role.MEMBER.ToString(),
 		LastLoginTime: now,
 	}
-	err := tx.Create(&account).Error
+	err := tx.WithContext(ctx).Create(&account).Error
 	if err != nil {
 		if strings.Contains(err.Error(), "Duplicate entry") {
 			if strings.Contains(err.Error(), "username") {
@@ -72,10 +73,10 @@ func CreateAccount(tx *gorm.DB, memberId int64, username, password, email string
 	return account.Uuid, nil
 }
 
-func UpdateLoginTime(tx *gorm.DB, accountUUID uuid.UUID) error {
+func UpdateLoginTime(ctx context.Context, tx *gorm.DB, accountUUID uuid.UUID) error {
 	now := time.Now().UTC()
 
-	err := tx.Model(&gormTable.Account{}).
+	err := tx.WithContext(ctx).Model(&gormTable.Account{}).
 		Where("uuid = ?", accountUUID).
 		Update("last_login_time", now).Error
 
@@ -85,18 +86,3 @@ func UpdateLoginTime(tx *gorm.DB, accountUUID uuid.UUID) error {
 	}
 	return nil
 }
-
-// func SaveLoginStatus(nickname, deviceId, token string, now time.Time)(map[string]interface{},error){
-// 	// 儲存登入狀態至 Redis
-// 	key := fmt.Sprintf("user:%s:%s", nickname, deviceId)
-// 	data := map[string]interface{}{
-// 		"token":     token,
-// 		"loginTime": now,
-// 	}
-// 	err := redis.HSetData(key, data)
-// 	if err != nil {
-// 		logafa.Error("redis 設置失敗，error: %+v",err)
-// 		return data,fmt.Errorf("系統錯誤")
-// 	}
-// 	return data, nil
-// }

@@ -6,18 +6,19 @@ import (
 	jwtUtil "batchLog/0.core/jwt"
 	service "batchLog/3.service"
 	repo "batchLog/4.repo"
+	"context"
 	"fmt"
 	"slices"
 	"time"
 )
 
-func MqttDeviceStatus(deviceId string, member jwtUtil.Claims) (map[string]any, error) {
+func MqttDeviceStatus(ctx context.Context, deviceId string, member jwtUtil.Claims) (map[string]any, error) {
 
-	err := service.ValidateDeviceOwner(deviceId, member)
+	err := service.ValidateDeviceOwner(ctx, deviceId, member)
 	if err != nil {
 		return nil, err
 	}
-	isOnline, err := getDeviceOnline(deviceId)
+	isOnline, err := getDeviceOnline(ctx, deviceId)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +29,7 @@ func MqttDeviceStatus(deviceId string, member jwtUtil.Claims) (map[string]any, e
 		return nil, err
 	}
 	// 若 重啟 全域變數會消失 則從DB找最新紀錄
-	lastSeenFromMongo, err := getRecordInfo(deviceId)
+	lastSeenFromMongo, err := getRecordInfo(ctx, deviceId)
 	if err != nil {
 		return nil, err
 	}
@@ -42,8 +43,8 @@ func MqttDeviceStatus(deviceId string, member jwtUtil.Claims) (map[string]any, e
 	}, nil
 }
 
-func getDeviceOnline(deviceId string) (bool, error) {
-	devices, err := repo.GetOnlineDevices()
+func getDeviceOnline(ctx context.Context, deviceId string) (bool, error) {
+	devices, err := repo.GetOnlineDevices(ctx)
 	if err != nil {
 		return false, err
 	}
@@ -73,8 +74,8 @@ func getDeviceInfo(deviceId string) (string, error) {
 	return info.LastSeen, nil
 }
 
-func getRecordInfo(deviceId string) (string, error) {
-	info, err := repo.GetLatestDeviceRecordByDeviceId(deviceId)
+func getRecordInfo(ctx context.Context, deviceId string) (string, error) {
+	info, err := repo.GetLatestDeviceRecordByDeviceId(ctx, deviceId)
 	if err != nil {
 		return "", fmt.Errorf("無法取得裝置定位資訊, error: %+v", err)
 	}

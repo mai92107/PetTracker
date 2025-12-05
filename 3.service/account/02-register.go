@@ -4,10 +4,11 @@ import (
 	"batchLog/0.core/global"
 	"batchLog/0.core/logafa"
 	repo "batchLog/4.repo"
+	"context"
 	"fmt"
 )
 
-func Register(ip, username, password, email, lastName, firstName, nickName string) (map[string]interface{}, error) {
+func Register(ctx context.Context, ip, username, password, email, lastName, firstName, nickName string) (map[string]interface{}, error) {
 
 	err := validateRegister(email, nickName, username, password)
 	if err != nil {
@@ -15,27 +16,27 @@ func Register(ip, username, password, email, lastName, firstName, nickName strin
 	}
 
 	tx := global.Repository.DB.MariaDb.Writing.Begin()
-    defer func() {
-        if r := recover(); r != nil {
-            tx.Rollback()
-            logafa.Error("註冊失敗(panic): %v", r)
-            panic(r) // 重新拋出
-        }
-    }()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			logafa.Error("註冊失敗(panic): %v", r)
+			panic(r) // 重新拋出
+		}
+	}()
 
-	memberId, err := repo.CreateMember(tx, lastName, firstName, nickName, email)
+	memberId, err := repo.CreateMember(ctx, tx, lastName, firstName, nickName, email)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
 	}
 
-	accountUuid, err := repo.CreateAccount(tx, memberId, username, password, email)
+	accountUuid, err := repo.CreateAccount(ctx, tx, memberId, username, password, email)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
 	}
 
-	err = repo.CreatePasswordHistory(tx, accountUuid, password)
+	err = repo.CreatePasswordHistory(ctx, tx, accountUuid, password)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
@@ -46,7 +47,7 @@ func Register(ip, username, password, email, lastName, firstName, nickName strin
 		return nil, fmt.Errorf(global.COMMON_SYSTEM_ERROR)
 	}
 
-	return Login(ip, username, password)
+	return Login(ctx, ip, username, password)
 }
 
 func validateRegister(email, nickName, username, password string) error {

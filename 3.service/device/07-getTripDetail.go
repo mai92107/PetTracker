@@ -7,17 +7,18 @@ import (
 	"batchLog/0.core/logafa"
 	service "batchLog/3.service"
 	repo "batchLog/4.repo"
+	"context"
 	"fmt"
 )
 
-func GetTripDetail(member jwtUtil.Claims, deviceId string, tripUuid string) (map[string]interface{}, error) {
+func GetTripDetail(ctx context.Context, member jwtUtil.Claims, deviceId string, tripUuid string) (map[string]interface{}, error) {
 	trip := map[string]interface{}{}
 
 	err := validateTripDetailRequest(deviceId, tripUuid)
 	if err != nil {
 		return trip, err
 	}
-	err = service.ValidateDeviceOwner(deviceId, member)
+	err = service.ValidateDeviceOwner(ctx, deviceId, member)
 	if err != nil {
 		return trip, err
 	}
@@ -29,7 +30,7 @@ func GetTripDetail(member jwtUtil.Claims, deviceId string, tripUuid string) (map
 		}
 	}()
 
-	tripData, err := repo.GetTripDetail(tx, tripUuid)
+	tripData, err := repo.GetTripDetail(ctx, tx, tripUuid)
 	if err != nil {
 		return trip, err
 	}

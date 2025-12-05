@@ -3,9 +3,7 @@ package cron
 import (
 	"batchLog/0.core/global"
 	logafa "batchLog/0.core/logafa"
-	"batchLog/0.cron/data"
-	log "batchLog/0.cron/logafa"
-	"batchLog/0.cron/persist"
+	"context"
 	"sync"
 	"time"
 
@@ -25,7 +23,7 @@ type cronInfo struct {
 const (
 	Second CronType = iota
 	Minute
-	Five	 // 每 5 分
+	Five     // 每 5 分
 	Ten      // 每 10 分
 	Quarter  // 每 15 分
 	HalfHour // 每 30 分
@@ -37,7 +35,7 @@ const (
 var cronSpecs = map[CronType]cronInfo{
 	Second:   {spec: "*/1 * * * * *", infoName: "每秒"},
 	Minute:   {spec: "0 * * * * *", infoName: "每分鐘"},
-	Five:  	  {spec: "5 */5 * * * *", infoName: "每 5 分鐘"},
+	Five:     {spec: "5 */5 * * * *", infoName: "每 5 分鐘"},
 	Ten:      {spec: "10 */10 * * * *", infoName: "每 10 分鐘"},
 	Quarter:  {spec: "15 */15 * * * *", infoName: "每 15 分鐘"},
 	HalfHour: {spec: "20 */30 * * * *", infoName: "每 30 分鐘"},
@@ -46,57 +44,7 @@ var cronSpecs = map[CronType]cronInfo{
 	Day:      {spec: "35 0 0 * * *", infoName: "每天"},
 }
 
-func CronStart() {
-	c := cron.New(cron.WithSeconds())
-
-	// 每秒鐘執行一次
-	executeJob(c, Second, []func(){})
-
-	// 每分鐘執行一次
-	executeJob(c, Minute, []func(){
-		// func(){
-		// 	for i := 0; i <= 10; i++{
-		// 		println(i)
-		// 		time.Sleep(1000 * time.Millisecond)
-		// 	}
-		// },
-	})
-	// 每5分鐘執行一次
-	executeJob(c, Five, []func(){
-		persist.SaveGpsFmRdsToMongo,
-	})
-
-	// 每10分鐘執行一次
-	executeJob(c, Ten, []func(){
-		persist.SaveTripFmMongoToMaria,
-	})
-
-	// 每15分鐘執行一次
-	executeJob(c, Quarter, []func(){
-	})
-
-	// 每半小時執行一次
-	executeJob(c, HalfHour, []func(){
-		
-	})
-
-	// 每小時執行一次
-	executeJob(c, Hour, []func(){
-		data.GetOnlineDevice,
-	})
-
-	// 每半天執行一次（每日00:00, 12:00）
-	executeJob(c, HalfDay, []func(){})
-
-	// 每天執行一次（每日00:00）
-	executeJob(c, Day, []func(){
-		log.StartRotateFile,
-	})
-
-	c.Start()
-}
-
-func executeJob(c *cron.Cron, cronType CronType, jobs []func()) {
+func executeJob(c *cron.Cron, cronType CronType, jobs []func(context.Context)) {
 	// 沒工作就離開
 	if len(jobs) == 0 {
 		return
@@ -104,20 +52,18 @@ func executeJob(c *cron.Cron, cronType CronType, jobs []func()) {
 
 	c.AddFunc(cronSpecs[cronType].spec, func() {
 		start := time.Now()
-		logafa.Debug("%s執行程序, 現在時間: %+v", cronSpecs[cronType].infoName, start.Format(TIME_LAYOUT))
-
 		var localWg sync.WaitGroup
 		for _, job := range jobs {
 			submitJobAsync(job, &localWg)
 		}
 		localWg.Wait()
 		duration := time.Since(start)
-		logafa.Debug("%s任務執行完畢，耗時: %v", cronSpecs[cronType].infoName, duration)
+		logafa.Debug("任務執行完畢", "type", cronSpecs[cronType].infoName, "duration", duration)
 	})
 }
 
 // 工人分配執行工作
-func submitJobAsync(job func(), localWg *sync.WaitGroup) {
+func submitJobAsync(job func(context.Context), localWg *sync.WaitGroup) {
 	wg.Add(1)
 	<-global.NormalWorkerPool // 取得 worker
 	localWg.Add(1)
@@ -127,9 +73,9 @@ func submitJobAsync(job func(), localWg *sync.WaitGroup) {
 			localWg.Done()
 			global.NormalWorkerPool <- struct{}{}
 		}()
-		start := time.Now().UTC()
-		job()
-		logafa.Debug("單一任務完成，耗時: %v", time.Since(start))
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+		job(ctx)
 	}()
 }
 

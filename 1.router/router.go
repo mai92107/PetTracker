@@ -1,65 +1,80 @@
 package router
 
 import (
+	request "batchLog/0.core/commonResReq/req"
 	"batchLog/0.core/model/role"
 	middleware "batchLog/1.middleware"
-	accountHttp "batchLog/2.api/http/account"
-	debugHttp "batchLog/2.api/http/debug"
-	deviceHttp "batchLog/2.api/http/device"
-	homeHttp "batchLog/2.api/http/home"
-	memberHttp "batchLog/2.api/http/member"
-	systemHttp "batchLog/2.api/http/system_config"
+	"batchLog/1.router/adapter"
+	"batchLog/2.api/account"
+	"batchLog/2.api/debug"
+	"batchLog/2.api/device"
+	"batchLog/2.api/member"
+	system "batchLog/2.api/system_config"
+	"batchLog/2.api/test"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 func RegisterRoutes(r *gin.Engine) {
 
-	const ADMIN = "ADMIN"
-	const MEMBER = "MEMBER"
-
-	r.Use(middleware.WorkerMiddleware())
+	// middleware
+	r.Use(
+		middleware.HttpTimeoutMiddleware(5*time.Second),
+		middleware.HttpWorkerMiddleware(),
+	)
 
 	// 註冊路由
 	// TODO: 未來需要檢查ip body header 在路徑後加上middleware檢查
 	// 依類別分組
 	homeGroup := r.Group("/home")
 	{
-		homeGroup.GET("/say_hello", homeHttp.SayHello)
+		homeGroup.GET("/say_hello", required(role.GUEST), executeHttp(test.Hello))
 	}
 
 	accountGroup := r.Group("/account")
 	{
-		accountGroup.POST("/login", accountHttp.Login)
-		accountGroup.POST("/register", accountHttp.Register)
+		accountGroup.POST("/login", required(role.GUEST), executeHttp(account.Login))
+		accountGroup.POST("/register", required(role.GUEST), executeHttp(account.Register))
 	}
 
 	deviceGroup := r.Group("/device")
 	{
-		deviceGroup.POST("/create", middleware.JWTValidator(role.ADMIN), deviceHttp.Create)
-		deviceGroup.GET("/onlineDevice", middleware.JWTValidator(role.ADMIN), deviceHttp.MqttOnlineDevice)
-		deviceGroup.GET("/all", middleware.JWTValidator(role.ADMIN), deviceHttp.AllDevice)
+		deviceGroup.POST("/create", required(role.ADMIN), executeHttp(device.Create))
+		deviceGroup.GET("/onlineDevice", required(role.ADMIN), executeHttp(device.OnlineDeviceList))
+		deviceGroup.GET("/all", required(role.ADMIN), executeHttp(device.DeviceList))
 
-		deviceGroup.POST("/recording", middleware.JWTValidator(role.MEMBER), deviceHttp.Recording)
-		deviceGroup.GET("/:deviceId/status", middleware.JWTValidator(role.MEMBER), deviceHttp.DeviceStatus)
-		deviceGroup.GET("/trips", middleware.JWTValidator(role.MEMBER), deviceHttp.DeviceTrips)
-		deviceGroup.GET("/trip", middleware.JWTValidator(role.MEMBER), deviceHttp.TripDetail)
+		deviceGroup.POST("/recording", required(role.MEMBER), executeHttp(device.Recording))
+		deviceGroup.GET("/:deviceId/status", required(role.MEMBER), executeHttp(device.DeviceStatus))
+		deviceGroup.GET("/trips", required(role.MEMBER), executeHttp(device.TripList))
+		deviceGroup.GET("/trip", required(role.MEMBER), executeHttp(device.TripDetail))
 
 	}
 
 	memberGroup := r.Group("/member")
 	{
-		memberGroup.POST("/addDevice", middleware.JWTValidator(role.MEMBER), memberHttp.AddDevice)
-		memberGroup.GET("/allDevice", middleware.JWTValidator(role.MEMBER), memberHttp.MemberDevice)
+		memberGroup.POST("/addDevice", required(role.MEMBER), executeHttp(member.AddDevice))
+		memberGroup.GET("/allDevice", required(role.MEMBER), executeHttp(member.MemberDeviceList))
 	}
 
 	systemGroup := r.Group("/system")
 	{
-		systemGroup.GET("/status", middleware.JWTValidator(role.MEMBER), systemHttp.SystemStatus)
+		systemGroup.GET("/status", required(role.MEMBER), executeHttp(system.SystemStatus))
 	}
 
 	debugGroup := r.Group("/debug")
 	{
-		debugGroup.POST("/flush_to_maria", middleware.JWTValidator(role.ADMIN), debugHttp.FlushToMaria)
+		debugGroup.POST("/flush_to_maria", required(role.ADMIN), executeHttp(debug.FlushToMaria))
 	}
+}
+
+func executeHttp(handler func(request.RequestContext)) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx := adapter.NewHttpContext(c)
+		handler(ctx)
+	}
+}
+
+func required(identity role.MemberIdentity) gin.HandlerFunc {
+	return middleware.HttpJWTMiddleware(identity)
 }
