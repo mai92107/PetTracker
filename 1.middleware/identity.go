@@ -23,6 +23,7 @@ func HttpJWTMiddleware(identity role.MemberIdentity) gin.HandlerFunc {
 			authHeader := c.GetHeader("jwt")
 			validateJwt(identity, authHeader, func(code int, msg string) {
 				response.Error(c, code, now, msg)
+				c.Abort()
 			})
 		}
 		c.Next()

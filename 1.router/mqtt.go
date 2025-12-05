@@ -32,9 +32,9 @@ var mqttRoutes = map[string]Route{
 
 	// device
 	"device_create":    {Handler: executeMqtt(device.Create), Permission: role.ADMIN},
-	"device_recording": {Handler: nil, Permission: role.MEMBER},
+	"device_recording": {Handler: executeMqtt(device.Recording), Permission: role.MEMBER},
 	"device_online":    {Handler: executeMqtt(device.OnlineDeviceList), Permission: role.ADMIN},
-	"device_status":    {Handler: nil, Permission: role.MEMBER},
+	"device_status":    {Handler: executeMqtt(device.DeviceStatus), Permission: role.MEMBER},
 	"device_all":       {Handler: executeMqtt(device.DeviceList), Permission: role.ADMIN},
 
 	// trip

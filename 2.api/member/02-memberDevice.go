@@ -3,6 +3,7 @@ package member
 import (
 	request "batchLog/0.core/commonResReq/req"
 	"batchLog/0.core/global"
+	"batchLog/0.core/logafa"
 	memberService "batchLog/3.service/member"
 	"net/http"
 )
@@ -19,7 +20,7 @@ func MemberDeviceList(ctx request.RequestContext) {
 	}
 	deviceIds, err := memberService.MemberDeviceList(ctx.GetContext(), req.MemberId)
 	if err != nil {
-		// logafa.Error("系統發生錯誤, error: %+v", err)
+		logafa.Error("系統發生錯誤", "error", err)
 		ctx.Error(http.StatusInternalServerError, global.COMMON_SYSTEM_ERROR)
 		return
 	}
