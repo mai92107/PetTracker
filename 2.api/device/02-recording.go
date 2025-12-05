@@ -10,11 +10,12 @@ import (
 )
 
 type request02 struct {
-	Longitude float64 `json:"lng"`
-	Latitude  float64 `json:"lat"`
-	DeviceID  string  `json:"deviceId"`
-	RecordAt  string  `json:"recordAt"`
-	DataRef   string  `json:"dataRef"`
+	Longitude   float64 `json:"lng"`
+	Latitude    float64 `json:"lat"`
+	DeviceID    string  `json:"deviceId"`
+	RecordAt    string  `json:"recordAt"`
+	DataRef     string  `json:"dataRef"`
+	SubscribeTo string  `json:"subscribeTo"`
 }
 
 func Recording(ctx request.RequestContext) {
@@ -26,11 +27,20 @@ func Recording(ctx request.RequestContext) {
 	}
 	claim, err := jwtUtil.GetUserDataFromJwt(ctx.GetJWT())
 	if err != nil {
-		logafa.Error("身份認證錯誤, error: %+v", err)
+		logafa.Error("身份認證錯誤", "error", err)
 		ctx.Error(http.StatusForbidden, "身份認證錯誤")
 		return
 	}
+	final := false
+	if req.SubscribeTo != "" {
+		final = true
+	}
 
-	deviceService.Recording(ctx.GetContext(), req.Latitude, req.Longitude, claim.MemberId, req.DeviceID, req.RecordAt, req.DataRef)
-	ctx.Success("")
+	info, err := deviceService.Recording(ctx.GetContext(), req.Latitude, req.Longitude, claim, req.DeviceID, req.RecordAt, req.DataRef, final)
+	if err != nil {
+		logafa.Error("系統發生錯誤", "error", err)
+		ctx.Error(http.StatusInternalServerError, global.COMMON_SYSTEM_ERROR)
+		return
+	}
+	ctx.Success(info)
 }

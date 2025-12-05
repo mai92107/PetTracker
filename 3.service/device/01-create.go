@@ -17,7 +17,7 @@ func Create(ctx context.Context, deviceType string, memberId int64) (string, err
 	// 取得用戶資料
 	deviceId, err := repo.CreateDevice(ctx, db, deviceType, memberId)
 	if err != nil {
-		return "", fmt.Errorf("新增使用者裝置發生錯誤，error: %+v", err)
+		return "", fmt.Errorf("新增使用者裝置發生錯誤, err: %w", err)
 	}
 	return deviceId, nil
 }

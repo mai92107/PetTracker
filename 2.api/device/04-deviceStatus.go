@@ -23,13 +23,13 @@ func DeviceStatus(ctx request.RequestContext) {
 	}
 	userInfo, err := jwtUtil.GetUserDataFromJwt(ctx.GetJWT())
 	if err != nil {
-		logafa.Error("身份認證錯誤, error: %+v", err)
+		logafa.Error("身份認證錯誤", "error", err)
 		ctx.Error(http.StatusForbidden, "身份認證錯誤")
 		return
 	}
 	info, err := deviceService.MqttDeviceStatus(ctx.GetContext(), req.DeviceId, userInfo)
 	if err != nil {
-		logafa.Error("系統發生錯誤, error: %+v", err)
+		logafa.Error("系統發生錯誤", "error", err)
 		ctx.Error(http.StatusInternalServerError, global.COMMON_SYSTEM_ERROR)
 		return
 	}

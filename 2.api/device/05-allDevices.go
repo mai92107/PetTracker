@@ -12,7 +12,7 @@ import (
 func DeviceList(ctx request.RequestContext) {
 	deviceIds, err := deviceService.DeviceList(ctx.GetContext())
 	if err != nil {
-		logafa.Error("系統發生錯誤, error: %+v", err)
+		logafa.Error("系統發生錯誤", "error", err)
 		ctx.Error(http.StatusInternalServerError, global.COMMON_SYSTEM_ERROR)
 		return
 	}
