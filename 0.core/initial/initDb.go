@@ -155,7 +155,7 @@ func initSQLTables(db *gorm.DB) {
 					FOREIGN KEY (account_uuid) REFERENCES account(uuid) ON DELETE CASCADE
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`,
 
-		"record_summary": `
+		"trip_summary": `
 			CREATE TABLE trip_summary (
 				data_ref         varchar(64) NOT NULL PRIMARY KEY COMMENT '行程唯一編號',
 				device_id        varchar(64) NOT NULL COMMENT '裝置/寵物ID',
@@ -176,6 +176,7 @@ func initSQLTables(db *gorm.DB) {
 		"member_device",
 		"account",
 		"password_history",
+		"trip_summary",
 	}
 
 	// 計算開了多少TABLE
@@ -184,7 +185,7 @@ func initSQLTables(db *gorm.DB) {
 	for _, tableName := range createOrder {
 		sqlStmt, ok := tables[tableName]
 		if !ok {
-			logafa.Warn("Table 定義遺失: %s", tableName)
+			logafa.Warn("Table 定義遺失", "table", tableName)
 			continue
 		}
 
@@ -200,7 +201,7 @@ func initSQLTables(db *gorm.DB) {
 			Scan(&count).Error
 
 		if err != nil {
-			logafa.Error("檢查 Table %s 是否存在失敗: %v", tableName, err)
+			logafa.Error("檢查 Table 是否存在失敗", "table", tableName, "error", err)
 			continue
 		}
 
@@ -209,9 +210,9 @@ func initSQLTables(db *gorm.DB) {
 		}
 
 		// 建立 Table
-		logafa.Info("正在建立 Table `%s`...", tableName)
+		logafa.Info("正在建立 Table ...", "table", tableName)
 		if err := db.WithContext(ctx).Exec(sqlStmt).Error; err != nil {
-			logafa.Error("建立 Table `%s` 失敗: %v", tableName, err)
+			logafa.Error("建立 Table 失敗", "table", tableName, "error", err)
 			continue
 		}
 		newTable++
@@ -230,7 +231,7 @@ func initMongoIndexes(client *mongo.Client) {
 	// Panic 處理
 	defer func() {
 		if r := recover(); r != nil {
-			logafa.Error("初始化Mongo Index 失敗 (panic): %v", r)
+			logafa.Error("初始化Mongo Index 失敗", "error", r)
 			panic(r)
 		}
 	}()
@@ -288,7 +289,7 @@ func initMongoIndexes(client *mongo.Client) {
 	existingNames := make(map[string]bool)
 	cursor, err := collection.Indexes().List(ctx)
 	if err != nil {
-		logafa.Error("無法列出現有索引: %v", err)
+		logafa.Error("無法列出現有索引", "error", err)
 		return
 	}
 	defer cursor.Close(ctx)
@@ -302,7 +303,7 @@ func initMongoIndexes(client *mongo.Client) {
 		}
 	}
 	if err := cursor.Err(); err != nil {
-		logafa.Error("遍歷索引時發生錯誤: %v", err)
+		logafa.Error("遍歷索引時發生錯誤", "error", err)
 		return
 	}
 
@@ -322,7 +323,7 @@ func initMongoIndexes(client *mongo.Client) {
 	// 建立索引
 	_, err = collection.Indexes().CreateMany(ctx, toCreate)
 	if err != nil {
-		logafa.Error("建立索引失敗: %v", err)
+		logafa.Error("建立索引失敗", "error", err)
 		return
 	}
 	logafa.Info("MongoDB 索引初始化完成")
