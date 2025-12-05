@@ -38,8 +38,8 @@ var mqttRoutes = map[string]Route{
 	"device_all":       {Handler: executeMqtt(device.DeviceList), Permission: role.ADMIN},
 
 	// trip
-	"trips": {Handler: executeMqtt(device.DeviceList), Permission: role.MEMBER}, /*待改成trip_list*/
-	"trip":  {Handler: executeMqtt(device.TripDetail), Permission: role.MEMBER}, /*待改成trip_detail*/
+	"trip_list": {Handler: executeMqtt(device.TripList), Permission: role.MEMBER},
+	"trip_detail":  {Handler: executeMqtt(device.TripDetail), Permission: role.MEMBER},
 
 	// Member
 	"member_addDevice": {Handler: executeMqtt(member.AddDevice), Permission: role.MEMBER},
@@ -82,7 +82,7 @@ func OnMessageReceived(client mqtt.Client, msg mqtt.Message) {
 	payload := string(msg.Payload())
 	topic := msg.Topic()
 
-	logafa.Debug("收到 MQTT 訊息！Topic: %s | Payload: %s", topic, payload)
+	logafa.Debug("收到 MQTT 訊息", "topic", topic, "payload", payload)
 	action, clientId, jwt, ip := extractInfoFromTopic(topic)
 	if action == "" || ip == "" {
 		logafa.Warn("無法解析 action 或 ip: %s", topic)

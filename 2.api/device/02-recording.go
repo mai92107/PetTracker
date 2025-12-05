@@ -42,5 +42,7 @@ func Recording(ctx request.RequestContext) {
 		ctx.Error(http.StatusInternalServerError, global.COMMON_SYSTEM_ERROR)
 		return
 	}
-	ctx.Success(info)
+	if info != nil {
+		ctx.Success(info)
+	}
 }

@@ -52,7 +52,7 @@ func SuccessMqtt[T any](topic string, requestTime time.Time, data T) {
 	})
 	err := mqtt.PubMsgToTopic(topic, response)
 	if err != nil {
-		logafa.Error("❌ 發送 MQTT 訊息失敗: %v", err)
+		logafa.Error("❌ 發送 MQTT 訊息失敗", "error", err)
 	}
 }
 
