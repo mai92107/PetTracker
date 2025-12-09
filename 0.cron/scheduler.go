@@ -2,12 +2,13 @@ package cron
 
 import (
 	"batchLog/0.core/logafa"
-	"batchLog/0.cron/data"
-	"batchLog/0.cron/persist"
+	tripService "batchLog/3.service/trip"
 	"context"
 
 	"github.com/robfig/cron/v3"
 )
+
+const EXECUTOR string = "SYSTEM_CRON"
 
 func CronStart() {
 	c := cron.New(cron.WithSeconds())
@@ -25,14 +26,10 @@ func CronStart() {
 		// },
 	})
 	// 每5分鐘執行一次
-	executeJob(c, Five, []func(context.Context){
-		persist.SaveGpsFmRdsToMongo,
-	})
+	executeJob(c, Five, []func(context.Context){})
 
 	// 每10分鐘執行一次
-	executeJob(c, Ten, []func(context.Context){
-		persist.SaveTripFmMongoToMaria,
-	})
+	executeJob(c, Ten, []func(context.Context){})
 
 	// 每15分鐘執行一次
 	executeJob(c, Quarter, []func(context.Context){})
@@ -42,7 +39,10 @@ func CronStart() {
 
 	// 每小時執行一次
 	executeJob(c, Hour, []func(context.Context){
-		data.GetOnlineDevice,
+		// data.GetOnlineDevice,
+		func(ctx context.Context) {
+			tripService.FlushGpsFmRdsToMongo(ctx, nil, 70)
+		},
 	})
 
 	// 每半天執行一次（每日00:00, 12:00）
@@ -50,6 +50,9 @@ func CronStart() {
 
 	// 每天執行一次（每日00:00）
 	executeJob(c, Day, []func(context.Context){
+		func(ctx context.Context) {
+			tripService.FlushTripFmMongoToMaria(ctx, 25, EXECUTOR)
+		},
 		logafa.StartRotateFile,
 	})
 

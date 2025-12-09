@@ -1,4 +1,4 @@
-package device
+package trip
 
 import (
 	"net/http"
@@ -7,16 +7,16 @@ import (
 	"batchLog/0.core/global"
 	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
-	deviceService "batchLog/3.service/device"
+	tripService "batchLog/3.service/trip"
 )
 
-type request07 struct {
+type request02 struct {
 	DeviceId string `json:"deviceId"`
 	TripUuid string `json:"tripUuid"`
 }
 
 func TripDetail(ctx request.RequestContext) {
-	var req request07
+	var req request02
 	err := ctx.BindJSON(&req)
 	if err != nil {
 		ctx.Error(http.StatusBadRequest, global.COMMON_REQUEST_ERROR)
@@ -29,7 +29,7 @@ func TripDetail(ctx request.RequestContext) {
 		ctx.Error(http.StatusForbidden, "身份認證錯誤")
 		return
 	}
-	info, err := deviceService.GetTripDetail(ctx.GetContext(), userInfo, req.DeviceId, req.TripUuid)
+	info, err := tripService.GetTripDetail(ctx.GetContext(), userInfo, req.DeviceId, req.TripUuid)
 	if err != nil {
 		logafa.Error("系統發生錯誤", "error", err)
 		ctx.Error(http.StatusInternalServerError, global.COMMON_SYSTEM_ERROR)

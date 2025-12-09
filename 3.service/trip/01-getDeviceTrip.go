@@ -1,4 +1,4 @@
-package deviceService
+package tripService
 
 import (
 	common "batchLog/0.core/commonFunction"

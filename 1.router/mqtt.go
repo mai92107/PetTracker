@@ -13,6 +13,7 @@ import (
 	"batchLog/2.api/member"
 	system "batchLog/2.api/system_config"
 	"batchLog/2.api/test"
+	"batchLog/2.api/trip"
 	"fmt"
 	"net/http"
 	"strings"
@@ -38,8 +39,8 @@ var mqttRoutes = map[string]Route{
 	"device_all":       {Handler: executeMqtt(device.DeviceList), Permission: role.ADMIN},
 
 	// trip
-	"trip_list": {Handler: executeMqtt(device.TripList), Permission: role.MEMBER},
-	"trip_detail":  {Handler: executeMqtt(device.TripDetail), Permission: role.MEMBER},
+	"trip_list":   {Handler: executeMqtt(trip.TripList), Permission: role.MEMBER},
+	"trip_detail": {Handler: executeMqtt(trip.TripDetail), Permission: role.MEMBER},
 
 	// Member
 	"member_addDevice": {Handler: executeMqtt(member.AddDevice), Permission: role.MEMBER},

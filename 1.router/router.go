@@ -11,6 +11,7 @@ import (
 	"batchLog/2.api/member"
 	system "batchLog/2.api/system_config"
 	"batchLog/2.api/test"
+	"batchLog/2.api/trip"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -46,8 +47,12 @@ func RegisterRoutes(r *gin.Engine) {
 
 		deviceGroup.POST("/recording", required(role.MEMBER), executeHttp(device.Recording))
 		deviceGroup.GET("/:deviceId/status", required(role.MEMBER), executeHttp(device.DeviceStatus))
-		deviceGroup.GET("/trips", required(role.MEMBER), executeHttp(device.TripList))
-		deviceGroup.GET("/trip", required(role.MEMBER), executeHttp(device.TripDetail))
+	}
+
+	tripGroup := r.Group("/trip")
+	{
+		tripGroup.GET("/list", required(role.MEMBER), executeHttp(trip.TripList))
+		tripGroup.GET("/detail", required(role.MEMBER), executeHttp(trip.TripDetail))
 
 	}
 

@@ -78,8 +78,9 @@ type TripSummary struct {
 	PointCount      int       `gorm:"column:point_count;type:int;default:0;comment:'GPS點數量'" bson:"point_count"`
 	DistanceKM      float64   `gorm:"column:distance_km;type:decimal(10,3);default:0.000;index:idx_distance;comment:'總距離(km)'" bson:"distance_km"`
 
-	CreatedAt 		time.Time `gorm:"column:created_at"`
-	UpdatedAt 		time.Time `gorm:"column:updated_at"`
+	CreatedAt time.Time `gorm:"column:created_at"`
+	Executor  string    `gorm:"column:executor"`
+	UpdatedAt time.Time `gorm:"column:updated_at"`
 }
 
 func (d *TripSummary) TableName() string {

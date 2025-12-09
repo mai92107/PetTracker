@@ -5,7 +5,7 @@ import (
 	jwtUtil "batchLog/0.core/jwt"
 	"batchLog/0.core/logafa"
 	"batchLog/0.core/model"
-	"batchLog/0.cron/persist"
+	tripService "batchLog/3.service/trip"
 	repo "batchLog/4.repo"
 	"context"
 	"fmt"
@@ -16,9 +16,9 @@ import (
 func Recording(ctx context.Context, lat, lng float64, member jwtUtil.Claims, deviceId, recordTime, dataRef string, isEnd bool) (map[string]interface{}, error) {
 
 	if isEnd {
-		persist.SaveGpsFmRdsToMongo(ctx)
-		persist.FlushTripFmMongoToMaria(ctx, 5)
-		return GetTripDetail(ctx, member, deviceId, dataRef)
+		tripService.FlushGpsFmRdsToMongo(ctx, &deviceId, 60)
+		tripService.FlushTripFmMongoToMaria(ctx, 5, member.GetExecutor())
+		return tripService.GetTripDetail(ctx, member, deviceId, dataRef)
 	}
 
 	loc, err := time.LoadLocation("Local")

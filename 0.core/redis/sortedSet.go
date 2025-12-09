@@ -2,6 +2,7 @@ package redis
 
 import (
 	"batchLog/0.core/global"
+	"batchLog/0.core/logafa"
 	"context"
 	"fmt"
 	"time"
@@ -56,11 +57,14 @@ func ZRangeByScore(ctx context.Context, key string, startTs, endTs int64) ([]str
 }
 
 // ✅ 移除指定 key 的資料指定時間區段資料
-func ZRemRangeByScore(ctx context.Context, client *redis.Client, key string, startTs, endTs int64) error {
+func ZRemRangeByScore(ctx context.Context, keys []string, startTs, endTs int64) error {
 	// 移除指定區間資料
-	_, err := client.ZRemRangeByScore(ctx, key, fmt.Sprintf("%v", startTs), fmt.Sprintf("%v", endTs)).Result()
-	if err != nil {
-		return err
+	var err error
+	for _, key := range keys {
+		_, err = global.Repository.Cache.Writing.ZRemRangeByScore(ctx, key, fmt.Sprintf("%v", startTs), fmt.Sprintf("%v", endTs)).Result()
+		if err != nil {
+			logafa.Error("Key 值 資料刪除失敗", "key", key, "start", startTs, "end", endTs)
+		}
 	}
-	return nil
+	return err
 }

@@ -4,6 +4,7 @@ import (
 	"batchLog/0.core/global"
 	"batchLog/0.core/logafa"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -35,6 +36,10 @@ type Claims struct {
 	Identity    string `json:"identity"`
 	LoginIp     string `json:"loginIp"`
 	jwt.RegisteredClaims
+}
+
+func (c Claims) GetExecutor() string {
+	return strconv.Itoa(int(c.MemberId))
 }
 
 func (c Claims) IsAdmin() bool {

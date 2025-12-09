@@ -1,4 +1,4 @@
-package persist
+package tripService
 
 import (
 	"context"
@@ -26,15 +26,11 @@ type rawData struct {
 	Coords    [][]float64 `bson:"coords"` // [[lng, lat], [lng, lat], ...]
 }
 
-func SaveTripFmMongoToMaria(ctx context.Context) {
-	FlushTripFmMongoToMaria(ctx, 30)
-}
-
-// 計算近 30min 每趟行程資訊
-func FlushTripFmMongoToMaria(ctx context.Context, timeDuration int) {
+// 計算 過去時間(小時) 行程資訊
+func FlushTripFmMongoToMaria(ctx context.Context, timeDuration int, executor string) {
 	coll := global.Repository.DB.MongoDb.Reading.Collection("pettrack")
 
-	duration := time.Now().UTC().Add(time.Minute * -(time.Duration(timeDuration)))
+	duration := time.Now().UTC().Add(time.Hour * time.Duration(-1*timeDuration))
 	pipeline := mongo.Pipeline{
 		{{Key: "$match", Value: bson.D{
 			{Key: "recorded_at", Value: bson.D{{Key: "$gte", Value: duration}}},
@@ -85,23 +81,14 @@ func FlushTripFmMongoToMaria(ctx context.Context, timeDuration int) {
 			PointCount:      len(rawData.Coords),
 			DistanceKM:      math.Round(distance*1000) / 1000, // 保留3位
 			CreatedAt:       common.ToUtcTime(now),
+			Executor:        executor,
 			UpdatedAt:       common.ToUtcTime(now),
 		})
 	}
-
-	err = saveTripSummaries(results)
-	if err != nil {
-		logafa.Error("%w", err)
-	}
-}
-
-func saveTripSummaries(results []gormTable.TripSummary) error {
-	tx := global.Repository.DB.MariaDb.Reading.Begin()
+	tx := global.Repository.DB.MariaDb.Writing.Begin()
 	if err := tx.Error; err != nil {
-		return fmt.Errorf("開始交易失敗, %w", err)
+		logafa.Error("開始交易失敗", "error", err)
 	}
-
-	// 確保一定會 rollback（除非我們明確 commit）
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
@@ -109,33 +96,37 @@ func saveTripSummaries(results []gormTable.TripSummary) error {
 		}
 	}()
 
+	err = saveTripSummaries(tx, results)
+	if err != nil {
+		logafa.Error("%w", err)
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		logafa.Error("交易提交失敗", "error", err)
+	}
+
+	logafa.Info("全部行程摘要寫入成功！", "count", len(results))
+}
+
+func saveTripSummaries(tx *gorm.DB, results []gormTable.TripSummary) error {
+	var err error
 	for i, t := range results {
-		if err := saveTripToDB(tx, &t); err != nil {
+		err = tx.Clauses(clause.OnConflict{
+			Columns: []clause.Column{{Name: "data_ref"}},
+			DoUpdates: []clause.Assignment{
+				{Column: clause.Column{Name: "updated_at"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(updated_at), updated_at)")},
+				{Column: clause.Column{Name: "end_time"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(end_time), end_time)")},
+				{Column: clause.Column{Name: "distance_km"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(distance_km), distance_km)")},
+				{Column: clause.Column{Name: "duration_minutes"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(duration_minutes), duration_minutes)")},
+				{Column: clause.Column{Name: "point_count"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(point_count), point_count)")},
+			}}).Create(&t).Error
+		if err != nil {
 			logafa.Error("某筆儲存失敗，將 rollback 整批", "no", i+1, "data_ref", t.DataRef, "error", err)
 			return fmt.Errorf("儲存失敗: %w", err) // 觸發 rollback
 		}
 	}
 
-	if err := tx.Commit().Error; err != nil {
-		logafa.Error("交易提交失敗", "error", err)
-		return fmt.Errorf("commit 失敗: %w", err)
-	}
-
-	logafa.Info("全部行程摘要寫入成功！", "count", len(results))
 	return nil
-}
-
-func saveTripToDB(tx *gorm.DB, trip *gormTable.TripSummary) error {
-	return tx.Clauses(clause.OnConflict{
-		Columns: []clause.Column{{Name: "data_ref"}},
-		DoUpdates: []clause.Assignment{
-			{Column: clause.Column{Name: "updated_at"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(updated_at), updated_at)")},
-			{Column: clause.Column{Name: "end_time"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(end_time), end_time)")},
-			{Column: clause.Column{Name: "distance_km"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(distance_km), distance_km)")},
-			{Column: clause.Column{Name: "duration_minutes"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(duration_minutes), duration_minutes)")},
-			{Column: clause.Column{Name: "point_count"}, Value: gorm.Expr("IF(VALUES(point_count) > point_count, VALUES(point_count), point_count)")},
-		},
-	}).Create(trip).Error
 }
 
 func getDistance(rawData rawData) float64 {

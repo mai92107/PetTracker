@@ -165,6 +165,7 @@ func initSQLTables(db *gorm.DB) {
 				point_count      int DEFAULT 0 COMMENT 'GPS點數量',
 				distance_km      decimal(10,3) DEFAULT 0.000 COMMENT '總距離(km)',
 				created_at       datetime(3),
+				executor  		 varchar(64) NOT NULL COMMENT '最後執行者',
 				updated_at       datetime(3)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;`,
 	}
